@@ -1,29 +1,53 @@
 using UnityEngine;
-using System;
-public static class Extensions
+using System.Linq;
+using System.Collections.Generic;
+public static class IntExtensions
 {
     public static bool Multiples(this int a, int b)
     {
         return b != 0 && a % b == 0 && a != 0;
     }
-    public static Color ToColor(this string color)
+}
+public static class RandomExtensions
+{
+    public static int GetChance(int[] chances)
     {
-        if (color.StartsWith("#"))
+        int amount = chances.Length;
+        List<int> res = new List<int>();
+        for (int i = 0; i < amount; i++)
         {
-            color = color.Substring(1); // strip #
+            for (int _ = 0; _ < chances[i]; _++) 
+                res.Add(chances[i]);
         }
-
-        if (color.Length == 6)
-        {
-            color += "FF"; // add alpha if missing
-        }
-
-        var hex = Convert.ToUInt32(color, 16);
-        var r = ((hex & 0xff000000) >> 0x18) / 255f;
-        var g = ((hex & 0xff0000) >> 0x10) / 255f;
-        var b = ((hex & 0xff00) >> 8) / 255f;
-        var a = ((hex & 0xff)) / 255f;
-
-        return new Color(r, g, b, a);
+        return res[Random.Range(0, res.Count)];
+    }
+}
+public static class CollectionExtensions
+{
+    public static object[] Add(this object[] a, object[] b)
+    {
+        object[] newCollection = new object[a.Length + b.Length];
+        for (int i = 0; i < a.Length; i++) newCollection[i] = a[i];
+        for (int i = a.Length; i < b.Length; i++) newCollection[i] = b[i];
+        return newCollection;
+    }
+    /// <summary>
+    /// Finds index of first element equals format
+    /// </summary>
+    /// <param name="collection"></param>
+    /// <returns>index of first null element in array. If it is full than returns -1</returns>
+    public static int FirstEmpty(this object[] collection, object format = null)
+    {
+        for (int i = 0; i < collection.Length; i++)
+            if (collection[i] == format)
+                return i;
+        return -1;
+    }
+}
+public static class IEnumerableExtensions
+{
+    public static string ToStringFormat<T>(this IEnumerable<T> collection)
+    {
+        return string.Join(", ", collection);
     }
 }

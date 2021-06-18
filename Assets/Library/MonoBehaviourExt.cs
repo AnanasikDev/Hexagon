@@ -1,10 +1,13 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 public class MonoBehaviourExt : MonoBehaviour
 {
     public static MonoBehaviourExt extensions { get; private set; }
+    //public delegate TResult[] Loop<T>(Func<T, TResult> func, object arg, int n);
+    public delegate TResult Funcf<in T, out TResult>(T arg);
     private void Awake() => extensions = this;
-    public void Log(params object[] args)
+    public void Log<T>(params T[] args)
     {
         Debug.Log(string.Join(" ", args));
     }
@@ -12,13 +15,12 @@ public class MonoBehaviourExt : MonoBehaviour
     {
         Debug.Log($"<color={color}>{string.Join(" ", args)}</color>");
     }
-    /// <summary>
-    /// exmaple: LogColor("#FF00FFFF", "hello {0} world {1}")
-    /// </summary>
-    /// <param name="color"></param>
-    /// <param name="format"></param>
-    public void LogColor(string color, string format)
+    public IEnumerable<TResult> Loop<T, TResult>(Funcf<T, TResult> func, T arg, int n)
     {
-        Debug.Log(string.Format(format, $"<color={color}>", "</color>"));
+        for (int i = 0; i < n; i++) yield return func(arg);
+    }
+    public void Loop<T>(Action<T> func, T arg, int n)
+    {
+        for (int i = 0; i < n; i++) func(arg);
     }
 }
