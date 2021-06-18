@@ -5,5 +5,6 @@ public class Main : MonoBehaviour
     void Start()
     {
         MonoBehaviourExt.extensions.Log(1, 2, "helo");
+        MonoBehaviourExt.extensions.LogColor("#00ffffff", "hello world");
     }
 }
