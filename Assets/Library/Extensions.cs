@@ -139,6 +139,26 @@ public static class RandomExtensions
         }
         return res[Random.Range(0, res.Count)];
     }
+    public static double NormalDistribution(float min, float max, float std_deviation = 2, float mean = 0)
+    {
+        /*float mean = ((max + min) / 2.0f) + hor_mean;
+        float stdDev = std_deviation;
+        float u1 = 1.0f - Random.Range(0f, 0.9999f); //uniform(0,1] random doubles
+        float u2 = 1.0f - Random.Range(0f, 0.9999f);
+        float randStdNormal = Mathf.Sqrt(-2.0f * Mathf.Log(u1) * Mathf.Sin(2.0f * Mathf.PI * u2)); //random normal(0,1)
+        float randNormal = mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
+        return randNormal;*/
+
+        System.Random rand = new System.Random(); //reuse this if you are generating many
+        double u1 = 1.0 - rand.NextDouble(); //uniform(0,1] random doubles
+        double u2 = 1.0 - rand.NextDouble();
+        double randStdNormal = System.Math.Sqrt(-2.0f * System.Math.Log(u1)) *
+                     System.Math.Sin(2.0f * System.Math.PI * u2); //random normal(0,1)
+        double randNormal =
+                     mean + std_deviation * randStdNormal; //random normal(mean,stdDev^2)
+
+        return randNormal;
+    }
 }
 public static class CollectionExtensions
 {
@@ -172,5 +192,13 @@ public static class IEnumerableExtensions
     public static string ToStringFormat<T>(this IEnumerable<T> collection, string separator)
     {
         return string.Join(separator, collection);
+    }
+}
+public static class GameObjectExtensions
+{
+    public static bool Has<T>(this GameObject gameObject, T type)
+    {
+        T component;
+        return gameObject.TryGetComponent<T>(out component);
     }
 }

@@ -19,8 +19,4 @@ public class MonoBehaviourExt : MonoBehaviour
     {
         for (int i = 0; i < n; i++) yield return func(arg);
     }
-    public void Loop<T>(Action<T> func, T arg, int n)
-    {
-        for (int i = 0; i < n; i++) func(arg);
-    }
 }
