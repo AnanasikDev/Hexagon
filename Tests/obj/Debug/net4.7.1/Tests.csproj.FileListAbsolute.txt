@@ -1,0 +1,4 @@
+C:\GitArchive\Archive\Code\Unity\Hexagon\Tests\obj\Debug\net4.7.1\Tests.csprojAssemblyReference.cache
+C:\GitArchive\Archive\Code\Unity\Hexagon\Tests\obj\Debug\net4.7.1\Tests.AssemblyInfoInputs.cache
+C:\GitArchive\Archive\Code\Unity\Hexagon\Tests\obj\Debug\net4.7.1\Tests.AssemblyInfo.cs
+C:\GitArchive\Archive\Code\Unity\Hexagon\Tests\obj\Debug\net4.7.1\Tests.csproj.CoreCompileInputs.cache
