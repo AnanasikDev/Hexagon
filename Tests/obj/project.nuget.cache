@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VfF72Lss5sr6VQCgaUrMWQldRObIll9vCjxUrWU9B9OdfNrlsxXjvvHw9Ww2jZf1j6/nnvh9x9oXKTaao0fQDQ==",
+  "dgSpecHash": "pw+0pGqP+M8l8I8m4ivTZoVA0zV99YyKiENwvzPSce7DcpdAvndXPx4A1KQWh4eg64ni2xYti/7hTOR2cbguSg==",
   "success": true,
-  "projectFilePath": "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Tests\\Tests.csproj",
+  "projectFilePath": "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Tests\\Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\olegb\\.nuget\\packages\\coverlet.collector\\1.3.0\\coverlet.collector.1.3.0.nupkg.sha512",
     "C:\\Users\\olegb\\.nuget\\packages\\microsoft.codecoverage\\16.7.1\\microsoft.codecoverage.16.7.1.nupkg.sha512",

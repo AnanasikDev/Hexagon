@@ -1,27 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Tests\\Tests.csproj": {}
+    "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Tests\\Tests.csproj": {}
   },
   "projects": {
-    "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Assembly-CSharp.csproj": {
+    "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Assembly-CSharp.csproj": {
       "restore": {
-        "projectUniqueName": "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Assembly-CSharp.csproj",
+        "projectUniqueName": "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Assembly-CSharp.csproj",
         "projectName": "Assembly-CSharp",
-        "projectPath": "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Assembly-CSharp.csproj"
+        "projectPath": "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Assembly-CSharp.csproj"
       },
       "frameworks": {
         "net471": {}
       }
     },
-    "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Tests\\Tests.csproj": {
+    "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Tests\\Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Tests\\Tests.csproj",
+        "projectUniqueName": "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Tests\\Tests.csproj",
         "projectName": "Tests",
-        "projectPath": "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Tests\\Tests.csproj",
+        "projectPath": "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Tests\\Tests.csproj",
         "packagesPath": "C:\\Users\\olegb\\.nuget\\packages\\",
-        "outputPath": "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Tests\\obj\\",
+        "outputPath": "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -42,8 +42,8 @@
           "net471": {
             "targetAlias": "net4.7.1",
             "projectReferences": {
-              "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Assembly-CSharp.csproj": {
-                "projectPath": "C:\\GitArchive\\Archive\\Code\\Unity\\Hexagon\\Assembly-CSharp.csproj"
+              "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Assembly-CSharp.csproj": {
+                "projectPath": "C:\\GitArchive\\Archive\\Code\\Unity\\Assets\\Hexagon\\Assembly-CSharp.csproj"
               }
             }
           }
