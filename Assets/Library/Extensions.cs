@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UIElements;
+
 public static class IEnumerableExtensions
 {
     public static string Join<T>(this string separator, IEnumerable<T> collection)
@@ -54,7 +56,7 @@ public static class TransformExtensions
     {
         transform.localScale = Vector3.one;
     }
-    public static Vector3 globalScale(this Transform transform)
+    public static Vector3 GlobalScale(this Transform transform)
     {
         return transform.lossyScale;
     }
@@ -68,9 +70,60 @@ public static class TransformExtensions
         return others.OrderBy(t => (t.position - transform.position).sqrMagnitude)
                               .Where(t => includeInactive ? true : t.gameObject.activeSelf).First();
     }
-    public static Vector3 GetCirclePosition(float radius)
+    public static int DeepChildrenCount(this Transform transform)
     {
-        float a = Random.Range(0f, 360f);
-        return new Vector3(Mathf.Sin(a) * radius, 0, Mathf.Cos(a) * radius);
+        int childcount = 0;
+
+        void inner(Transform transform)
+        {
+            foreach (Transform child in transform)
+            {
+                childcount++;
+
+                if (child.childCount == 0) continue;
+
+                inner(child);
+            }
+        }
+
+        inner(transform);
+
+        return childcount;
+    }
+    public static List<Transform> DeepChildren(this Transform transform)
+    {
+        List<Transform> children = new List<Transform>();
+
+        void inner(Transform transform)
+        {
+            foreach (Transform child in transform)
+            {
+                children.Add(child);
+
+                if (child.childCount == 0) continue;
+
+                inner(child);
+            }
+        }
+
+        inner(transform);
+
+        return children;
+    }
+}
+public static class Hexath
+{
+    public static Vector3 GetCirclePosition(float radius, float angleDeg)
+    {
+        angleDeg *= Mathf.Deg2Rad;
+
+        float x = Mathf.Sin(angleDeg) * radius;
+        float z = Mathf.Cos(angleDeg) * radius;
+
+        return new Vector3(x, 0, z);
+    }
+    public static Vector3 GetRandomCirclePosition(float radius)
+    {
+        return GetCirclePosition(radius, Random.Range(0f, 360f));
     }
 }
