@@ -18,8 +18,11 @@ public static class GameObjectExtensions
 {
     public static bool HasComponent<T>(this GameObject gameObject, T type)
     {
-        T component;
-        return gameObject.TryGetComponent<T>(out component);
+        return gameObject.TryGetComponent<T>(out T component);
+    }
+    public static bool HasComponent<T>(this GameObject gameObject)
+    {
+        return gameObject.TryGetComponent<T>(out T component);
     }
 }
 public static class TransformExtensions
@@ -56,39 +59,30 @@ public static class TransformExtensions
     {
         transform.localScale = Vector3.one;
     }
-    public static Vector3 GlobalScale(this Transform transform)
+
+    public static Vector3 GetGlobalScale(this Transform transform)
     {
         return transform.lossyScale;
     }
-    public static Transform Nearest(this Transform transform, Transform[] others, bool includeInactive = false)
+    public static Transform FindNearest(this Transform transform, Transform[] others, bool includeInactive = false)
     {
         return others.OrderBy(t => (t.position - transform.position).sqrMagnitude)
                               .Where(t => includeInactive ? true : t.gameObject.activeSelf).First();
     }
-    public static Transform LocalNearest(this Transform transform, Transform[] others, bool includeInactive = false)
+    public static Transform FindLocalNearest(this Transform transform, Transform[] others, bool includeInactive = false)
     {
-        return others.OrderBy(t => (t.position - transform.position).sqrMagnitude)
+        return others.OrderBy(t => (t.localPosition - transform.localPosition).sqrMagnitude)
                               .Where(t => includeInactive ? true : t.gameObject.activeSelf).First();
+    }    
+    
+    public static void DoDeep(this Transform transform, Action<Transform> function)
+    {
+        foreach (Transform child in transform.DeepChildren())
+            function(child);
     }
     public static int DeepChildrenCount(this Transform transform)
     {
-        int childcount = 0;
-
-        void inner(Transform transform)
-        {
-            foreach (Transform child in transform)
-            {
-                childcount++;
-
-                if (child.childCount == 0) continue;
-
-                inner(child);
-            }
-        }
-
-        inner(transform);
-
-        return childcount;
+        return transform.DeepChildren().Count;
     }
     public static List<Transform> DeepChildren(this Transform transform)
     {
@@ -110,9 +104,22 @@ public static class TransformExtensions
 
         return children;
     }
-    public static void ScaleForward(this Transform transform, Vector3 direction)
+
+    public static void AddScaleForwardRelative(this Transform transform, Vector3 direction)
     {
-        transform.localPosition += direction / 2f - transform.localScale / 2f;
+        transform.localScale += direction;
+        transform.Translate(direction/2f);
+        //transform.position -= transform.InverseTransformDirection(direction);
+
+        /*transform.localPosition += direction / 2f - transform.localScale / 2f;
+        Quaternion rotation = transform.rotation;
+        transform.ResetRotation();
+        transform.localScale = transform.TransformVector(direction);
+        transform.rotation = rotation;*/
+    }
+    public static void SetScaleForwardRelative(this Transform transform, Vector3 direction)
+    {
+        transform.Translate((direction - transform.localScale) / 2f);
         transform.localScale = direction;
     }
 }
@@ -124,6 +131,13 @@ public static class Hexath
 
         float x = Mathf.Sin(angleDeg) * radius;
         float z = Mathf.Cos(angleDeg) * radius;
+
+        return new Vector3(x, 0, z);
+    }
+    public static Vector3 GetCirclePositionRadians(float radius, float angleRad)
+    {
+        float x = Mathf.Sin(angleRad) * radius;
+        float z = Mathf.Cos(angleRad) * radius;
 
         return new Vector3(x, 0, z);
     }
@@ -146,7 +160,7 @@ public static class Vector
     {
         return new Vector3((float)System.Math.Pow(a.x, b.x), (float)System.Math.Pow(a.y, b.y), (float)System.Math.Pow(a.z, b.z));
     }
-    public static Vector3 Manual(this Vector3 a, Vector3 b, Func<float, float, float> function)
+    public static Vector3 DoManual(this Vector3 a, Vector3 b, Func<float, float, float> function)
     {
         return new Vector3(function(a.x, b.x), function(a.y, b.y), function(a.z, b.z));
     }
@@ -163,7 +177,7 @@ public static class Vector
     {
         return new Vector3Int((int)System.Math.Pow(a.x, b.x), (int)System.Math.Pow(a.y, b.y), (int)System.Math.Pow(a.z, b.z));
     }
-    public static Vector3Int Manual(this Vector3Int a, Vector3Int b, Func<int, int, int> function)
+    public static Vector3Int DoManual(this Vector3Int a, Vector3Int b, Func<int, int, int> function)
     {
         return new Vector3Int(function(a.x, b.x), function(a.y, b.y), function(a.z, b.z));
     }
@@ -182,7 +196,7 @@ public static class Vector
     {
         return new Vector2((float)System.Math.Pow(a.x, b.x), (float)System.Math.Pow(a.y, b.y));
     }
-    public static Vector2 Manual(this Vector2 a, Vector2 b, Func<float, float, float> function)
+    public static Vector2 DoManual(this Vector2 a, Vector2 b, Func<float, float, float> function)
     {
         return new Vector2(function(a.x, b.x), function(a.y, b.y));
     }
@@ -199,7 +213,7 @@ public static class Vector
     {
         return new Vector2Int((int)System.Math.Pow(a.x, b.x), (int)System.Math.Pow(a.y, b.y));
     }
-    public static Vector2Int Manual(this Vector2Int a, Vector2Int b, Func<int, int, int> function)
+    public static Vector2Int DoManual(this Vector2Int a, Vector2Int b, Func<int, int, int> function)
     {
         return new Vector2Int(function(a.x, b.x), function(a.y, b.y));
     }
