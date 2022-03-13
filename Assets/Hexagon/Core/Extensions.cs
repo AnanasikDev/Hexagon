@@ -109,13 +109,6 @@ public static class TransformExtensions
     {
         transform.localScale += direction;
         transform.Translate(direction/2f);
-        //transform.position -= transform.InverseTransformDirection(direction);
-
-        /*transform.localPosition += direction / 2f - transform.localScale / 2f;
-        Quaternion rotation = transform.rotation;
-        transform.ResetRotation();
-        transform.localScale = transform.TransformVector(direction);
-        transform.rotation = rotation;*/
     }
     public static void SetScaleForwardRelative(this Transform transform, Vector3 direction)
     {
