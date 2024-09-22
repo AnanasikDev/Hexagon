@@ -34,7 +34,7 @@ public static class Hexath
     }
 
     /// <summary>
-    /// Least common multiple
+    /// Least common multiple of two numbers
     /// </summary>
     public static int LCM(int a, int b)
     {
@@ -46,7 +46,7 @@ public static class Hexath
         return -1;
     }
     /// <summary>
-    /// Greatest common divisor
+    /// Greatest common divisor of two numbers
     /// </summary>
     public static int GCD(int a, int b)
     {
@@ -60,6 +60,9 @@ public static class Hexath
         return -1;
     }
 
+    /// <summary>
+    /// Least common multiple of a list of numbers
+    /// </summary>
     public static int LCM(List<int> nums)
     {
         int max = nums.Max();
@@ -87,15 +90,31 @@ public static class Hexath
         }
     }
 
+    /// <summary>
+    /// Returns -1 if value is negative, 0 if value is 0, 1 if value is positive
+    /// </summary>
+    public static int Ternarsign(float value)
+    {
+        return (value > 0 ? 1 : (value < 0 ? -1 : 0));
+    }
+
     public static float Ramp(float x, float min, float max)
     {
         if (x > min) return max;
         return (max - min) + x;
     }
+
+    /// <summary>
+    /// Returns min if value is less than min, or the value otherwise
+    /// </summary>
     public static float MinLimit(float value, float min)
     {
         return value > min ? value : min;
     }
+
+    /// <summary>
+    /// Returns max if value is greater than max, or the value otherwise
+    /// </summary>
     public static float MaxLimit(float value, float max)
     {
         return value < max ? value : max;
