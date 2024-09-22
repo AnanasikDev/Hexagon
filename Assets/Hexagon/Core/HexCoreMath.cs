@@ -6,34 +6,37 @@ public static class Hexath
 {
     public static float SnapNumberToStep(this float number, float step)
     {
-        float sediment = number % step;
+        float remainder = number % step;
 
-        if (Mathf.Abs(sediment) < step / 2f) return number - sediment;
-        else return number - sediment + step * Mathf.Sign(number);
+        if (Mathf.Abs(remainder) < step / 2f) return number - remainder;
+        else return number - remainder + step * Mathf.Sign(number);
     }
-    public static Vector2 GetCirclePositionDegrees(float radius, float angleDeg)
+    public static Vector2 GetCirclePointDegrees(float radius, float angleDeg)
     {
         float angleRad = angleDeg * Mathf.Deg2Rad;
 
-        return GetCirclePositionRadians(radius, angleRad);
+        return GetCirclePointRadians(radius, angleRad);
     }
-    public static Vector2 GetCirclePositionRadians(float radius, float angleRad)
+    public static Vector2 GetCirclePointRadians(float radius, float angleRad)
     {
-        float x = Mathf.Sin(angleRad) * radius;
-        float y = Mathf.Cos(angleRad) * radius;
+        float x = Mathf.Cos(angleRad) * radius;
+        float y = Mathf.Sin(angleRad) * radius;
 
         return new Vector2(x, y);
     }
     public static Vector2 GetRandomRingPoint(float radius)
     {
-        return GetCirclePositionDegrees(radius, UnityEngine.Random.Range(0f, 360f));
+        return GetCirclePointDegrees(radius, UnityEngine.Random.Range(0f, 360f));
     }
     public static Vector2 GetRandomCirclePoint(float radius)
     {
-        return GetCirclePositionDegrees(Random.Range(0, radius), UnityEngine.Random.Range(0f, 360f));
+        return GetCirclePointDegrees(Random.Range(0, radius), UnityEngine.Random.Range(0f, 360f));
     }
 
-    public static int HOK(int a, int b)
+    /// <summary>
+    /// Least common multiple
+    /// </summary>
+    public static int LCM(int a, int b)
     {
         for (int i = a; i < b * a; i += a)
         {
@@ -42,9 +45,12 @@ public static class Hexath
 
         return -1;
     }
-    public static int HOD(int a, int b)
+    /// <summary>
+    /// Greatest common divisor
+    /// </summary>
+    public static int GCD(int a, int b)
     {
-        var min = a > b ? b : a;
+        int min = a > b ? b : a;
 
         for (int i = min; i >= 0; i--)
         {
@@ -54,7 +60,7 @@ public static class Hexath
         return -1;
     }
 
-    public static int HOK(List<int> nums)
+    public static int LCM(List<int> nums)
     {
         int max = nums.Max();
         int lcm = max;
@@ -88,6 +94,10 @@ public static class Hexath
     }
     public static float MinLimit(float value, float min)
     {
-        return value >= min ? value : min;
+        return value > min ? value : min;
+    }
+    public static float MaxLimit(float value, float max)
+    {
+        return value < max ? value : max;
     }
 }
