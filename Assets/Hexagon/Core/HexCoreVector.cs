@@ -74,6 +74,30 @@ public static class HexVector3
 
     public static bool IsBetween(this float a, float min, float max, bool edgesInclude = false) 
         => edgesInclude ? a >= min && a <= max : a > min && a < max;
+
+    public static Vector3 Random() 
+        => new Vector3(
+                       UnityEngine.Random.value - 0.5f, 
+                       UnityEngine.Random.value - 0.5f, 
+                       UnityEngine.Random.value - 0.5f
+                      ) * 2;
+
+    public static Vector3 Random01() 
+        => new Vector3(
+                       UnityEngine.Random.value,
+                       UnityEngine.Random.value,
+                       UnityEngine.Random.value
+                       );
+
+    public static Vector3 RandomRange(Vector3 min, Vector3 max) 
+        => new Vector3(
+                       UnityEngine.Random.Range(min.x, max.x),
+                       UnityEngine.Random.Range(min.y, max.y),
+                       UnityEngine.Random.Range(min.z, max.z)
+                       );
+
+    public static bool NearlyEquals(this Vector3 a, Vector3 b, double inaccuracy = 9.0E-11) => 
+        Vector3.SqrMagnitude(a - b) < inaccuracy;
 }
 
 public static class HexVector3Int

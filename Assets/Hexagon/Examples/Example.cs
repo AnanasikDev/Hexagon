@@ -2,20 +2,23 @@ using UnityEngine;
 using System.Linq;
 
 // Example script using Hexagon
+[RequireComponent(typeof(HexCoroutineRunner))]
 public class Example : MonoBehaviour
 {
     public Canvas canvas;
     void Start()
     {
-        Vector3 v1 = new Vector3(1, 2, 3);
-        v1 = v1.WithX(99);
-        Debug.Log(v1);
+        Debug.Log(Hexath.SnapNumberToStep(0.123f, 0.1f));
+        Debug.Log(Hexath.SnapNumberToStep(0.223f, 0.1f));
+        Debug.Log(Hexath.SnapNumberToStep(0.023f, 0.1f));
+        Debug.Log(Hexath.SnapNumberToStep(0.023f, 0.01f));
 
-        Vector3 v2 = new Vector3(1, 2, 3);
-        v2.SetX(123);
-        v2.SetY(321);
-        v2.SetZ(213);
-        Debug.Log(v2);
+        HexTime.DelayedAction(3, f, 0.1f, 2, (double d) => Debug.Log("Outed with " + d));
+    }
+
+    private double f(float a, int b)
+    {
+        return (double)(a + b);
     }
 
     private void Update()

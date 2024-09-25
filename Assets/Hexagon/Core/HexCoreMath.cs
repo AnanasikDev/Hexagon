@@ -4,6 +4,11 @@ using UnityEngine;
 
 public static class Hexath
 {
+    /// <summary>
+    /// Snaps the given number to the nearest float number within the given step. Rounding for float-point numbers with adjustable accuracy given as the "step" argument.
+    /// </summary>
+    /// <param name="number">Number to be rounded</param>
+    /// <param name="step">Accuracy of rounding, modulo of the maximum difference with the original "number"</param>
     public static float SnapNumberToStep(this float number, float step)
     {
         float remainder = number % step;
@@ -11,23 +16,39 @@ public static class Hexath
         if (Mathf.Abs(remainder) < step / 2f) return number - remainder;
         else return number - remainder + step * Mathf.Sign(number);
     }
-    public static Vector2 GetCirclePointDegrees(float radius, float angleDeg)
+
+    /// <summary>
+    /// Returns a point on the circumference with the given "radius" at the given "angle" in degrees, starting at the point (radius, 0) as in math.
+    /// </summary>
+    public static Vector2 GetCirclePointDegrees(float radius, float angle)
     {
-        float angleRad = angleDeg * Mathf.Deg2Rad;
+        float angleRad = angle * Mathf.Deg2Rad;
 
         return GetCirclePointRadians(radius, angleRad);
     }
-    public static Vector2 GetCirclePointRadians(float radius, float angleRad)
+
+    /// <summary>
+    /// Returns a point on the circumference with the given "radius" at the given "angle" in radians, starting at the point (radius, 0) as in math.
+    /// </summary>
+    public static Vector2 GetCirclePointRadians(float radius, float angle)
     {
-        float x = Mathf.Cos(angleRad) * radius;
-        float y = Mathf.Sin(angleRad) * radius;
+        float x = Mathf.Cos(angle) * radius;
+        float y = Mathf.Sin(angle) * radius;
 
         return new Vector2(x, y);
     }
+    
+    /// <summary>
+    /// Returns random point on the circumference of the given "radius".
+    /// </summary>
     public static Vector2 GetRandomRingPoint(float radius)
     {
         return GetCirclePointDegrees(radius, UnityEngine.Random.Range(0f, 360f));
     }
+
+    /// <summary>
+    /// Returns random point on or within the circumference of the given "radius".
+    /// </summary>
     public static Vector2 GetRandomCirclePoint(float radius)
     {
         return GetCirclePointDegrees(Random.Range(0, radius), UnityEngine.Random.Range(0f, 360f));
@@ -98,10 +119,13 @@ public static class Hexath
         return (value > 0 ? 1 : (value < 0 ? -1 : 0));
     }
 
-    public static float Ramp(float x, float min, float max)
+    /// <summary>
+    /// Holds the input "value" at "max" when it is larger than "min", otherwise starts decreasing starting from "max".
+    /// </summary>
+    public static float Ramp(float value, float min, float max)
     {
-        if (x > min) return max;
-        return (max - min) + x;
+        if (value > min) return max;
+        return (max - min) + value;
     }
 
     /// <summary>
