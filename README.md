@@ -81,7 +81,7 @@ Invokes the input function once the condition() becomes true
 ## Vector
 
 <details>
-<summary># HexVectorOps</summary>
+<summary>HexVectorOps</summary>
 
 ### Overview
 These functions perform element-wise arithmetic operations on vectors - multiplication, division, and taking absolute values. They work on `Vector3`, `Vector3Int`, `Vector2`, and `Vector2Int` types.
@@ -117,7 +117,7 @@ Returns a new vector where each component is the absolute value of the correspon
 </details>
 
 <details>
-<summary># HexVectorAxisOps</summary>
+<summary>HexVectorAxisOps</summary>
 
 ### Overview
 These functions allow inline manipulation of individual components of vectors. They provide a way to set values for individual axes (X, Y, Z).
@@ -161,7 +161,7 @@ A shortcut for ```WithZ(0)```
 </details>
 
 <details>
-<summary># HexVectorRandomOps</summary>
+<summary>HexVectorRandomOps</summary>
 
 ### Random Vectors
 ```csharp
@@ -173,7 +173,7 @@ Generates a random vector where each component is a random float value between -
 </details>
 
 <details>
-<summary># HexVectorUtils</summary>
+<summary>HexVectorUtils</summary>
 
 ### Conversion
 ```csharp
@@ -223,7 +223,7 @@ Rotates the given ```Vector2``` by the given degree and returns the result witho
 </details>
 
 <details>
-<summary># HexVectorMath</summary>
+<summary>HexVectorMath</summary>
 
 ```csharp
 Vector2 Clamp01(this Vector2 vector)
@@ -248,3 +248,23 @@ Iterates over all transforms attached to this transform as direct children. For 
 List<Transform> GetChildrenRecursive(this Transform transform)
 ```
 Recursively iterates over all transforms nested to this transform
+
+## Audio
+
+Default random settings:
+```csharp
+float pitch_min = 0.94f;
+float pitch_max = 1.04f;
+float volume_min = 0.97f;
+float volume_max = 1.03f;
+```
+
+```csharp
+float RandomizePitch(this AudioSource source)
+```
+Sets and returns random pitch for the audio source.
+
+```csharp
+float RandomizeVolume(this AudioSource source)
+```
+Sets and returns random volume for the audio source.
