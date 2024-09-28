@@ -270,4 +270,18 @@ public static class HexVectorUtils
     /// Checks if two Vector3 instances are nearly equal based on an inaccuracy tolerance.
     /// </summary>
     public static bool NearlyEquals(this Vector2 a, Vector2 b, double inaccuracy = 1.0E-7) => Vector2.SqrMagnitude(a - b) < inaccuracy;
+
+    /// <summary>
+    /// Rotates the given Vector2 by the given degree.
+    /// </summary>
+    public static Vector2 Rotate(this Vector2 vector, float degrees)
+    {
+        float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+        float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+        float tx = vector.x;
+        float ty = vector.y;
+        vector.x = (cos * tx) - (sin * ty);
+        vector.y = (sin * tx) + (cos * ty);
+        return vector;
+    }
 }
