@@ -229,17 +229,110 @@ public static class HexVectorUtils
     /// <summary>
     /// Converts a Vector2 to a Vector3 with Z set to 0.
     /// </summary>
-    public static Vector2 ConvertTo3D(this Vector2 vector2) => new Vector3(vector2.x, vector2.y, 0);
+    public static Vector3 ConvertTo3D(this Vector2 vector2) => new Vector3(vector2.x, vector2.y, 0);
 
     /// <summary>
     /// Converts a Vector2Int to a Vector2.
     /// </summary>
-    public static Vector2 ConvertTo2D(this Vector2Int vector2Int) => new Vector3(vector2Int.x, vector2Int.y, 0);
+    public static Vector2 ConvertTo2D(this Vector2Int vector2Int) => new Vector2(vector2Int.x, vector2Int.y);
 
     /// <summary>
     /// Converts a Vector3Int to a Vector3.
     /// </summary>
-    public static Vector2 ConvertTo3D(this Vector3Int vector3Int) => new Vector3(vector3Int.x, vector3Int.y, 0);
+    public static Vector3 ConvertTo3D(this Vector3Int vector3Int) => new Vector3(vector3Int.x, vector3Int.y, vector3Int.z);
+
+    /// <summary>
+    /// Rounds the components of a Vector2 to the nearest integer values and returns a Vector2Int.
+    /// </summary>
+    /// <returns>A new Vector2Int with rounded integer values.</returns>
+    /// <remarks>
+    /// This method uses Mathf.RoundToInt.
+    /// </remarks>
+    public static Vector2Int RoundToInt(this Vector2 vector2)
+    {
+        return new Vector2Int(
+            Mathf.RoundToInt(vector2.x),
+            Mathf.RoundToInt(vector2.y)
+        );
+    }
+
+    /// <summary>
+    /// Rounds the components of a Vector3 to the nearest integer values and returns a Vector3Int.
+    /// </summary>
+    /// <returns>A new Vector3Int with rounded integer values.</returns>
+    /// <remarks>
+    /// This method uses Mathf.RoundToInt.
+    /// </remarks>
+    public static Vector3Int RoundToInt(this Vector3 vector3)
+    {
+        return new Vector3Int(
+            Mathf.RoundToInt(vector3.x),
+            Mathf.RoundToInt(vector3.y),
+            Mathf.RoundToInt(vector3.z)
+        );
+    }
+
+    /// <summary>
+    /// Ceils the components of a Vector2 and returns a Vector2Int.
+    /// </summary>
+    /// <returns>A new Vector2Int with ceiled integer values.</returns>
+    /// <remarks>
+    /// This method uses Mathf.CeilToInt.
+    /// </remarks>
+    public static Vector2Int CeilToInt(this Vector2 vector2)
+    {
+        return new Vector2Int(
+            Mathf.CeilToInt(vector2.x),
+            Mathf.CeilToInt(vector2.y)
+        );
+    }
+
+    /// <summary>
+    /// Ceils the components of a Vector3 and returns a Vector3Int.
+    /// </summary>
+    /// <returns>A new Vector3Int with ceiled integer values.</returns>
+    /// <remarks>
+    /// This method uses Mathf.CeilToInt.
+    /// </remarks>
+    public static Vector3Int CeilToInt(this Vector3 vector3)
+    {
+        return new Vector3Int(
+            Mathf.CeilToInt(vector3.x),
+            Mathf.CeilToInt(vector3.y),
+            Mathf.CeilToInt(vector3.z)
+        );
+    }
+
+    /// <summary>
+    /// Floors the components of a Vector2 and returns a Vector2Int.
+    /// </summary>
+    /// <returns>A new Vector2Int with floored integer values.</returns>
+    /// <remarks>
+    /// This method uses Mathf.FloorToInt.
+    /// </remarks>
+    public static Vector2Int FloorToInt(this Vector2 vector2)
+    {
+        return new Vector2Int(
+            Mathf.FloorToInt(vector2.x),
+            Mathf.FloorToInt(vector2.y)
+        );
+    }
+
+    /// <summary>
+    /// Floors the components of a Vector3 and returns a Vector3Int.
+    /// </summary>
+    /// <returns>A new Vector3Int with floored integer values.</returns>
+    /// <remarks>
+    /// This method uses Mathf.FloorToInt.
+    /// </remarks>
+    public static Vector3Int FloorToInt(this Vector3 vector3)
+    {
+        return new Vector3Int(
+            Mathf.FloorToInt(vector3.x),
+            Mathf.FloorToInt(vector3.y),
+            Mathf.FloorToInt(vector3.z)
+        );
+    }
 
     /// <summary>
     /// Calculates the squared distance between two Vector2.
@@ -252,14 +345,19 @@ public static class HexVectorUtils
     public static float SqrDistance(this Vector2Int a, Vector2Int b) => (a - b).sqrMagnitude;
 
     /// <summary>
+    /// Calculates the squared distance between two Vector3.
+    /// </summary>
+    public static float SqrDistance(this Vector3 a, Vector3 b) => (a - b).sqrMagnitude;
+
+    /// <summary>
+    /// Calculates the squared distance between two Vector3Int.
+    /// </summary>
+    public static float SqrDistance(this Vector3Int a, Vector3Int b) => (a - b).sqrMagnitude;
+
+    /// <summary>
     /// Calculates the squared distance between two Vector3 instances in 2D space (in XY-plane).
     /// </summary>
     public static float SqrDistanceXY(this Vector3 a, Vector3 b) => (a - b).NullZ().sqrMagnitude;
-
-    /// <summary>
-    /// Calculates the squared distance between two Vector2.
-    /// </summary>
-    public static float SqrDistance(this Vector3 a, Vector3 b) => (a - b).sqrMagnitude;
 
     /// <summary>
     /// Checks if two Vector3 instances are nearly equal based on an inaccuracy tolerance.
@@ -284,4 +382,20 @@ public static class HexVectorUtils
         vector.y = (sin * tx) + (cos * ty);
         return vector;
     }
+}
+
+public static class HexVectorMath
+{
+    /// <summary>
+    /// Clamps the given Vector2 to 0.0 - 1.0 range
+    /// </summary>
+    public static Vector2 Clamp01(this Vector2 vector) =>
+        new Vector2(Mathf.Clamp01(vector.x), Mathf.Clamp01(vector.y));
+
+    /// <summary>
+    /// Clamps the given Vector3 to 0.0 - 1.0 range
+    /// </summary>
+    public static Vector3 Clamp01(this Vector3 vector) =>
+        new Vector3(Mathf.Clamp01(vector.x), Mathf.Clamp01(vector.y), Mathf.Clamp01(vector.z));
+
 }
