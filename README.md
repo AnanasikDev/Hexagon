@@ -29,12 +29,49 @@ Vector2 GetCirclePointDegrees(float radius, float angleDeg)
 ```
 Returns a point on the circumference with the given "radius" at the given "angle" in degrees, starting at the point (radius, 0) as in math.
 
+```csharp
+Vector2 GetCirclePointRadians(float radius, float angle)
+```
+Returns a point on the circumference with the given "radius" at the given "angle" in radians, starting at the point (radius, 0) as in math.
+
+```csharp
+Vector2 GetRandomRingPoint(float radius)
+```
+Returns random point on the circumference of the given "radius".
+
+```csharp
+Vector2 GetRandomCirclePoint(float radius)
+```
+Returns random point on or within the circumference of the given "radius".
+
+```csharp
+int Ternarsign(float value)
+```
+Returns -1 if value is negative, 0 if value is 0, 1 if value is positive
+
+```csharp
+float Ramp(float value, float min, float max)
+```
+Holds the input "value" at "max" when it is larger than "min", otherwise starts decreasing starting from "max".
+
+```csharp
+float MinLimit(float value, float min)
+```
+Returns value if it's greater than min threshold, min otherside
+
+```csharp
+float MaxLimit(float value, float max)
+```
+Returns value if it's less than max threshold, or max otherwise
+
 ### Time
+
+Note: All coroutine-related functions work using ```HexCoroutineRunner``` script that has to be attached to any gameobject on scene, unless non of these functions are called.
 
 ```csharp
 void InvokeDelayed(float delaySeconds, System.Action action)
 ```
-exists for void output and 0, 1, 2, 3, 4 generic arguments and 1 output with 0, 1, 2, 3 generic arguments
+Invokes the given function with a delay. There are overloads for void output and 0, 1, 2, 3, 4 generic arguments and 1 output with 0, 1, 2, 3 generic arguments.
 
 ```csharp
 void InvokeOnCondition(System.Func<bool> condition, System.Action action)
@@ -66,7 +103,7 @@ Vector2 Divide(this Vector2 a, Vector2 b);
 Vector2Int Divide(this Vector2Int a, Vector2Int b);
 ```
 Divides each component of the first vector by the corresponding component of the second vector, returning a new vector with the result.  
-> **Remarks:** Watch out for division by zero in any vector component. Always check the second vector before dividing.
+> **Remarks:** Not safe from division by zero
 
 ### Abs (Per component)
 ```csharp

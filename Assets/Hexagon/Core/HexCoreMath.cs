@@ -129,7 +129,7 @@ public static class Hexath
     }
 
     /// <summary>
-    /// Returns min if value is less than min, or the value otherwise
+    /// Returns value if it's greater than min threshold, min otherside
     /// </summary>
     public static float MinLimit(float value, float min)
     {
@@ -137,7 +137,7 @@ public static class Hexath
     }
 
     /// <summary>
-    /// Returns max if value is greater than max, or the value otherwise
+    /// Returns value if it's less than max threshold, or max otherwise
     /// </summary>
     public static float MaxLimit(float value, float max)
     {
