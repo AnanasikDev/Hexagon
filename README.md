@@ -268,3 +268,15 @@ Sets and returns random pitch for the audio source.
 float RandomizeVolume(this AudioSource source)
 ```
 Sets and returns random volume for the audio source.
+
+## Collections
+
+```csharp
+T RandomElement<T>(this T[] array)
+```
+Returns random element from the given array with the scope of [first, last].
+
+```csharp
+T RandomElement<T>(this List<T> list)
+```
+Returns random element from the given list with the scope of [first, last].
