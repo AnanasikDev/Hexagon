@@ -362,12 +362,12 @@ public static class HexVectorUtils
     /// <summary>
     /// Checks if two Vector3 instances are nearly equal based on an inaccuracy tolerance.
     /// </summary>
-    public static bool NearlyEquals(this Vector3 a, Vector3 b, double inaccuracy = 1.0E-7) => Vector3.SqrMagnitude(a - b) < inaccuracy;
+    public static bool NearlyEquals(this Vector3 a, Vector3 b, double inaccuracy = 1.0E-5) => Vector3.SqrMagnitude(a - b) < inaccuracy;
 
     /// <summary>
     /// Checks if two Vector3 instances are nearly equal based on an inaccuracy tolerance.
     /// </summary>
-    public static bool NearlyEquals(this Vector2 a, Vector2 b, double inaccuracy = 1.0E-7) => Vector2.SqrMagnitude(a - b) < inaccuracy;
+    public static bool NearlyEquals(this Vector2 a, Vector2 b, double inaccuracy = 1.0E-5) => Vector2.SqrMagnitude(a - b) < inaccuracy;
 
     /// <summary>
     /// Rotates the given Vector2 by the given degree.

@@ -143,4 +143,7 @@ public static class Hexath
     {
         return value < max ? value : max;
     }
+
+    public static bool NearlyEquals(this float a, float b, double epsilon = 1E-5) =>
+        (a - b) <= epsilon;
 }
