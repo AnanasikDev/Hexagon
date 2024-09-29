@@ -11,11 +11,14 @@ Unity extensions library
     * [Vector](#Vector)
     * [Transform](#Transform)
     * [Collections](#Collections)
+    * [Debug](#Debug)
 - [Tests](#Tests)
 
 ## Notes
 
 ```HexCoroutineRunner``` should be attached to **any** gameobject on each scene where its functionality is needed (used to use Unity built-in coroutines from non-MonoBehaviour classes). As it is using singleton there should be no more than one instance of it on a scene (there is no reason to have more anyway).
+
+All other classes and functions are ```static``` and are declared in the global namespace. 
 
 ## Features
 
@@ -297,6 +300,29 @@ Checks if two lists contain the same unique objects, regardless of order or the 
 bool AreMultisetsEqual<T>(this List<T> list1, List<T> list2)
 ```
 Checks if two lists contain the same objects with the same number of occurrences, regardless of order.
+
+## Debug
+
+```csharp
+public static class HexDebug
+```
+
+```csharp
+void Log(params object[] objs)
+```
+Logs multiple objects in the Console (leaving space between them)
+
+```csharp
+void LogWarning(params object[] objs)
+```
+
+Logs as a warning multiple objects in the Console (leaving space between them)
+
+```csharp
+void LogError(params object[] objs)
+```
+
+Logs as an error multiple objects in the Console (leaving space between them)
 
 # Tests
 

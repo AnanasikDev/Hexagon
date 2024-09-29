@@ -2,6 +2,9 @@
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Class for static math operations
+/// </summary>
 public static class Hexath
 {
     /// <summary>
