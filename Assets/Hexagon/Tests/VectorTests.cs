@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 
 [TestFixture]
-public class Tests
+public class VectorTests
 {
     [Test]
     public void Vector_Rotate45()

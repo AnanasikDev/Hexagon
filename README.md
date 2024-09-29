@@ -10,6 +10,8 @@ Unity extensions library
     * [Time](#Time)
     * [Vector](#Vector)
     * [Transform](#Transform)
+    * [Collections](#Collections)
+- [Tests](#Tests)
 
 ## Notes
 
@@ -280,3 +282,22 @@ Returns random element from the given array with the scope of [first, last].
 T RandomElement<T>(this List<T> list)
 ```
 Returns random element from the given list with the scope of [first, last].
+
+```csharp
+bool AreListsEqual<T>(this List<T> list1, List<T> list2)
+```
+Checks if two lists are completely equal (same length, same objects, and same order).
+
+```csharp
+bool AreSetsEqual<T>(this List<T> list1, List<T> list2)
+```
+Checks if two lists contain the same unique objects, regardless of order or the number of occurrences.
+
+```csharp
+bool AreMultisetsEqual<T>(this List<T> list1, List<T> list2)
+```
+Checks if two lists contain the same objects with the same number of occurrences, regardless of order.
+
+# Tests
+
+Tests are implemented using built-in Unity NUnit Framework.
