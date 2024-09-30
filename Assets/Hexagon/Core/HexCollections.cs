@@ -65,4 +65,32 @@ public static class HexCollections
 
         return dict1.Count == dict2.Count && !dict1.Except(dict2).Any();
     }
+
+    /// <summary>
+    /// Returns index of the first element in the collection which is null. If it is empty or all elements are not null, the return value is -1.
+    /// </summary>
+    public static int FirstNullIndex<T>(this IEnumerable<T> collection)
+    {
+        int index = -1;
+        foreach (var item in collection)
+        {
+            index++;
+            if (item == null) return index;
+        }
+        return -1;
+    }
+
+    /// <summary>
+    /// Returns index of the first element in the collection which is not null. If it is empty or all elements are null, the return value is -1.
+    /// </summary>
+    public static int FirstNotNullIndex<T>(this IEnumerable<T> collection)
+    {
+        int index = -1;
+        foreach (var item in collection)
+        {
+            index++;
+            if (item != null) return index;
+        }
+        return -1;
+    }
 }

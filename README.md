@@ -11,6 +11,7 @@ Unity extensions library
     * [Vector](#Vector)
     * [Transform](#Transform)
     * [Collections](#Collections)
+    * [Pool](#Pool)
     * [Debug](#Debug)
 - [Tests](#Tests)
 
@@ -18,7 +19,7 @@ Unity extensions library
 
 ```HexCoroutineRunner``` should be attached to **any** gameobject on each scene where its functionality is needed (used to use Unity built-in coroutines from non-MonoBehaviour classes). As it is using singleton there should be no more than one instance of it on a scene (there is no reason to have more anyway).
 
-All other classes and functions are ```static``` and are declared in the global namespace. 
+All other classes (except for ```Pool``` and ```HexCoroutineRunner```) and functions are ```static``` and are declared in the global namespace. 
 
 ## Features
 
@@ -300,6 +301,55 @@ Checks if two lists contain the same unique objects, regardless of order or the 
 bool AreMultisetsEqual<T>(this List<T> list1, List<T> list2)
 ```
 Checks if two lists contain the same objects with the same number of occurrences, regardless of order.
+
+## Pool
+
+Basic implementation of a pool of objects. When an object is no longer needed it is disabled and not destroyed. Being cached in the pool it can be reused later. This is a way to reduce waste of memory and cpu time as reinitializing objects is often more efficient than instantiating them (Especially useful when working with large numbers of Gameobjects).
+
+Pools allow only objects implementing ```IPoolable``` interface and which have default constructors.
+
+```csharp
+public interface IPoolable
+{
+    bool isActiveInPool { get; set; }
+    public void EnableInPool();
+    public void DisableInPool();
+}
+```
+
+```csharp
+class Pool<T> where T : IPoolable, new()
+```
+
+```csharp
+T TakeInactive()
+```
+Returns the first inactive object from pool or null if there is no active object or the pool is empty.
+
+```csharp
+T TakeActive()
+```
+Returns the first active object from pool or null if there is no active object or the pool is empty.
+
+```csharp
+bool TryTakeInactive(out T obj)
+```
+Puts the first inactive object from pool into out "obj" variable. Returns true if the result object is not null, otherwise false.
+
+```csharp
+bool TryTakeActive(out T obj)
+```
+Puts the first active object from pool into out "obj" variable. Returns true if the result object is not null, otherwise false.
+
+```csharp
+T TakeInactiveOrCreate()
+```
+Takes an inactive object from the pool or creates and records a new object using default type contructor.
+
+```csharp
+T RecordNew(T newObj)
+```
+Records a new object to the pool without checking if it is needed. Sets the default state.
 
 ## Debug
 
