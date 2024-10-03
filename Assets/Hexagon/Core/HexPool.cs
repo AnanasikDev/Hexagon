@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
 /// Pool of objects of the same type. Objects can be enabled and disabled dynamically without unnecessary instantiation and destruction.
 /// </summary>
-public class Pool<T> where T : IPoolable, new()
+public class Pool<T> where T : IPoolable
 {
     private readonly List<T> objects = new List<T>();
     public bool isActiveByDefault = true;
 
     public bool isEmpty { get { return objects.Count == 0; } }
 
-    public T At(int index) =>
-        index >= 0 ? objects[index] : default;
+    public Func<T> create;
 
     /// <summary>
     /// Returns the first inactive object from pool or null if there is no active object or the pool is empty.
@@ -52,7 +52,7 @@ public class Pool<T> where T : IPoolable, new()
     {
         if (TryTakeInactive(out T obj))
             return obj;
-        T res = new T();
+        T res = create.Invoke();
         return RecordNew(res);
     }
 
@@ -69,7 +69,7 @@ public class Pool<T> where T : IPoolable, new()
 }
 
 /// <summary>
-/// Pools allow only objects implementing this interface. IPoolable objects can be Enabled and Disabled rather than instantiated and destroyed. For instantiation all Pool elements must have constructors though.
+/// Pools allow only objects implementing this interface. IPoolable objects can be Enabled and Disabled rather than instantiated and destroyed. Pool.create has to be defined manually to be able to instantiate objects.
 /// </summary>
 public interface IPoolable
 {
