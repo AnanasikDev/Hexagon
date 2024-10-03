@@ -211,7 +211,16 @@ float SqrDistance(this Vector3 a, Vector3 b)
 float SqrDistance(this Vector3Int a, Vector3Int b)
 float SqrDistanceXY(this Vector3 a, Vector3 b)
 ```
-Calculates the squared distance between two vectors. `SqrDistanceXY` calculates squared distance on XY plane.
+Calculate the squared distance between two vectors. `SqrDistanceXY` calculates the squared distance on XY plane.
+
+```csharp
+float Distance(this Vector2 a, Vector2 b)
+float Distance(this Vector2Int a, Vector2Int b)
+float Distance(this Vector3 a, Vector3 b)
+float Distance(this Vector3Int a, Vector3Int b)
+float DistanceXY(this Vector3 a, Vector3 b)
+```
+Calculate the real distance between two vectors. `DistanceXY` calculates the real distance on XY plane.
 
 ### Comparison
 ```csharp
