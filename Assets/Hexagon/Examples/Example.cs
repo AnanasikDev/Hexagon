@@ -6,6 +6,8 @@ public class Example : MonoBehaviour
     Pool<MyPoolUnit> pool = new Pool<MyPoolUnit>();
     void Start()
     {
+        pool.isActiveFunc = x => x.gameObject.activeSelf;
+        pool.createFunc = () => MyPoolUnit.Create();
 
         var go1 = new GameObject();
         var u1 = go1.AddComponent<MyPoolUnit>();
@@ -24,12 +26,13 @@ public class Example : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            pool.TakeInactive().EnableInPool();
+            pool.TakeInactiveOrCreate().gameObject.SetActive(true);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            pool.TakeActive().DisableInPool();
+            if (pool.TryTakeActive(out var go))
+                go.gameObject.SetActive(false);
         }
     }
 }

@@ -1,17 +1,9 @@
 ﻿using UnityEngine;
 
-public class MyPoolUnit : MonoBehaviour, IPoolable
+public class MyPoolUnit : MonoBehaviour
 {
-    public bool isActiveInPool { get; set; }
-
-    public void EnableInPool()
+    public static MyPoolUnit Create()
     {
-        isActiveInPool = true;
-        gameObject.SetActive(true);
-    }
-    public void DisableInPool()
-    {
-        isActiveInPool = false;
-        gameObject.SetActive(false);
+        return new GameObject().AddComponent<MyPoolUnit>();
     }
 }
