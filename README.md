@@ -326,16 +326,16 @@ When an object becomes inactive on the client (such as when an entity dies, is d
 <summary>Fields and Properties</summary>
 
 ```csharp
-public bool isEmpty
+bool isEmpty
 ```
 
 ```csharp
-public Func<T> createFunc
+Func<T> createFunc
 ```
 Function called upon instantiation of a new object. Only used in the `TakeInactiveOrCreate` method.
 
 ```csharp
-public Func<T, bool> isActiveFunc
+Func<T, bool> isActiveFunc
 ```
 Function that defines whether an object is considered active.
 
@@ -345,67 +345,72 @@ Function that defines whether an object is considered active.
 <summary>Methods</summary>
 
 ```csharp
-public Pool(Func<T> createFunc, Func<T, bool> isActiveFunc)
+pubc Pool(Func<T> createFunc, Func<T, bool> isActiveFunc)
 ```
 Parameters:
 - `createFunc`: Function that instantiates a new object, used in `TakeInactiveOrCreate`.
 - `isActiveFunc`: Function that determines if an object is active.
 
 ```csharp
-public T TakeInactive()
+T TakeInactive()
 ```
 Returns the first inactive object in the pool, or null if there are no inactive objects or the pool is empty.
 
 ```csharp
-public T TakeActive()
+T TakeActive()
 ```
 Returns the first active object in the pool, or null if there are no active objects or the pool is empty.
 
 ```csharp
-public T TakeInactive(Func<T, bool> condition)
+T TakeInactive(Func<T, bool> condition)
 ```
 Returns the first inactive object that meets the specified condition, or null if no suitable objects are available or the pool is empty.  
 Parameters:
 - `condition`: An additional condition that determines whether an inactive object is suitable.
 
 ```csharp
-public T TakeActive(Func<T, bool> condition)
+T TakeActive(Func<T, bool> condition)
 ```
 Returns the first active object that meets the specified condition, or null if no suitable objects are available or the pool is empty.  
 Parameters:
 - `condition`: An additional condition that determines whether an active object is suitable.
 
 ```csharp
-public bool TryTakeInactive(out T obj, Func<T, bool> condition = null)
+bool TryTakeInactive(out T obj, Func<T, bool> condition = null)
 ```
 Assigns the first inactive object that meets the specified condition to `obj`, or null if no suitable object is available. Returns true if an object was assigned, otherwise false.  
 Parameters:
 - `condition`: An additional condition that determines whether an inactive object is suitable (optional).
 
 ```csharp
-public bool TryTakeActive(out T obj, Func<T, bool> condition = null)
+bool TryTakeActive(out T obj, Func<T, bool> condition = null)
 ```
 Assigns the first active object that meets the specified condition to `obj`, or null if no suitable object is available. Returns true if an object was assigned, otherwise false.  
 Parameters:
 - `condition`: An additional condition that determines whether an active object is suitable (optional).
 
 ```csharp
-public T TakeInactiveOrCreate()
+T TakeInactiveOrCreate()
 ```
 Returns an inactive object from the pool or creates and records a new object using 'createFunc' if no inactive object is available.
 
 ```csharp
-public T TakeInactiveOrCreate(Func<T, bool> condition)
+T TakeInactiveOrCreate(Func<T, bool> condition)
 ```
 Returns an inactive object that meets the specified condition, or creates and records a new object using 'createFunc' if no suitable inactive object is available.  
 Parameters:
 - `condition`: An additional condition that determines whether an inactive object is suitable.
 
 ```csharp
-public T RecordNew(T newObj)
+T RecordNew(T newObj)
 ```
 Records a new object to the pool without checking whether it is needed.  
 Returns the added object.
+
+```csharp
+bool Unrecord(T obj)
+```
+Removes the given object. Returns true if the given object was successfully removed.
 
 </details>
 

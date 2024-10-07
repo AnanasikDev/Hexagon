@@ -12,7 +12,7 @@ using System.Linq;
 /// </summary>
 public class Pool<T>
 {
-    private readonly List<T> objects = new List<T>();
+    public readonly List<T> objects = new List<T>();
 
     public bool isEmpty { get { return objects.Count == 0; } }
 
@@ -27,14 +27,13 @@ public class Pool<T>
     public Func<T, bool> isActiveFunc;
 
     /// <summary>
-    /// adasd
     /// </summary>
-    /// <param name="createFunc">Function that will be called on instantiation of a new object. Is only used in TakeInactiveOrCreate function and its variations.</param>
     /// <param name="isActiveFunc">Function that determines whether an object is considered active or not.</param>
-    public Pool(Func<T> createFunc, Func<T, bool> isActiveFunc)
+    /// <param name="createFunc">Function that will be called on instantiation of a new object. Is only used in TakeInactiveOrCreate function and its variations.</param>
+    public Pool(Func<T, bool> isActiveFunc, Func<T> createFunc)
     {
-        this.createFunc = createFunc;
         this.isActiveFunc = isActiveFunc;
+        this.createFunc = createFunc;
     }
 
     /// <summary>
@@ -128,5 +127,14 @@ public class Pool<T>
     {
         objects.Add(newObj);
         return newObj;
+    }
+
+    /// <summary>
+    /// Removes the given object 
+    /// </summary>
+    /// <returns>True if the given object was successfully removed</returns>
+    public bool Unrecord(T obj)
+    {
+        return objects.Remove(obj);
     }
 }

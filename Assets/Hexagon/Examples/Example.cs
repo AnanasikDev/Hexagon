@@ -3,12 +3,10 @@ using UnityEngine;
 [RequireComponent(typeof(HexCoroutineRunner))]
 public class Example : MonoBehaviour
 {
-    Pool<MyPoolUnit> pool = new Pool<MyPoolUnit>();
-    void Start()
-    {
-        pool.isActiveFunc = x => x.gameObject.activeSelf;
-        pool.createFunc = () => MyPoolUnit.Create();
+    Pool<MyPoolUnit> pool = new Pool<MyPoolUnit>(x => x.gameObject.activeSelf, () => MyPoolUnit.Create());
 
+    private void Start()
+    {
         var go1 = new GameObject();
         var u1 = go1.AddComponent<MyPoolUnit>();
         pool.RecordNew(u1);
@@ -33,6 +31,13 @@ public class Example : MonoBehaviour
         {
             if (pool.TryTakeActive(out var go))
                 go.gameObject.SetActive(false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            if (pool.TryTakeActive(out var go)){
+                pool.Unrecord(go);
+            }
         }
     }
 }
