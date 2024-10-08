@@ -30,7 +30,7 @@ public class Pool<T>
     /// </summary>
     /// <param name="isActiveFunc">Function that determines whether an object is considered active or not.</param>
     /// <param name="createFunc">Function that will be called on instantiation of a new object. Is only used in TakeInactiveOrCreate function and its variations.</param>
-    public Pool(Func<T, bool> isActiveFunc, Func<T> createFunc)
+    public Pool(Func<T, bool> isActiveFunc, Func<T> createFunc = null)
     {
         this.isActiveFunc = isActiveFunc;
         this.createFunc = createFunc;
