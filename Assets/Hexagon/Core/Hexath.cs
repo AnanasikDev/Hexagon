@@ -7,6 +7,10 @@ using UnityEngine;
 /// </summary>
 public static class Hexath
 {
+    public static float sqrt2 = 1.41421356237f;
+    public static float sqrt2half = 0.70710678118f;
+    public static float sqrt3 = 1.73205080757f;
+
     /// <summary>
     /// Snaps the given number to the nearest float number within the given step. Rounding for float-point numbers with adjustable accuracy given as the "step" argument.
     /// </summary>

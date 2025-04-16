@@ -393,7 +393,10 @@ public static class HexVectorUtils
     /// Checks if two Vector3 instances are nearly equal based on an inaccuracy tolerance.
     /// </summary>
     public static bool NearlyEquals(this Vector2 a, Vector2 b, double inaccuracy = 1.0E-5) => Vector2.SqrMagnitude(a - b) < inaccuracy;
+}
 
+public static class HexVector
+{
     /// <summary>
     /// Rotates the given Vector2 by the given degree.
     /// </summary>
@@ -406,6 +409,31 @@ public static class HexVectorUtils
         vector.x = (cos * tx) - (sin * ty);
         vector.y = (sin * tx) + (cos * ty);
         return vector;
+    }
+
+    public static Vector3 Rotate(this Vector3 vector, Vector3 planeNormal, float degrees)
+    {
+        return Quaternion.AngleAxis(degrees, planeNormal) * vector;
+    }
+
+    public static float SignedAngleBetween2D(this Vector2 a, Vector2 b)
+    {
+        return Mathf.Rad2Deg * Mathf.Acos(Vector2.Dot(a.normalized, b.normalized)) * Mathf.Sign(Vector3.Cross(a, b).z);
+    }
+
+    public static float AbsAngleBetween2D(this Vector2 a, Vector2 b)
+    {
+        return Mathf.Rad2Deg * Mathf.Acos(Vector2.Dot(a.normalized, b.normalized));
+    }
+
+    public static float SignedAngleBetween3D(this Vector3 a, Vector3 b)
+    {
+        return Mathf.Rad2Deg * Mathf.Acos(Vector3.Dot(a.normalized, b.normalized)) * Mathf.Sign(Vector3.Cross(a, b).z);
+    }
+
+    public static float AbsAngleBetween3D(this Vector3 a, Vector3 b)
+    {
+        return Mathf.Rad2Deg * Mathf.Acos(Vector3.Dot(a.normalized, b.normalized));
     }
 }
 

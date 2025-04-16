@@ -7,7 +7,7 @@ public class Example : MonoBehaviour
 
     private void Start()
     {
-        var go1 = new GameObject();
+        /*var go1 = new GameObject();
         var u1 = go1.AddComponent<MyPoolUnit>();
         pool.RecordNew(u1);
 
@@ -17,7 +17,18 @@ public class Example : MonoBehaviour
 
         var go3 = new GameObject();
         var u3 = go3.AddComponent<MyPoolUnit>();
-        pool.RecordNew(u3);
+        pool.RecordNew(u3);*/
+
+        Vector3 v1 = new Vector3(0, 0, 1);
+        Vector3 axis = new Vector3(1, 1, 0);
+        Vector3 v1r = v1.Rotate(axis, 45);
+        Debug.Log($"{v1} | {v1r}");
+        Debug.DrawRay(Vector3.zero, axis, Color.blue, 10);
+        Debug.DrawRay(Vector3.zero, v1, Color.white, 10);
+        Debug.DrawRay(Vector3.zero, v1r, Color.red, 10);
+
+        Debug.Log(new Vector2(1, 2).SignedAngleBetween2D(new Vector2(-1, 2)));
+        Debug.Log(new Vector2(1, 2).SignedAngleBetween2D(new Vector2(-2, 1)));
     }
 
     private void Update()
