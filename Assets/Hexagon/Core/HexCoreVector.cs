@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Runtime.CompilerServices;
+using UnityEngine;
 
 /// <summary>
 /// Class for general vector operations (multiplication, division, and absolute value) for all vector types.
