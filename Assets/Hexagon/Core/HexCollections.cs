@@ -8,24 +8,6 @@ using UnityEngine;
 public static class HexCollections
 {
     /// <summary>
-    /// Returns random element from the given array with the scope of [first, last].
-    /// </summary>
-    public static T RandomElement<T>(this T[] array)
-    {
-        if (array.Length == 1) return array[0];
-        return array[Random.Range(0, array.Length)];
-    }
-
-    /// <summary>
-    /// Returns random element from the given list with the scope of [first, last].
-    /// </summary>
-    public static T RandomElement<T>(this List<T> list)
-    {
-        if (list.Count == 1) return list[0];
-        return list[Random.Range(0, list.Count)];
-    }
-
-    /// <summary>
     /// Checks if two lists are completely equal (same length, same objects, and same order).
     /// </summary>
     public static bool AreListsEqual<T>(this List<T> list1, List<T> list2)
@@ -92,5 +74,16 @@ public static class HexCollections
             if (item != null) return index;
         }
         return -1;
+    }
+
+    public static int GetLength<T>(this IEnumerable<T> collection)
+    {
+        int len = 0;
+        var iter = collection.GetEnumerator();
+        while (iter.MoveNext())
+        {
+            len++;
+        }
+        return len;
     }
 }

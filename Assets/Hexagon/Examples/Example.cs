@@ -27,8 +27,10 @@ public class Example : MonoBehaviour
         Debug.DrawRay(Vector3.zero, v1, Color.white, 10);
         Debug.DrawRay(Vector3.zero, v1r, Color.red, 10);
 
-        Debug.Log(new Vector2(1, 2).SignedAngleBetween2D(new Vector2(-1, 2)));
-        Debug.Log(new Vector2(1, 2).SignedAngleBetween2D(new Vector2(-2, 1)));
+        for (int i = 0; i < 10000; i++)
+        {
+            Debug.Log(HexRandom.GetTernarSign(1,2,3));
+        }
     }
 
     private void Update()

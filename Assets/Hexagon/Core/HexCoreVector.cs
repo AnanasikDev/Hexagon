@@ -395,7 +395,7 @@ public static class HexVectorUtils
     public static bool NearlyEquals(this Vector2 a, Vector2 b, double inaccuracy = 1.0E-5) => Vector2.SqrMagnitude(a - b) < inaccuracy;
 }
 
-public static class HexVector
+public static class HexVectorGeom
 {
     /// <summary>
     /// Rotates the given Vector2 by the given degree.
@@ -415,26 +415,6 @@ public static class HexVector
     {
         return Quaternion.AngleAxis(degrees, planeNormal) * vector;
     }
-
-    public static float SignedAngleBetween2D(this Vector2 a, Vector2 b)
-    {
-        return Mathf.Rad2Deg * Mathf.Acos(Vector2.Dot(a.normalized, b.normalized)) * Mathf.Sign(Vector3.Cross(a, b).z);
-    }
-
-    public static float AbsAngleBetween2D(this Vector2 a, Vector2 b)
-    {
-        return Mathf.Rad2Deg * Mathf.Acos(Vector2.Dot(a.normalized, b.normalized));
-    }
-
-    public static float SignedAngleBetween3D(this Vector3 a, Vector3 b)
-    {
-        return Mathf.Rad2Deg * Mathf.Acos(Vector3.Dot(a.normalized, b.normalized)) * Mathf.Sign(Vector3.Cross(a, b).z);
-    }
-
-    public static float AbsAngleBetween3D(this Vector3 a, Vector3 b)
-    {
-        return Mathf.Rad2Deg * Mathf.Acos(Vector3.Dot(a.normalized, b.normalized));
-    }
 }
 
 public static class HexVectorMath
@@ -450,5 +430,4 @@ public static class HexVectorMath
     /// </summary>
     public static Vector3 Clamp01(this Vector3 vector) =>
         new Vector3(Mathf.Clamp01(vector.x), Mathf.Clamp01(vector.y), Mathf.Clamp01(vector.z));
-
 }
