@@ -546,4 +546,34 @@ public static class HexVectorMath
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 Clamp01(this Vector3 vector) =>
         new Vector3(Mathf.Clamp01(vector.x), Mathf.Clamp01(vector.y), Mathf.Clamp01(vector.z));
+
+    /// <summary>
+    /// Returns the sum of all components of the input vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Sum(this Vector2 v) => v.x + v.y;
+
+    /// <summary>
+    /// Returns the sum of all components of the input vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Sum(this Vector3 v) => v.x + v.y + v.z;
+
+    /// <summary>
+    /// Returns the sum of all components of the input vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Sum(this Vector4 v) => v.x + v.y + v.z + v.w;
+
+    /// <summary>
+    /// Returns the sum of all components of the input vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Sum(this Vector2Int v) => v.x + v.y;
+
+    /// <summary>
+    /// Returns the sum of all components of the input vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Sum(this Vector3Int v) => v.x + v.y + v.z;
 }

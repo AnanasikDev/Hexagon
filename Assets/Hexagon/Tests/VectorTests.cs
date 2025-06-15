@@ -41,7 +41,7 @@ public class VectorTests
         var vec = new Vector2(123, 0);
         var vecRotated = vec.Rotate(48);
 
-        Assert.That(vecRotated.magnitude.NearlyEquals(vec.magnitude));
+        Assert.That(vecRotated.magnitude.NearlyEqualsPositive(vec.magnitude));
     }
 
     [Test]

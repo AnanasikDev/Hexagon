@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 /// <summary>
 /// Class for audio random manipulations
@@ -14,6 +15,7 @@ public static class HexAudioRandom
     /// <summary>
     /// Sets and returns random pitch for the audio source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float RandomizePitch(this AudioSource source)
     {
         source.pitch = Random.Range(pitch_min, pitch_max);
@@ -23,6 +25,7 @@ public static class HexAudioRandom
     /// <summary>
     /// Sets and returns random volume for the audio source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float RandomizeVolume(this AudioSource source)
     {
         source.volume = Random.Range(volume_min, volume_max);

@@ -11,7 +11,7 @@ public static class HexRandom
     /// Returns random element from the given array with the scope of [first, last].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T RandomElement<T>([DisallowNull] this T[] array)
+    public static T PickRandom<T>([DisallowNull] this T[] array)
     {
         Assert.IsNotNull(array);
         Assert.AreNotEqual(array.Length, 0);
@@ -22,7 +22,7 @@ public static class HexRandom
     /// Returns random element from the given list with the scope of [first, last].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T RandomElement<T>([DisallowNull] this List<T> list)
+    public static T PickRandom<T>([DisallowNull] this List<T> list)
     {
         Assert.IsNotNull(list);
         Assert.AreNotEqual(list.Count, 0);
@@ -33,7 +33,7 @@ public static class HexRandom
     /// Returns random element from the given collection with the scope of [first, last]. Number of elements (count) may not be specified, then it will be calculated automatically.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T RandomElement<T>([DisallowNull] this IEnumerable<T> collection, int? count = null)
+    public static T PickRandom<T>([DisallowNull] this IEnumerable<T> collection, int? count = null)
     {
         Assert.IsNotNull(collection);
         if (!count.HasValue) count = collection.GetLength();
