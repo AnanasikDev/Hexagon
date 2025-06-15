@@ -8,9 +8,9 @@ using UnityEngine.Assertions;
 /// </summary>
 public static class Hexath
 {
-    public const float sqrt2 = 1.41421356237f;
-    public const float sqrt2half = 0.70710678118f;
-    public const float sqrt3 = 1.73205080757f;
+    public const float sqrt2 = 1.41421356F;
+    public const float sqrt2half = 0.70710678F;
+    public const float sqrt3 = 1.73205080F;
 
     /// <summary>
     /// Snaps the given number to the nearest float number within the given step. Rounding for float-point numbers with adjustable accuracy given as the 'step' argument.
@@ -41,7 +41,7 @@ public static class Hexath
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 GetCirclePointRadians(float radius, float angle)
     {
-        return new Vector2(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius);
+        return new Vector2(System.MathF.Cos(angle) * radius, System.MathF.Sin(angle) * radius);
     }
     
     /// <summary>
@@ -119,38 +119,91 @@ public static class Hexath
     }
 
     /// <summary>
-    /// Returns -1 if value is negative, 0 if value is 0, 1 if value is positive
+    /// Returns -1 if 'value' is negative, 0 if 'value' is 0, 1 if 'value' is positive
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Ternarsign(float value)
     {
         return (value > 0 ? 1 : (value < 0 ? -1 : 0));
     }
 
     /// <summary>
-    /// Holds the input "value" at "max" when it is larger than "min", otherwise starts decreasing starting from "max".
+    /// Holds the input 'value' at 'holdValue' when it is larger than 'slideThreshold', otherwise starts decreasing starting from 'holdValue'.
     /// </summary>
-    public static float Ramp(float value, float min, float max)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Ramp(float value, float slideThreshold, float holdValue)
     {
-        if (value > min) return max;
-        return (max - min) + value;
+        Assert.IsTrue(value >= 0 && slideThreshold >= 0 && holdValue >= 0);
+        if (value > slideThreshold) return holdValue;
+        return (holdValue - slideThreshold) + value;
     }
 
     /// <summary>
-    /// Returns value if it's greater than min threshold, min otherside
+    /// Returns a value in range of [min, +INF). If input value is smaller or equal to 'min' the output will be 'min', otherwise 'value'.
     /// </summary>
-    public static float MinLimit(float value, float min)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float ClampMin(this float value, float min)
     {
         return value > min ? value : min;
     }
 
     /// <summary>
-    /// Returns value if it's less than max threshold, or max otherwise
+    /// Returns a value in range of [min, +INF). If input value is smaller or equal to 'min' the output will be 'min', otherwise 'value'.
     /// </summary>
-    public static float MaxLimit(float value, float max)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float ClampMin(this int value, int min)
+    {
+        return value > min ? value : min;
+    }
+
+    /// <summary>
+    /// Returns a value in range of (-INF; max]. If input value is larger or equal to 'max' the output will be 'max', otherwise 'value'.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float ClampMax(this float value, float max)
     {
         return value < max ? value : max;
     }
 
-    public static bool NearlyEquals(this float a, float b, double epsilon = 1E-5) =>
-        (a - b) <= epsilon;
+    /// <summary>
+    /// Returns a value in range of (-INF; max]. If input value is larger or equal to 'max' the output will be 'max', otherwise 'value'.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float ClampMax(this int value, int max)
+    {
+        return value < max ? value : max;
+    }
+
+    /// <summary>
+    /// Returns true if (a - b) no larger than epsilon, does not check signs of numbers!
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool NearlyEqualsPositive(this float a, float b, double epsilon = 1E-5)
+    {
+        return (a - b) <= epsilon; // beware, no sign check!
+    }
+
+    /// <summary>
+    /// Returns true if |a - b| no larger than epsilon, works on any numbers
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool NearlyEquals(this float a, float b, double epsilon = 1E-5)
+    {
+        return System.MathF.Abs(a - b) <= epsilon;
+    }
+
+    /// <summary>
+    /// Remaps value from one range to another. It returns a point that lies on the same relative position on the output range as on the input range.
+    /// </summary>
+    /// <param name="value">Value to remap</param>
+    /// <param name="minFrom">Minimum value of the input range</param>
+    /// <param name="maxFrom">Maximum value of the input range</param>
+    /// <param name="minTo">Minimum value of the output range</param>
+    /// <param name="maxTo">Maximum value of the output range</param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Remap(this float value, float minFrom, float maxFrom, float minTo, float maxTo)
+    {
+        return minTo + (maxTo - minTo) * (value - minFrom) / (maxFrom - minFrom);
+    }
 }

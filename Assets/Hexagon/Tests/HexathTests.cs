@@ -47,4 +47,46 @@ public class HexathTests
         Assert.AreEqual(4, Hexath.GreatestCommonFactor(new int[] { 8, 12, 100, 4, 8, 28 }));
         Assert.AreEqual(1, Hexath.GreatestCommonFactor(new int[] { 7, 50, 700 }));
     }
+
+    [Test]
+    public void Remap_Test()
+    {
+        Assert.AreEqual(5, Hexath.Remap(2, 1, 3, 0, 10));
+        Assert.AreEqual(0.1f, Hexath.Remap(10, 0, 100, 0, 1));
+        Assert.AreEqual(0.1f, Hexath.Remap(0.2f, 0, 2, 0, 1));
+        Assert.AreEqual(-2, Hexath.Remap(-1, -1, 0, -2, 0));
+        Assert.AreEqual(-0.2f, Hexath.Remap(2, 0, 10, -1, 3));
+    }
+
+    [Test]
+    public void Ramp_Test()
+    {
+        Assert.AreEqual(2, Hexath.Ramp(1.5f, 1, 2));
+        Assert.AreEqual(2, Hexath.Ramp(1.1f, 1, 2));
+        Assert.AreEqual(1.9f, Hexath.Ramp(0.9f, 1, 2));
+        Assert.AreEqual(1.5f, Hexath.Ramp(0.5f, 1, 2));
+
+        Assert.AreEqual(100, Hexath.Ramp(95, 90, 100));
+        Assert.AreEqual(100, Hexath.Ramp(99, 90, 100));
+        Assert.AreEqual(98, Hexath.Ramp(88, 90, 100));
+        Assert.AreEqual(60, Hexath.Ramp(50, 90, 100));
+    }
+
+    [Test]
+    public void Clamp_Test()
+    {
+        Assert.AreEqual(10, Hexath.ClampMax(90, 10));
+        Assert.AreEqual(10, Hexath.ClampMax(10, 10));
+        Assert.AreEqual(8, Hexath.ClampMax(8, 10));
+        Assert.AreEqual(-10, Hexath.ClampMax(0, -10));
+        Assert.AreEqual(-10, Hexath.ClampMax(-7, -10));
+        Assert.AreEqual(-11, Hexath.ClampMax(-11, -10));
+
+        Assert.AreEqual(0, Hexath.ClampMin(0, -1));
+        Assert.AreEqual(5, Hexath.ClampMin(5, 0));
+        Assert.AreEqual(0, Hexath.ClampMin(0, 0));
+        Assert.AreEqual(0, Hexath.ClampMin(-1, 0));
+        Assert.AreEqual(-1, (-1f).ClampMin(-10.1f));
+        Assert.AreEqual(-10.1f, (-20f).ClampMin(-10.1f));
+    }
 }
