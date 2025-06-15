@@ -567,6 +567,6 @@ public static class Vector3IntSwizzles
     [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3Int zyz(this Vector3Int a) => new(a.z, a.y, a.z);
     [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3Int xzz(this Vector3Int a) => new(a.x, a.z, a.z);
     [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3Int yzz(this Vector3Int a) => new(a.y, a.z, a.z);
-    [MethodImpl(MethodImplOptions.AggressiveInlining)] [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3Int zzz(this Vector3Int a) => new(a.z, a.z, a.z);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3Int zzz(this Vector3Int a) => new(a.z, a.z, a.z);
 }
 #endif

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public static class HexTransform
+public static partial class HexTransform
 {
     /// <summary>
     /// Iterates over all transforms attached to this transform as direct children. For recursive search see GetChildrenRecursive
