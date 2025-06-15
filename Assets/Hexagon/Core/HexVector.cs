@@ -113,6 +113,12 @@ public static class HexVectorAxisOps
     public static Vector3 WithZ(this Vector3 vector, float z) => new Vector3(vector.x, vector.y, z);
 
     /// <summary>
+    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 With(this Vector3 vector, float? x = null, float? y = null, float? z = null) => new Vector3(x ?? vector.x, y ?? vector.y, z ?? vector.z);
+
+    /// <summary>
     /// Sets the X component of the Vector3.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -129,6 +135,17 @@ public static class HexVectorAxisOps
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SetZ(this ref Vector3 vector, float z) => vector.z = z;
+
+    /// <summary>
+    /// Sets the specified components of the Vector3, leaving the unspecified ones as they were.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Set(this ref Vector3 vector, float? x = null, float? y = null, float? z = null)
+    {
+        vector.x = x ?? vector.x;
+        vector.y = y ?? vector.y;
+        vector.z = z ?? vector.z;
+    }
 
     /// <summary>
     /// Creates a new Vector3Int with the specified X component, retaining the original Y and Z components.
@@ -149,6 +166,12 @@ public static class HexVectorAxisOps
     public static Vector3Int WithZ(this Vector3Int vector, int z) => new Vector3Int(vector.x, vector.y, z);
 
     /// <summary>
+    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3Int With(this Vector3Int vector, int? x = null, int? y = null, int? z = null) => new Vector3Int(x ?? vector.x, y ?? vector.y, z ?? vector.z);
+
+    /// <summary>
     /// Sets the X component of the Vector3Int.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -167,6 +190,17 @@ public static class HexVectorAxisOps
     public static void SetZ(this ref Vector3Int vector, int z) => vector.z = z;
 
     /// <summary>
+    /// Sets the specified components of the Vector3Int, leaving the unspecified ones as they were.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Set(this ref Vector3Int vector, int? x = null, int? y = null, int? z = null)
+    {
+        vector.x = x ?? vector.x;
+        vector.y = y ?? vector.y;
+        vector.z = z ?? vector.z;
+    }
+
+    /// <summary>
     /// Creates a new Vector2 with the specified X component, retaining the original Y component.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -177,6 +211,12 @@ public static class HexVectorAxisOps
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 WithY(this Vector2 vector, float y) => new Vector2(vector.x, y);
+
+    /// <summary>
+    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 With(this Vector2 vector, float? x = null, float? y = null) => new Vector2(x ?? vector.x, y ?? vector.y);
 
     /// <summary>
     /// Sets the X component of the Vector2.
@@ -191,6 +231,16 @@ public static class HexVectorAxisOps
     public static void SetY(this ref Vector2 vector, float y) => vector.y = y;
 
     /// <summary>
+    /// Sets the specified components of the Vector2, leaving the unspecified ones as they were.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Set(this ref Vector2 vector, float? x = null, float? y = null)
+    {
+        vector.x = x ?? vector.x;
+        vector.y = y ?? vector.y;
+    }
+
+    /// <summary>
     /// Creates a new Vector2Int with the specified X component, retaining the original Y component.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -203,6 +253,12 @@ public static class HexVectorAxisOps
     public static Vector2Int WithY(this Vector2Int vector, int y) => new Vector2Int(vector.x, y);
 
     /// <summary>
+    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2Int With(this Vector2Int vector, int? x = null, int? y = null) => new Vector2Int(x ?? vector.x, y ?? vector.y);
+
+    /// <summary>
     /// Sets the X component of the Vector2Int.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -213,6 +269,16 @@ public static class HexVectorAxisOps
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SetY(this ref Vector2Int vector, int y) => vector.y = y;
+
+    /// <summary>
+    /// Sets the specified components of the Vector2, leaving the unspecified ones as they were.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Set(this ref Vector2Int vector, int? x = null, int? y = null)
+    {
+        vector.x = x ?? vector.x;
+        vector.y = y ?? vector.y;
+    }
 }
 
 /// <summary>
@@ -247,18 +313,6 @@ public static class HexVectorRandomOps
 /// </summary>
 public static class HexVectorUtils
 {
-    /// <summary>
-    /// Converts a Vector3 to a Color with the desired alpha. Default alpha is 1.0f.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color VectorToColor(this Vector3 vector, float a = 1.0f) => new Color(vector.x, vector.y, vector.z, a);
-
-    /// <summary>
-    /// Converts a Color to a Vector3 representation. The result Vector3 values are within 0.0 - 1.0 range.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 ColorToVector(this Color color) => new Vector3(color.r, color.g, color.b);
-
     /// <summary>
     /// Converts a Vector3 to a Vector2 by ignoring the Z component.
     /// </summary>

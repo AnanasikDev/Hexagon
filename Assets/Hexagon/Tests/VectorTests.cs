@@ -57,4 +57,20 @@ public class VectorTests
         Assert.That(v1.Rotate(new Vector3(1, 1, 1), 120).NearlyEquals(new Vector3(1, 0, 0)));
         Assert.That(v1.Rotate(new Vector3(1, 1, 1), 240).NearlyEquals(new Vector3(0, 1, 0)));
     }
+
+    [Test]
+    public void Vector_SetComponents()
+    {
+        Vector2 a = new Vector2(1, 0);
+        a.SetX(3);
+        Assert.AreEqual(a.x, 3);
+        Assert.AreEqual(a.WithY(4), new Vector2(3, 4));
+        Assert.AreEqual(a.With(x: 1, y: 1), Vector2.one);
+
+        Vector3 b = new Vector3();
+        Assert.AreEqual(b.xyz(), b.yzx());
+        b.Set(x: 20);
+        Assert.AreEqual(b.With(2, 3), new Vector3(2, 3, 0));
+        Assert.AreEqual(b, new Vector3(20, 0, 0));
+    }
 }
