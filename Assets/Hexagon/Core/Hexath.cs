@@ -1,121 +1,121 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 /// <summary>
 /// Class for static math operations
 /// </summary>
 public static class Hexath
 {
-    public static float sqrt2 = 1.41421356237f;
-    public static float sqrt2half = 0.70710678118f;
-    public static float sqrt3 = 1.73205080757f;
+    public const float sqrt2 = 1.41421356237f;
+    public const float sqrt2half = 0.70710678118f;
+    public const float sqrt3 = 1.73205080757f;
 
     /// <summary>
-    /// Snaps the given number to the nearest float number within the given step. Rounding for float-point numbers with adjustable accuracy given as the "step" argument.
+    /// Snaps the given number to the nearest float number within the given step. Rounding for float-point numbers with adjustable accuracy given as the 'step' argument.
     /// </summary>
     /// <param name="number">Number to be rounded</param>
-    /// <param name="step">Accuracy of rounding, modulo of the maximum difference with the original "number"</param>
+    /// <param name="step">Accuracy of rounding, modulo of the maximum difference with the original 'number'</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float SnapNumberToStep(this float number, float step)
     {
         float remainder = number % step;
 
-        if (Mathf.Abs(remainder) < step / 2f) return number - remainder;
+        if (System.Math.Abs(remainder) < step / 2f) return number - remainder;
         else return number - remainder + step * Mathf.Sign(number);
     }
 
     /// <summary>
-    /// Returns a point on the circumference with the given "radius" at the given "angle" in degrees, starting at the point (radius, 0) as in math.
+    /// Returns a point on the circumference with the given 'radius' at the given 'angle' in degrees, starting at the point (radius, 0) as in math.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 GetCirclePointDegrees(float radius, float angle)
     {
-        float angleRad = angle * Mathf.Deg2Rad;
-
-        return GetCirclePointRadians(radius, angleRad);
+        return GetCirclePointRadians(radius, angle * Mathf.Deg2Rad);
     }
 
     /// <summary>
-    /// Returns a point on the circumference with the given "radius" at the given "angle" in radians, starting at the point (radius, 0) as in math.
+    /// Returns a point on the circumference with the given 'radius' at the given 'angle' in radians, starting at the point (radius, 0) as in math.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 GetCirclePointRadians(float radius, float angle)
     {
-        float x = Mathf.Cos(angle) * radius;
-        float y = Mathf.Sin(angle) * radius;
-
-        return new Vector2(x, y);
+        return new Vector2(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius);
     }
     
     /// <summary>
-    /// Returns random point on the circumference of the given "radius".
+    /// Returns random point on the circumference of the given 'radius'.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 GetRandomRingPoint(float radius)
     {
-        return GetCirclePointDegrees(radius, UnityEngine.Random.Range(0f, 360f));
+        return GetCirclePointRadians(radius, UnityEngine.Random.Range(0f, 2f * Mathf.PI));
     }
 
     /// <summary>
-    /// Returns random point on or within the circumference of the given "radius".
+    /// Returns random point on or within the circumference of the given 'radius'.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 GetRandomCirclePoint(float radius)
     {
-        return GetCirclePointDegrees(Random.Range(0, radius), UnityEngine.Random.Range(0f, 360f));
+        return GetCirclePointRadians(Random.Range(0, radius), UnityEngine.Random.Range(0f, 2f * Mathf.PI));
     }
 
     /// <summary>
-    /// Least common multiple of two numbers
+    /// Least common multiple of two positive numbers. An exception will be thrown if any of the input numbers are less or equal to zero.
     /// </summary>
-    public static int LCM(int a, int b)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int LeastCommonMultiple(int a, int b)
     {
-        for (int i = a; i < b * a; i += a)
-        {
-            if (i % a == 0 && i % b == 0) return i;
-        }
-
-        return -1;
-    }
-    /// <summary>
-    /// Greatest common divisor of two numbers
-    /// </summary>
-    public static int GCD(int a, int b)
-    {
-        int min = a > b ? b : a;
-
-        for (int i = min; i >= 0; i--)
-        {
-            if (b % i == 0 && a % i == 0) return i;
-        }
-
-        return -1;
+        Assert.IsTrue(a > 0 && b > 0);
+        return a / GreatestCommonFactor(a, b) * b;
     }
 
     /// <summary>
-    /// Least common multiple of a list of numbers
+    /// Greatest common divisor (aka highest common factor) of two numbers. An exception will be thrown if any of the input numbers are less or equal to zero.
     /// </summary>
-    public static int LCM(List<int> nums)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GreatestCommonFactor(int a, int b)
     {
-        int max = nums.Max();
-        int lcm = max;
+        Assert.IsTrue(a > 0 && b > 0);
+        while (b != 0)
+            (a, b) = (b, a % b);
+        return a;
+    }
 
-        while (true)
+    /// <summary>
+    /// Least common multiple of an array of numbers. An exception will be thrown if any of the input numbers are less or equal to zero. Input array may contain any number of elements but it cannot be null.
+    /// </summary>
+    public static int LeastCommonMultiple([DisallowNull] int[] values)
+    {
+        int len = values.Length;
+        if (len == 0) return 0;
+        if (len == 1) return values[0];
+        int result = 0;
+        if (len >= 2) result = LeastCommonMultiple(values[0], values[1]);
+        for (int i = 2; i < len; i++)
         {
-            bool divisible = true;
-
-            for (int i = 0; i < nums.Count; i++)
-            {
-                if (lcm % nums[i] != 0)
-                {
-                    divisible = false;
-                    break;
-                }
-            }
-
-            if (divisible)
-            {
-                return lcm;
-            }
-
-            lcm += max;
+            result = LeastCommonMultiple(result, values[i]);
         }
+        return result;
+    }
+
+    /// <summary>
+    /// Greatest common divisor (aka highest common factor) of an array of numbers. An exception will be thrown if any of the input numbers are less or equal to zero. Input array may contain any number of elements but it cannot be null.
+    /// </summary>
+    public static int GreatestCommonFactor([DisallowNull] int[] values)
+    {
+        int len = values.Length;
+        if (len == 0) return 0;
+        if (len == 1) return values[0];
+        int result = 0;
+        if (len >= 2) result = GreatestCommonFactor(values[0], values[1]);
+        for (int i = 2; i < len; i++)
+        {
+            result = GreatestCommonFactor(result, values[i]);
+        }
+        return result;
     }
 
     /// <summary>
