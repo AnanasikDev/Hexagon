@@ -282,28 +282,6 @@ public static class HexVectorAxisOps
 }
 
 /// <summary>
-/// Class for random generation of vectors.
-/// </summary>
-public static class HexVectorRandomOps
-{
-    /// <summary>
-    /// Generates a random Vector3 with values between -1 and 1.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 Random3D()
-        => new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
-
-    /// <summary>
-    /// Generates a random Vector2 with values between -1 and 1.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 Random2D()
-        => new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
-
-}
-
-
-/// <summary>
 /// Class for utility operations involving vectors:
 /// <list type="bullet">
 /// <item> Conversion operations </item>

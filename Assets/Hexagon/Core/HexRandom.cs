@@ -80,4 +80,40 @@ public static class HexRandom
         float negThreshold = zeroBias / len;
         return val > posThreshold ? 1 : (val > negThreshold ? -1 : 0);
     }
+
+    /// <summary>
+    /// Generates a random Vector3 with values between -1 and 1.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 Random3D()
+        => new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+
+    /// <summary>
+    /// Generates a random Vector2 with values between -1 and 1.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 Random2D()
+        => new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+
+    public static int GetWeightedIndex(float[] segments, float sum)
+    {
+        float rand = Random.Range(0.0f, sum);
+        float threshold = 0.0f;
+        for (int i = 0; i < segments.Length; i++)
+        {
+            if (rand < (threshold += segments[i]))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int GetWeightedIndex(float[] segments)
+    {
+        float sum = 0.0f;
+        foreach (float v in segments) sum += v;
+
+        return GetWeightedIndex(segments, sum);
+    }
 }

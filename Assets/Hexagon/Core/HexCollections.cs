@@ -86,4 +86,11 @@ public static class HexCollections
         }
         return len;
     }
+
+    public static bool AddIfNew<T>(this ICollection<T> list, T item)
+    {
+        if (list.Contains(item)) return false;
+        list.Add(item);
+        return true;
+    }
 }

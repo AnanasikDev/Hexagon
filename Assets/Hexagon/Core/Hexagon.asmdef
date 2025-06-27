@@ -1,3 +1,16 @@
 {
-	"name": "Hexagon"
+    "name": "Hexagon",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ae308520fb3b3554a91986f13269598a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
