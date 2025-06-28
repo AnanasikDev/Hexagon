@@ -37,4 +37,9 @@ public static partial class HexTransform
 
         return children;
     }
+
+    public static void LookAtXY(this Transform transform, Vector3 position)
+    {
+        transform.LookAt(new Vector3(position.x, position.y, transform.position.z));
+    }
 }
