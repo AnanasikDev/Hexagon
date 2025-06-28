@@ -119,6 +119,10 @@ public static class HexRandom
 
     public static int GetWeightedIndex(float[] segments, float sum)
     {
+        Assert.IsNotNull(segments);
+        Assert.AreNotEqual(segments.Length, 0);
+        if (segments.Length == 1) return 0;
+
         float rand = Random.Range(0.0f, sum);
         float threshold = 0.0f;
         for (int i = 0; i < segments.Length; i++)
@@ -133,6 +137,10 @@ public static class HexRandom
 
     public static int GetWeightedIndex(float[] segments)
     {
+        Assert.IsNotNull(segments);
+        Assert.AreNotEqual(segments.Length, 0);
+        if (segments.Length == 1) return 0;
+
         float sum = 0.0f;
         foreach (float v in segments) sum += v;
 
