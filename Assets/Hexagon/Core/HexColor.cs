@@ -28,6 +28,14 @@ public static class ModHexColor
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Color WithAlpha(this Color color, float a) => new Color(color.r, color.g, color.b, a);
 
+    /// <summary>
+    /// Applies brightness to a color. Brightness does not have to lie in the range of [0-1].
+    /// </summary>
+    public static Color WithBrightness(this Color color, float brightness)
+    {
+        return color.NormalizeRGB() * brightness;
+    }
+
     public static float GetRGBMagnitude(this Color color)
     {
         return Mathf.Sqrt(color.r * color.r + color.g * color.g + color.b * color.b);
@@ -49,7 +57,7 @@ public static class ModHexColor
     }
 
     /// <summary>
-    /// Divides RGB color by its length like a vector. Results in a color such that it does not depend on the input brightness. Output brightness is always the same. Output saturation differs from the input.
+    /// Divides RGB color by its length like a vector. Results in a color such that it does not depend on the input brightness. Output brightness is always the same.
     /// </summary>
     public static Color NormalizeRGB(this Color color)
     {

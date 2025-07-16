@@ -507,6 +507,22 @@ public static class HexVectorGeom
     {
         return Quaternion.AngleAxis(degrees, planeNormal) * vector;
     }
+
+    public static Vector2 RotateAround2D(this Vector2 point, Vector2 pivotPoint, float degrees)
+    {
+        Quaternion rotation = Quaternion.AngleAxis(degrees, new Vector3(0, 0, 1));
+        Vector3 diff = point - pivotPoint;
+        Vector3 result = pivotPoint.ConvertTo3D() + (rotation * diff);
+        return result;
+    }
+
+    public static Vector3 RotateAround3D(this Vector3 point, Vector3 pivotPoint, Vector3 axis, float degrees)
+    {
+        Quaternion rotation = Quaternion.AngleAxis(degrees, axis);
+        Vector3 diff = point - pivotPoint;
+        Vector3 result = pivotPoint + (rotation * diff);
+        return result;
+    }
 }
 
 public static class HexVectorMath
