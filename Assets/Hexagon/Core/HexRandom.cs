@@ -104,12 +104,18 @@ public static class HexRandom
 
     #region Booleans
 
+    /// <summary>
+    /// Returns random boolean based on true/false ratio. When they are equal (i.e. 1:1) results are uniformly spread. The larger the bias towards one value is, the more frequent it will appear in the output. No checks for non-zero denominator are performed.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GetBool(float trueBias, float falseBias)
     {
         return Random.Range(0.0f, 1.0f) < trueBias / (trueBias + falseBias);
     }
 
+    /// <summary>
+    /// Returns random boolean based on the true threshold. The lower it is the more frequent true will appear in output.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GetBool(float minTrue = 0.5f)
     {
@@ -131,6 +137,10 @@ public static class HexRandom
         return Random.Range(0.0f, 1.0f) > minPositive ? 1 : -1;
     }
 
+    /// <summary>
+    /// Returns either -1, 0 or +1 with uniform distribution among the three.
+    /// </summary>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetTernarSign()
     {
@@ -138,6 +148,13 @@ public static class HexRandom
         return val > 0.6666f ? 1 : (val > 0.3333f ? 0 : -1);
     }
 
+    /// <summary>
+    /// Returns random ternar sign (-1/0/1) based on true/false ratio. When they are equal (i.e. 1:1) results are uniformly spread. The larger the bias towards one value is, the more frequent it will appear in the output. No checks for non-zero denominator are performed.
+    /// </summary>
+    /// <param name="negBias"></param>
+    /// <param name="zeroBias"></param>
+    /// <param name="posBias"></param>
+    /// <returns></returns>
     public static int GetTernarSign(float negBias, float zeroBias, float posBias)
     {
         float val = Random.Range(0.0f, 1.0f);

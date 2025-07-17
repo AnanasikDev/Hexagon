@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -42,24 +43,6 @@ public static class Hexath
     public static Vector2 GetCirclePointRadians(float radius, float angle)
     {
         return new Vector2(System.MathF.Cos(angle) * radius, System.MathF.Sin(angle) * radius);
-    }
-    
-    /// <summary>
-    /// Returns random point on the circumference of the given 'radius'.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 GetRandomRingPoint(float radius)
-    {
-        return GetCirclePointRadians(radius, UnityEngine.Random.Range(0f, 2f * Mathf.PI));
-    }
-
-    /// <summary>
-    /// Returns random point on or within the circumference of the given 'radius'.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 GetRandomCirclePoint(float radius)
-    {
-        return GetCirclePointRadians(Random.Range(0, radius), UnityEngine.Random.Range(0f, 2f * Mathf.PI));
     }
 
     /// <summary>
@@ -141,6 +124,7 @@ public static class Hexath
     /// <summary>
     /// Returns a value in range of [min, +INF). If input value is smaller or equal to 'min' the output will be 'min', otherwise 'value'.
     /// </summary>
+    [Obsolete("Use Mathf.Max instead")]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ClampMin(this float value, float min)
     {
@@ -150,6 +134,7 @@ public static class Hexath
     /// <summary>
     /// Returns a value in range of [min, +INF). If input value is smaller or equal to 'min' the output will be 'min', otherwise 'value'.
     /// </summary>
+    [Obsolete("Use Mathf.Max instead")]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ClampMin(this int value, int min)
     {
@@ -159,6 +144,7 @@ public static class Hexath
     /// <summary>
     /// Returns a value in range of (-INF; max]. If input value is larger or equal to 'max' the output will be 'max', otherwise 'value'.
     /// </summary>
+    [Obsolete("Use Mathf.Min instead")]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ClampMax(this float value, float max)
     {
@@ -168,6 +154,7 @@ public static class Hexath
     /// <summary>
     /// Returns a value in range of (-INF; max]. If input value is larger or equal to 'max' the output will be 'max', otherwise 'value'.
     /// </summary>
+    [Obsolete("Use Mathf.Min instead")]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ClampMax(this int value, int max)
     {

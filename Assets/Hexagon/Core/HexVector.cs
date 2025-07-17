@@ -1,11 +1,16 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 /// <summary>
 /// Class for general vector operations (multiplication, division, and absolute value) for all vector types.
 /// </summary>
 public static class HexVectorOps
 {
+    #region Scale
+
     /// <summary>
     /// Multiplies two Vector3 instances element-wise and returns the result.
     /// </summary>
@@ -29,6 +34,36 @@ public static class HexVectorOps
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2Int Scale(this Vector2Int a, Vector2Int b) => new Vector2Int(a.x * b.x, a.y * b.y);
+
+    /// <summary>
+    /// Scales only X component of the given vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 ScaleX(this Vector3 vec, float factor) => new Vector3(vec.x * factor, vec.y, vec.z);
+
+    /// <summary>
+    /// Scales only Y component of the given vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 ScaleY(this Vector3 vec, float factor) => new Vector3(vec.x, vec.y * factor, vec.z);
+
+    /// <summary>
+    /// Scales only Z component of the given vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 ScaleZ(this Vector3 vec, float factor) => new Vector3(vec.x, vec.y, vec.z * factor);
+
+    /// <summary>
+    /// Scales only X component of the given vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 ScaleX(this Vector2 vec, float factor) => new Vector3(vec.x * factor, vec.y);
+
+    /// <summary>
+    /// Scales only Y component of the given vector
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 ScaleY(this Vector2 vec, float factor) => new Vector3(vec.x, vec.y * factor);
 
     /// <summary>
     /// Divides two Vector3 instances element-wise and returns the result.
@@ -58,29 +93,93 @@ public static class HexVectorOps
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2Int Divide(this Vector2Int a, Vector2Int b) => new Vector2Int(a.x / b.x, a.y / b.y);
 
+    #endregion // scale
+
+    #region Abs
+
     /// <summary>
     /// Returns a new Vector3 with the absolute values of the components.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 Abs(this Vector3 vector) => new Vector3(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z));
 
     /// <summary>
     /// Returns a new Vector3Int with the absolute values of the components.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3Int Abs(this Vector3Int vector) => new Vector3Int(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z));
 
     /// <summary>
     /// Returns a new Vector2 with the absolute values of the components.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2 Abs(this Vector2 vector) => new Vector2(Mathf.Abs(vector.x), Mathf.Abs(vector.y));
 
     /// <summary>
     /// Returns a new Vector2Int with the absolute values of the components.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2Int Abs(this Vector2Int vector) => new Vector2Int(Mathf.Abs(vector.x), Mathf.Abs(vector.y));
+
+    #endregion // abs
+
+    #region Exponents
+
+    /// <summary>
+    /// Raises each component to the specified exponent
+    /// </summary>
+    public static Vector3 Pow(this Vector3 vector, float exponent) => new Vector3(Mathf.Pow(vector.x, exponent), Mathf.Pow(vector.y, exponent), Mathf.Pow(vector.z, exponent));
+
+    /// <summary>
+    /// Raises each component to the specified exponent
+    /// </summary>
+    public static Vector2 Pow(this Vector2 vector, float exponent) => new Vector2(Mathf.Pow(vector.x, exponent), Mathf.Pow(vector.y, exponent));
+
+    /// <summary>
+    /// Takes square root of each component
+    /// </summary>
+    public static Vector3 Sqrt(this Vector3 vector) => new Vector3(Mathf.Sqrt(vector.x), Mathf.Sqrt(vector.y), Mathf.Sqrt(vector.z));
+
+    /// <summary>
+    /// Takes square root of each component
+    /// </summary>
+    public static Vector2 Sqrt(this Vector2 vector) => new Vector2(Mathf.Sqrt(vector.x), Mathf.Sqrt(vector.y));
+
+    #endregion // exponents
+
+    #region Average
+
+    /// <summary>
+    /// Returns an average point of the given list of vectors.
+    /// </summary>
+    public static Vector2 Average([DisallowNull] this IEnumerable<Vector2> vectors)
+    {
+        Assert.IsNotNull(vectors);
+        Vector2 result = Vector2.zero;
+        int count = 0;
+        foreach (Vector2 iter in vectors)
+        {
+            result += iter;
+            count++;
+        }
+        Assert.AreNotEqual(0, count);
+        return result / count;
+    }
+
+    /// <summary>
+    /// Returns an average point of the given list of vectors.
+    /// </summary>
+    public static Vector3 Average([DisallowNull] this IEnumerable<Vector3> vectors)
+    {
+        Assert.IsNotNull(vectors);
+        Vector3 result = Vector3.zero;
+        int count = 0;
+        foreach (Vector3 iter in vectors)
+        {
+            result += iter;
+            count++;
+        }
+        Assert.AreNotEqual(0, count);
+        return result / count;
+    }
+
+    #endregion // average
 }
 
 /// <summary>
@@ -88,6 +187,8 @@ public static class HexVectorOps
 /// </summary>
 public static class HexVectorAxisOps
 {
+    #region With
+
     /// <summary>
     /// Returns a copy of the given Vector3 with the Z component set to 0.
     /// </summary>
@@ -115,37 +216,7 @@ public static class HexVectorAxisOps
     /// <summary>
     /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 With(this Vector3 vector, float? x = null, float? y = null, float? z = null) => new Vector3(x ?? vector.x, y ?? vector.y, z ?? vector.z);
-
-    /// <summary>
-    /// Sets the X component of the Vector3.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetX(this ref Vector3 vector, float x) => vector.x = x;
-
-    /// <summary>
-    /// Sets the Y component of the Vector3.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetY(this ref Vector3 vector, float y) => vector.y = y;
-
-    /// <summary>
-    /// Sets the Z component of the Vector3.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetZ(this ref Vector3 vector, float z) => vector.z = z;
-
-    /// <summary>
-    /// Sets the specified components of the Vector3, leaving the unspecified ones as they were.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Set(this ref Vector3 vector, float? x = null, float? y = null, float? z = null)
-    {
-        vector.x = x ?? vector.x;
-        vector.y = y ?? vector.y;
-        vector.z = z ?? vector.z;
-    }
 
     /// <summary>
     /// Creates a new Vector3Int with the specified X component, retaining the original Y and Z components.
@@ -168,8 +239,73 @@ public static class HexVectorAxisOps
     /// <summary>
     /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3Int With(this Vector3Int vector, int? x = null, int? y = null, int? z = null) => new Vector3Int(x ?? vector.x, y ?? vector.y, z ?? vector.z);
+
+    /// <summary>
+    /// Creates a new Vector2 with the specified X component, retaining the original Y component.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 WithX(this Vector2 vector, float x) => new Vector2(x, vector.y);
+
+    /// <summary>
+    /// Creates a new Vector2 with the specified Y component, retaining the original X component.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 WithY(this Vector2 vector, float y) => new Vector2(vector.x, y);
+
+    /// <summary>
+    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
+    /// </summary>
+    public static Vector2 With(this Vector2 vector, float? x = null, float? y = null) => new Vector2(x ?? vector.x, y ?? vector.y);
+
+    /// <summary>
+    /// Creates a new Vector2Int with the specified X component, retaining the original Y component.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2Int WithX(this Vector2Int vector, int x) => new Vector2Int(x, vector.y);
+
+    /// <summary>
+    /// Creates a new Vector2Int with the specified Y component, retaining the original X component.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2Int WithY(this Vector2Int vector, int y) => new Vector2Int(vector.x, y);
+
+    /// <summary>
+    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
+    /// </summary>
+    public static Vector2Int With(this Vector2Int vector, int? x = null, int? y = null) => new Vector2Int(x ?? vector.x, y ?? vector.y);
+
+    #endregion // with
+
+    #region Set
+
+    /// <summary>
+    /// Sets the X component of the Vector3.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void SetX(this ref Vector3 vector, float x) => vector.x = x;
+
+    /// <summary>
+    /// Sets the Y component of the Vector3.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void SetY(this ref Vector3 vector, float y) => vector.y = y;
+
+    /// <summary>
+    /// Sets the Z component of the Vector3.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void SetZ(this ref Vector3 vector, float z) => vector.z = z;
+
+    /// <summary>
+    /// Sets the specified components of the Vector3, leaving the unspecified ones as they were.
+    /// </summary>
+    public static void Set(this ref Vector3 vector, float? x = null, float? y = null, float? z = null)
+    {
+        vector.x = x ?? vector.x;
+        vector.y = y ?? vector.y;
+        vector.z = z ?? vector.z;
+    }
 
     /// <summary>
     /// Sets the X component of the Vector3Int.
@@ -192,31 +328,12 @@ public static class HexVectorAxisOps
     /// <summary>
     /// Sets the specified components of the Vector3Int, leaving the unspecified ones as they were.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(this ref Vector3Int vector, int? x = null, int? y = null, int? z = null)
     {
         vector.x = x ?? vector.x;
         vector.y = y ?? vector.y;
         vector.z = z ?? vector.z;
     }
-
-    /// <summary>
-    /// Creates a new Vector2 with the specified X component, retaining the original Y component.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 WithX(this Vector2 vector, float x) => new Vector2(x, vector.y);
-
-    /// <summary>
-    /// Creates a new Vector2 with the specified Y component, retaining the original X component.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 WithY(this Vector2 vector, float y) => new Vector2(vector.x, y);
-
-    /// <summary>
-    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 With(this Vector2 vector, float? x = null, float? y = null) => new Vector2(x ?? vector.x, y ?? vector.y);
 
     /// <summary>
     /// Sets the X component of the Vector2.
@@ -233,30 +350,11 @@ public static class HexVectorAxisOps
     /// <summary>
     /// Sets the specified components of the Vector2, leaving the unspecified ones as they were.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(this ref Vector2 vector, float? x = null, float? y = null)
     {
         vector.x = x ?? vector.x;
         vector.y = y ?? vector.y;
     }
-
-    /// <summary>
-    /// Creates a new Vector2Int with the specified X component, retaining the original Y component.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2Int WithX(this Vector2Int vector, int x) => new Vector2Int(x, vector.y);
-
-    /// <summary>
-    /// Creates a new Vector2Int with the specified Y component, retaining the original X component.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2Int WithY(this Vector2Int vector, int y) => new Vector2Int(vector.x, y);
-
-    /// <summary>
-    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2Int With(this Vector2Int vector, int? x = null, int? y = null) => new Vector2Int(x ?? vector.x, y ?? vector.y);
 
     /// <summary>
     /// Sets the X component of the Vector2Int.
@@ -273,12 +371,13 @@ public static class HexVectorAxisOps
     /// <summary>
     /// Sets the specified components of the Vector2, leaving the unspecified ones as they were.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Set(this ref Vector2Int vector, int? x = null, int? y = null)
     {
         vector.x = x ?? vector.x;
         vector.y = y ?? vector.y;
     }
+
+    #endregion // set
 }
 
 /// <summary>
@@ -291,6 +390,8 @@ public static class HexVectorAxisOps
 /// </summary>
 public static class HexVectorUtils
 {
+    #region Convert
+
     /// <summary>
     /// Converts a Vector3 to a Vector2 by ignoring the Z component.
     /// </summary>
@@ -314,6 +415,10 @@ public static class HexVectorUtils
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 ConvertTo3D(this Vector3Int vector3Int) => new Vector3(vector3Int.x, vector3Int.y, vector3Int.z);
+
+    #endregion // convert
+
+    #region To int
 
     /// <summary>
     /// Rounds the components of a Vector2 to the nearest integer values and returns a Vector2Int.
@@ -414,6 +519,10 @@ public static class HexVectorUtils
         );
     }
 
+    #endregion // to int
+
+    #region Distance
+
     /// <summary>
     /// Calculates the squared distance between two Vector2.
     /// </summary>
@@ -474,6 +583,10 @@ public static class HexVectorUtils
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float DistanceXY(this Vector3 a, Vector3 b) => (a - b).NullZ().magnitude;
 
+    #endregion // distance
+
+    #region Nearly equals
+
     /// <summary>
     /// Checks if two Vector3 instances are nearly equal based on an inaccuracy tolerance.
     /// </summary>
@@ -485,10 +598,14 @@ public static class HexVectorUtils
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool NearlyEquals(this Vector2 a, Vector2 b, double inaccuracy = 1.0E-5) => Vector2.SqrMagnitude(a - b) < inaccuracy;
+
+    #endregion // nearly equals
 }
 
 public static class HexVectorGeom
 {
+    #region Rotate
+
     /// <summary>
     /// Rotates the given Vector2 by the given degree.
     /// </summary>
@@ -523,10 +640,14 @@ public static class HexVectorGeom
         Vector3 result = pivotPoint + (rotation * diff);
         return result;
     }
+
+    #endregion // rotate
 }
 
 public static class HexVectorMath
 {
+    #region Clamp
+
     /// <summary>
     /// Clamps the given Vector2 to 0.0 - 1.0 range
     /// </summary>
@@ -540,6 +661,10 @@ public static class HexVectorMath
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 Clamp01(this Vector3 vector) =>
         new Vector3(Mathf.Clamp01(vector.x), Mathf.Clamp01(vector.y), Mathf.Clamp01(vector.z));
+
+    #endregion // clamp
+
+    #region Sum
 
     /// <summary>
     /// Returns the sum of all components of the input vector
@@ -570,4 +695,6 @@ public static class HexVectorMath
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Sum(this Vector3Int v) => v.x + v.y + v.z;
+
+    #endregion // sum
 }
