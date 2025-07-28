@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using UnityEditor;
 
 /// <summary>
 /// <para>
@@ -12,52 +14,115 @@ using System.Linq;
 /// </summary>
 public class Pool<T>
 {
-    public readonly List<T> objects = new List<T>();
+    public readonly List<T> items;
 
-    public bool isEmpty { get { return objects.Count == 0; } }
+    public bool isEmpty { get { return items.Count == 0; } }
 
     /// <summary>
     /// Function that will be called upon instantiation of a new object. Is only used in TakeInactiveOrCreate function and its variations.
     /// </summary>
-    public Func<T> createFunc;
+    protected Func<T> factoryFunc;
 
     /// <summary>
     /// Function that determines whether an object is considered active or not.
     /// </summary>
-    public Func<T, bool> isActiveFunc;
+    protected Func<T, bool> isActiveFunc;
+
+    protected Action<T> onGet;
+
+    protected Action<T> onRelease;
 
     /// <summary>
     /// </summary>
-    /// <param name="isActiveFunc">Function that determines whether an object is considered active or not.</param>
+    /// <param name="isAvailable">Function that determines whether an object is available for getting or not.</param>
     /// <param name="createFunc">Function that will be called on instantiation of a new object. Is only used in TakeInactiveOrCreate function and its variations.</param>
-    public Pool(Func<T, bool> isActiveFunc, Func<T> createFunc = null)
+    public Pool(Func<T> factoryFunc, Func<T, bool> isAvailable, Action<T> onGet, Action<T> onRelease, int capacity = 8)
     {
-        this.isActiveFunc = isActiveFunc;
-        this.createFunc = createFunc;
+        this.factoryFunc = factoryFunc;
+        this.isActiveFunc = isAvailable;
+        this.onGet = onGet;
+        this.onRelease = onRelease;
+
+        items = new List<T>(capacity);
+    }
+
+    public void Populate(int count, bool defaultState = false)
+    {
+        if (count > 0)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                T item = RecordNew(factoryFunc());
+                if (defaultState == true) onGet(item);
+                if (defaultState == false) onRelease(item);
+            }
+        }
+    }
+
+#nullable enable
+
+    /// <summary>
+    /// Returns the first inactive object from pool or default if there is no active object or the pool is empty.
+    /// </summary>
+    /// <returns></returns>
+    public T? PeekInactive() 
+    {
+        foreach (T item in items)
+        {
+            if (!isActiveFunc(item))
+            {
+                return item;
+            }   
+        }
+
+        return default(T?);
     }
 
     /// <summary>
-    /// Returns the first inactive object from pool or null if there is no active object or the pool is empty.
+    /// Returns the first active object from pool or default if there is no active object or the pool is empty.
     /// </summary>
-    /// <returns></returns>
-    public T TakeInactive() => objects.FirstOrDefault(o => !isActiveFunc(o));
+    public T? PeekActive()
+    {
+        foreach (T item in items)
+        {
+            if (isActiveFunc(item))
+            {
+                return item;
+            }
+        }
 
-    /// <summary>
-    /// Returns the first active object from pool or null if there is no active object or the pool is empty.
-    /// </summary>
-    public T TakeActive() => objects.FirstOrDefault(o => isActiveFunc(o));
+        return default(T?);
+    }
 
     /// <summary>
     ///  Returns the first inactive object from pool which follows condition or null if there is no suitable object or the pool is empty.
     /// </summary>
     /// <param name="condition">Extra condition on each element which determines whether a certain (inactive) object is suitable or not</param>
-    public T TakeInactive(Func<T, bool> condition) => objects.FirstOrDefault(o => !isActiveFunc(o) && condition.Invoke(o));
+    public T? PeekInactive(Func<T, bool> condition)
+    {
+        foreach (T item in items)
+        {
+            if (!isActiveFunc(item) && condition.Invoke(item))
+                return item;
+        }
+
+        return default(T?);
+    }
 
     /// <summary>
     /// Returns the first active object from pool which follows condition or null if there is no suitable object or the pool is empty.
     /// </summary>
     /// /// <param name="condition">Extra condition on each element which determines whether a certain (active) object is suitable or not</param>
-    public T TakeActive(Func<T, bool> condition) => objects.FirstOrDefault(o => isActiveFunc(o) && condition.Invoke(o));
+    public T? PeekActive(Func<T, bool> condition)
+    {
+        foreach (T item in items)
+        {
+            if (isActiveFunc(item) && condition.Invoke(item))
+                return item;
+        }
+
+        return default(T?);
+    }
 
     /// <summary>
     /// Assigns the first inactive object that meets the specified condition to obj, or null if no suitable object is available.
@@ -66,13 +131,12 @@ public class Pool<T>
     /// <returns>
     /// True if the result object is not null, otherwise false
     /// </returns>
-    public bool TryTakeInactive(out T obj, Func<T, bool> condition = null)
+    public bool TryTakeInactive([NotNullWhen(true)] out T? result, Func<T, bool>? condition = null)
     {
-        if (condition == null)
-            obj = objects.FirstOrDefault(o => !isActiveFunc(o));
-        else
-            obj = objects.FirstOrDefault(o => !isActiveFunc(o) && condition.Invoke(o));
-        return obj != null;
+        if (condition == null) result = PeekInactive();
+        else result = PeekInactive(condition);
+
+        return result != null;
     }
 
     /// <summary>
@@ -82,13 +146,12 @@ public class Pool<T>
     /// <returns>
     /// True if the result object is not null, otherwise false
     /// </returns>
-    public bool TryTakeActive(out T obj, Func<T, bool> condition = null)
+    public bool TryTakeActive([NotNullWhen(true)] out T? result, Func<T, bool>? condition = null)
     {
-        if (condition == null)
-            obj = objects.FirstOrDefault(o => isActiveFunc(o));
-        else
-            obj = objects.FirstOrDefault(o => isActiveFunc(o) && condition.Invoke(o));
-        return obj != null;
+        if (condition == null) result = PeekActive();
+        else result = PeekActive(condition);
+
+        return result != null;
     }
 
     /// <summary>
@@ -96,9 +159,10 @@ public class Pool<T>
     /// </summary>
     public T TakeInactiveOrCreate()
     {
-        if (TryTakeInactive(out T obj))
-            return obj;
-        T res = createFunc.Invoke();
+        if (TryTakeInactive(out T? result))
+            return result;
+        T res = factoryFunc.Invoke();
+        onGet(res);
         return RecordNew(res);
     }
 
@@ -111,10 +175,18 @@ public class Pool<T>
     /// </returns>
     public T TakeInactiveOrCreate(Func<T, bool> condition)
     {
-        if (TryTakeInactive(out T obj, condition))
-            return obj;
-        T res = createFunc.Invoke();
+        if (TryTakeInactive(out T? result, condition))
+            return result;
+        T res = factoryFunc.Invoke();
+        onGet(res);
         return RecordNew(res);
+    }
+
+#nullable restore
+
+    public void Release(T item)
+    {
+        onRelease(item);
     }
 
     /// <summary>
@@ -123,10 +195,10 @@ public class Pool<T>
     /// <returns>
     /// Returns the added object back
     /// </returns>
-    public T RecordNew(T newObj)
+    public T RecordNew(T item)
     {
-        objects.Add(newObj);
-        return newObj;
+        items.Add(item);
+        return item;
     }
 
     /// <summary>
@@ -135,6 +207,6 @@ public class Pool<T>
     /// <returns>True if the given object was successfully removed</returns>
     public bool Unrecord(T obj)
     {
-        return objects.Remove(obj);
+        return items.Remove(obj);
     }
 }

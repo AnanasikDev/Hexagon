@@ -4,31 +4,27 @@ using UnityEngine.Pool;
 [RequireComponent(typeof(HexCoroutineRunner))]
 public class Example : MonoBehaviour
 {
-    ObjectPool<GameObject> pool;
-
     [SerializeField] private Transform pivot;
     [SerializeField] private Transform point;
     [SerializeField] private Color color;
     private Color outcolor;
     [Range(0, 2)][SerializeField] float brightness;
 
+    Pool<GameObject> pool = new Pool<GameObject>(
+        factoryFunc: () => new GameObject("Gameobject!!!"),
+        isAvailable: (GameObject item) => item.activeSelf,
+        onGet:       (GameObject item) => item.SetActive(true),
+        onRelease:   (GameObject item) => item.SetActive(false)
+    );
+
     private void Start()
     {
-        float[] segs = new float[] { 0.1f, 0.4f, 0.5f };
-        for (int i = 0; i < 10000; i++)
-        {
-            Debug.Log(HexRandom.GetWeightedIndex(segs, 1.0f));
-        }
-        
-        pool = new ObjectPool<GameObject>(
-            () => new GameObject("HEEE"),
-            (GameObject go) => go.SetActive(true),
-            (GameObject go) => go.SetActive(false)
-            );
-
-        Debug.Log(color);
-
-        segs.Shuffle();
+        //string str = "Hello my fur friend!";
+        //for (int i = 0; i < 1000; i++)
+        //{
+        //    Debug.Log(HexRandom.GetRandomChar(str));
+        //}
+        pool.Populate(5);
     }
 
     private void Update()
@@ -41,12 +37,15 @@ public class Example : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            pool.Get();
+            pool.TakeInactiveOrCreate();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            pool.Get().gameObject.SetActive(true);
+            if (pool.TryTakeActive(out GameObject go))
+            {
+                pool.Release(go);
+            }
         }
     }
 }
