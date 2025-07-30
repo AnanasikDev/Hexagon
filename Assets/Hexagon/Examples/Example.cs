@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Pool;
 
 [RequireComponent(typeof(HexCoroutineRunner))]
@@ -40,9 +41,9 @@ public class Example : MonoBehaviour
             pool.TakeInactiveOrCreate();
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            if (pool.TryTakeActive(out GameObject go))
+            if (pool.TryPeekActive(out GameObject go))
             {
                 pool.Release(go);
             }

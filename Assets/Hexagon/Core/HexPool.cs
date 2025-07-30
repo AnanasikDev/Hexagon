@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using UnityEditor;
+using UnityEngine.Assertions;
+
+#nullable enable
 
 /// <summary>
 /// <para>
@@ -12,9 +13,9 @@ using UnityEditor;
 /// When an object becomes inactive on client (entity died, destroyed, gone off screen, used etc) it should be disabled for the Pool to recognize it as inactive. Then, whenever it is needed, it can be taken as inactive back and reinited and adapted to match new use case and enabled back. Because disabling and enabling an entity is highly game-dependend it all must be done on the game side.
 /// </para>
 /// </summary>
-public class Pool<T>
+public class Pool<T> where T : class
 {
-    public readonly List<T> items;
+    public readonly List<T?> items;
 
     public bool isEmpty { get { return items.Count == 0; } }
 
@@ -43,7 +44,7 @@ public class Pool<T>
         this.onGet = onGet;
         this.onRelease = onRelease;
 
-        items = new List<T>(capacity);
+        items = new List<T?>(capacity);
     }
 
     public void Populate(int count, bool defaultState = false)
@@ -59,23 +60,19 @@ public class Pool<T>
         }
     }
 
-#nullable enable
-
     /// <summary>
     /// Returns the first inactive object from pool or default if there is no active object or the pool is empty.
     /// </summary>
-    /// <returns></returns>
     public T? PeekInactive() 
     {
-        foreach (T item in items)
+        foreach (T? item in items)
         {
-            if (!isActiveFunc(item))
+            if (item != null && !isActiveFunc(item))
             {
                 return item;
             }   
         }
-
-        return default(T?);
+        return null;
     }
 
     /// <summary>
@@ -83,15 +80,14 @@ public class Pool<T>
     /// </summary>
     public T? PeekActive()
     {
-        foreach (T item in items)
+        foreach (T? item in items)
         {
-            if (isActiveFunc(item))
+            if (item != null && isActiveFunc(item))
             {
                 return item;
             }
         }
-
-        return default(T?);
+        return null;
     }
 
     /// <summary>
@@ -100,13 +96,12 @@ public class Pool<T>
     /// <param name="condition">Extra condition on each element which determines whether a certain (inactive) object is suitable or not</param>
     public T? PeekInactive(Func<T, bool> condition)
     {
-        foreach (T item in items)
+        foreach (T? item in items)
         {
-            if (!isActiveFunc(item) && condition.Invoke(item))
+            if (item != null && !isActiveFunc(item) && condition.Invoke(item))
                 return item;
         }
-
-        return default(T?);
+        return null;
     }
 
     /// <summary>
@@ -115,13 +110,12 @@ public class Pool<T>
     /// /// <param name="condition">Extra condition on each element which determines whether a certain (active) object is suitable or not</param>
     public T? PeekActive(Func<T, bool> condition)
     {
-        foreach (T item in items)
+        foreach (T? item in items)
         {
-            if (isActiveFunc(item) && condition.Invoke(item))
+            if (item != null && isActiveFunc(item) && condition.Invoke(item))
                 return item;
         }
-
-        return default(T?);
+        return null;
     }
 
     /// <summary>
@@ -131,7 +125,7 @@ public class Pool<T>
     /// <returns>
     /// True if the result object is not null, otherwise false
     /// </returns>
-    public bool TryTakeInactive([NotNullWhen(true)] out T? result, Func<T, bool>? condition = null)
+    public bool TryPeekInactive([NotNullWhen(true)] out T? result, Func<T, bool>? condition = null)
     {
         if (condition == null) result = PeekInactive();
         else result = PeekInactive(condition);
@@ -146,7 +140,7 @@ public class Pool<T>
     /// <returns>
     /// True if the result object is not null, otherwise false
     /// </returns>
-    public bool TryTakeActive([NotNullWhen(true)] out T? result, Func<T, bool>? condition = null)
+    public bool TryPeekActive([NotNullWhen(true)] out T? result, Func<T, bool>? condition = null)
     {
         if (condition == null) result = PeekActive();
         else result = PeekActive(condition);
@@ -159,11 +153,13 @@ public class Pool<T>
     /// </summary>
     public T TakeInactiveOrCreate()
     {
-        if (TryTakeInactive(out T? result))
-            return result;
-        T res = factoryFunc.Invoke();
-        onGet(res);
-        return RecordNew(res);
+        T? result = null;
+        if (TryPeekInactive(out T? tryresult))
+            result = tryresult;
+        else
+            result = factoryFunc.Invoke();
+        onGet(result);
+        return RecordNew(result);
     }
 
     /// <summary>
@@ -175,11 +171,13 @@ public class Pool<T>
     /// </returns>
     public T TakeInactiveOrCreate(Func<T, bool> condition)
     {
-        if (TryTakeInactive(out T? result, condition))
-            return result;
-        T res = factoryFunc.Invoke();
-        onGet(res);
-        return RecordNew(res);
+        T? result = null;
+        if (TryPeekInactive(out T? tryresult, condition))
+            result = tryresult;
+        else
+            result = factoryFunc.Invoke();
+        onGet(result);
+        return RecordNew(result);
     }
 
 #nullable restore
