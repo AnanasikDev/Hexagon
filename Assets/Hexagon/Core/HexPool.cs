@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine.Assertions;
 
 public sealed class Pool<T> where T : class
@@ -46,44 +47,50 @@ public sealed class Pool<T> where T : class
 
     public T Get()
     {
-        T result = Get(PeekInactiveUnsafe());
-        return result;
+        T? result = null;
+        bool exists = ViewInactive(out result);
+        if (!exists)
+        {
+            result = _factory();
+            _items.Add(result);
+        }
+        return Get(result!);
     }
 
     public T Get(T item)
     {
-        activeCount++;
+        Assert.IsTrue(_items.Contains(item));
+        activeCount--;
         _onGet?.Invoke(item);
         return item;
     }
 
-    public T PeekInactiveUnsafe()
+    public bool ViewInactive([NotNullWhen(true)] out T? result)
     {
-        T? result = null;
         foreach (T item in _items)
         {
             if (!_isActive(item))
             {
                 result = item;
-                break;
+                return true;
             }
         }
-        if (result == null)
-            result = _factory();
-
-        return result;
+        result = null;
+        return false;
     }
 
-    public T? PeekActiveUnsafe()
+    public bool ViewActive([NotNullWhen(true)] out T? result)
     {
         foreach (T item in _items)
         {
             if (_isActive(item))
             {
-                return item;
+                result = item;
+                return true;
             }
         }
-        return null;
+        result = null;
+        return false;
     }
 
     public void Release(T item)
@@ -101,80 +108,5 @@ public sealed class Pool<T> where T : class
                 Release(item);
             }
         }
-    }
-
-    /// <summary>
-    /// Leases an item from the pool for inspection.
-    /// Must be used in a 'using' block.
-    /// </summary>
-    public ItemLease<T> LeaseInactive()
-    {
-        T item = PeekInactiveUnsafe();
-        return new ItemLease<T>(item, this);
-    }
-
-    public ItemLease<T> LeaseActive()
-    {
-        T? item = PeekActiveUnsafe();
-        return new ItemLease<T>(item, this);
-    }
-}
-
-/// <summary>
-/// Represents a temporary, exclusive lease on a pooled item.
-/// Either commit the lease with ConfirmAndGet(), or dispose of it
-/// to return the item to the pool automatically.
-/// </summary>
-public readonly struct ItemLease<T> : IDisposable where T : class
-{
-    private readonly T? _item;
-    private readonly Pool<T> _sourcePool; // Using your updated pool name
-
-    internal ItemLease(T? item, Pool<T> sourcePool)
-    {
-        _item = item;
-        _sourcePool = sourcePool;
-    }
-
-    public readonly bool HasValue => _item != null;
-
-    /// <summary>
-    /// The leased item, available for inspection.
-    /// </summary>
-    public readonly T GetReadOnlyItem()
-    {
-        Assert.IsNotNull(_item, "ItemLease value is null. GetReadOnlyItem must be called after checking HasValue");
-        return _item!;
-    }
-
-    /// <summary>
-    /// Confirms the lease and officially gets the item from the pool.
-    /// This prevents the item from being returned upon disposal.
-    /// </summary>
-    /// <returns>The confirmed item.</returns>
-    public T ConfirmAndGet()
-    {
-        if (HasValue)
-        {
-            _sourcePool.Get(_item!);
-        }
-        return _item!;
-    }
-
-    public T ConfirmAndRelease()
-    {
-        if (HasValue)
-        {
-            _sourcePool.Release(_item!);
-        }
-        return _item!;
-    }
-
-    /// <summary>
-    /// If the lease was not confirmed, this automatically returns
-    /// the item to the pool.
-    /// </summary>
-    public void Dispose()
-    {
     }
 }

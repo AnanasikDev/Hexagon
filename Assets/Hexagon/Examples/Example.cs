@@ -11,14 +11,13 @@ public class Example : MonoBehaviour
     private Color outcolor;
     [Range(0, 2)][SerializeField] float brightness;
 
-    //ObjectPool<GameObject> pool = new ObjectPool<GameObject>(
-    //    createFunc: () => new GameObject("new GO!"),
-    //    actionOnGet: (GameObject go) => go.SetActive(true),
-    //    actionOnRelease: (GameObject go) => go.SetActive(false)
-    //); 
-
     Pool<GameObject> pool = Pool<GameObject>.Create(
-        factory: () => new GameObject("Gameobject!!!"),
+        factory: () =>
+        {
+            GameObject result = new GameObject("Gameobject!!!");
+            result.SetActive(false);
+            return result;
+        },
         onGet: (GameObject item) => item.SetActive(true),
         isActive: (GameObject item) => item.activeSelf,
         onRelease: (GameObject item) => item.SetActive(false)
@@ -26,11 +25,6 @@ public class Example : MonoBehaviour
 
     private void Start()
     {
-        //string str = "Hello my fur friend!";
-        //for (int i = 0; i < 1000; i++)
-        //{
-        //    Debug.Log(HexRandom.GetRandomChar(str));
-        //}
         pool.Populate(5);
     }
 
@@ -44,23 +38,22 @@ public class Example : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            pool.Get();
-            //pool.TakeInactiveOrCreate();
+            bool found = pool.ViewInactive(out GameObject go);
+            if (found)
+            {
+                pool.Get(go);
+            }
+
+            //pool.Get();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            using (var lease = pool.LeaseActive())
+            bool found = pool.ViewActive(out GameObject go);
+            if (found)
             {
-                if (lease.HasValue && lease.GetReadOnlyItem().name != string.Empty)
-                {
-                    var obj = lease.ConfirmAndRelease();
-                }
+                pool.Release(go);
             }
-            //if (pool.TryPeekActive(out GameObject go))
-            //{
-            //    pool.Release(go);
-            //}
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
