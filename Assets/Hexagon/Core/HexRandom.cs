@@ -27,7 +27,7 @@ public static class HexRandom
     {
         Assert.IsNotNull(collection);
         Assert.AreNotEqual(0, collection.Count, "Cannot get random element from an empty collection");
-        
+
         if (collection.Count == 1)
         {
             index = 0;

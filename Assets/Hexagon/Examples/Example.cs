@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Pool;
@@ -6,7 +8,8 @@ using UnityEngine.Pool;
 public class Example : MonoBehaviour
 {
     [SerializeField] private Transform pivot;
-    [SerializeField] private Transform point;
+    [SerializeField] private Transform point1;
+    [SerializeField] private Transform point2;
     [SerializeField] private Color color;
     private Color outcolor;
     [Range(0, 2)][SerializeField] float brightness;
@@ -26,13 +29,35 @@ public class Example : MonoBehaviour
     private void Start()
     {
         pool.Populate(5);
+
+        var data = new Dictionary<string, object>
+        {
+            { "productName", "Laptop" },
+            { "price", 1250.75123f },
+            { "discount", 0.15 },
+            { "manufactureDate", new DateTime(2025, 6, 15) }
+        };
+
+        //string template4 = "product {price:F2} progress={absProgress:F0}";
+        //string result4 = template4.FormatVariables("price", 123.234f, "absProgress", 99.4f);
+        string template = "Hello, {value:F2}!";
+        string result = template.FormatVariables
+        (
+            new Dictionary<string, object>() 
+            {
+                { "value", 123.917f }
+            }
+        );
+        Debug.Log(result);
     }
 
     private void Update()
     {
-        point.position = point.position.RotateAround3D(pivot.position, new Vector3(0.5f, 0.5f, 0.5f), 1);
+        //point.position = point.position.RotateAround3D(pivot.position, new Vector3(0.5f, 0.5f, 0.5f), 1);
+        point1.position = point1.position.WithX(HexEasing.EaseInOutQuad(0, 1, Mathf.PingPong(Time.time / 2, 1)) * 10);
+        point2.Translate(Vector3.right * (HexEasing.EaseInOutQuadD(-1, 1, Hexath.Remap(Mathf.PingPong(Time.time / 2, 1), 0, 1, -1, 1))) * Time.deltaTime);
         outcolor = color.WithBrightness(brightness);
-        point.GetComponent<MeshRenderer>().material.color = outcolor;
+        point1.GetComponent<MeshRenderer>().material.color = outcolor;
         Debug.Log(outcolor.WrapInHTMLTagRGB("color"));
         Debug.Log(color.GetRGBMagnitude());
 

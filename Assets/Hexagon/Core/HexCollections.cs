@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 /// <summary>
 /// Class for extensions over collections, such as lists, arrays or IEnumerable-s

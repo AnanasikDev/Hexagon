@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public static class Vector4Swizzles
 {
@@ -86,21 +86,21 @@ public static class Vector4Swizzles
     [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 www(this Vector4 a) => new(a.w, a.w, a.w);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xxxx(this Vector2 a) => new(a.x, a.x, a.x, a.x);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yxxx(this Vector2 a) => new(a.y, a.x, a.x, a.x);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xyxx(this Vector2 a) => new(a.x, a.y, a.x, a.x);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yyxx(this Vector2 a) => new(a.y, a.y, a.x, a.x);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xxyx(this Vector2 a) => new(a.x, a.x, a.y, a.x);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yxyx(this Vector2 a) => new(a.y, a.x, a.y, a.x);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xyyx(this Vector2 a) => new(a.x, a.y, a.y, a.x);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yyyx(this Vector2 a) => new(a.y, a.y, a.y, a.x);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xxxy(this Vector2 a) => new(a.x, a.x, a.x, a.y);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yxxy(this Vector2 a) => new(a.y, a.x, a.x, a.y);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xyxy(this Vector2 a) => new(a.x, a.y, a.x, a.y);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yyxy(this Vector2 a) => new(a.y, a.y, a.x, a.y);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xxyy(this Vector2 a) => new(a.x, a.x, a.y, a.y);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yxyy(this Vector2 a) => new(a.y, a.x, a.y, a.y);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xyyy(this Vector2 a) => new(a.x, a.y, a.y, a.y);
-	[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yyyy(this Vector2 a) => new(a.y, a.y, a.y, a.y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yxxx(this Vector2 a) => new(a.y, a.x, a.x, a.x);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xyxx(this Vector2 a) => new(a.x, a.y, a.x, a.x);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yyxx(this Vector2 a) => new(a.y, a.y, a.x, a.x);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xxyx(this Vector2 a) => new(a.x, a.x, a.y, a.x);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yxyx(this Vector2 a) => new(a.y, a.x, a.y, a.x);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xyyx(this Vector2 a) => new(a.x, a.y, a.y, a.x);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yyyx(this Vector2 a) => new(a.y, a.y, a.y, a.x);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xxxy(this Vector2 a) => new(a.x, a.x, a.x, a.y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yxxy(this Vector2 a) => new(a.y, a.x, a.x, a.y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xyxy(this Vector2 a) => new(a.x, a.y, a.x, a.y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yyxy(this Vector2 a) => new(a.y, a.y, a.x, a.y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xxyy(this Vector2 a) => new(a.x, a.x, a.y, a.y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yxyy(this Vector2 a) => new(a.y, a.x, a.y, a.y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xyyy(this Vector2 a) => new(a.x, a.y, a.y, a.y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 yyyy(this Vector2 a) => new(a.y, a.y, a.y, a.y);
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 xxxx(this Vector3 a) => new(a.x, a.x, a.x, a.x);

@@ -9,10 +9,12 @@ Unity extensions library
     * [Math](#Math)
     * [Time](#Time)
     * [Vector](#Vector)
+    * [Random](#Random)
     * [Transform](#Transform)
     * [Collections](#Collections)
     * [Pool](#Pool)
     * [Debug](#Debug)
+    * [Easing](#Easing)
 - [Tests](#Tests)
 
 ## Notes
@@ -252,6 +254,118 @@ Clamps the given ```Vector3``` to 0.0 - 1.0 range
 
 </details>
 
+## Random
+
+`HexRandom` is a static utility class providing a comprehensive suite of randomization helpers for Unity-based projects. It extends Unity’s `Random` functionality with concise, readable, and assert-checked methods for collections, booleans, signs, vectors, weighted distributions, strings, colors, and geometric points.
+
+## Features
+
+- Random selection and shuffling of collections
+- Controlled boolean and sign generation
+- Random vector and color generation
+- Weighted index selection
+- Enum value randomization
+- Random character and substring extraction
+- Geometric point generation within Unity shapes
+
+## Collections
+
+- `T RandomElement<T>(this IList<T> collection)`
+  - Returns a random element from a non-empty collection.
+  - Asserts: collection is not null and not empty.
+
+- `T RandomElementWithIndex<T>(this IList<T> collection, out int index)`
+  - Returns a random element and its index from a non-empty collection.
+
+- `T Select<T>(params T[] values)`
+  - Shorthand for choosing a random value from the provided arguments.
+
+- `IEnumerable<T> GetRandomElements<T>(this IList<T> collection, int num, bool unique = true)`
+  - Returns `num` elements, optionally unique.
+  - Shuffles when `unique = true`; otherwise, samples.
+
+- `void Shuffle<T>(this IList<T> list)`
+  - In-place Fisher-Yates shuffle.
+
+- `List<T> GetShuffled<T>(this IList<T> list)`
+  - Returns a new shuffled list copy.
+
+## Booleans
+
+- `bool GetBool(float trueBias, float falseBias)`
+  - Returns a boolean with a probability bias.
+  - `trueBias` : `falseBias` determines output ratio
+  - No checks for zero denominator (`trueBias + falseBias`).
+
+- `bool GetBool(float minTrue = 0.5f)`
+  - Returns `true` with chance `1 - minTrue`.
+
+## Signs
+
+- `int GetSign(float minPositive = 0.5f)`
+  - Returns `+1` or `-1`, with `+1` probability being `1 - minPositive`.
+
+- `int GetTernarSign()`
+  - Uniformly returns `-1`, `0`, or `+1`.
+
+- `int GetTernarSign(float negBias, float zeroBias, float posBias)`
+  - Returns ternary value based on segment weights.
+
+## Vectors
+
+- `Vector3 Random3D()`
+- `Vector2 Random2D()`
+  - Each component is in range `[-1, 1]`.
+
+## Weighted Selection
+
+- `int GetWeightedIndex(float[] segments, float sum)`
+- `int GetWeightedIndex(float[] segments)`
+  - Selects index based on relative segment weight.
+  - No validation for non-positive weights.
+
+## Colors
+
+- `Color RandomColorOpaque()`
+  - RGB in `[0,1]`, alpha = 1.
+
+- `Color RandomColor(bool randomAlpha = false)`
+  - RGB in `[0,1]`; alpha optional random.
+
+- `Color RandomColor(float min, float max)`
+  - Each channel in `[min, max]`.
+
+## Random Points
+
+- `Vector3 RandomPointOnSphere(float radius)`
+- `Vector3 RandomPointInSphere(float radius)`
+- `Vector2 RandomPointOnCircle(float radius, float maxAngle = 2π)`
+- `Vector2 RandomPointInCircle(float radius, float maxAngle = 2π)`
+  - Angle optional for partial arc selection.
+
+- `Vector3 RandomPointInBounds(this Bounds bounds)`
+- `Vector2 RandomPointInRect(this Rect rect)`
+- `Quaternion RandomRotation2D()`
+
+## Enums
+
+- `T RandomEnumValue<T>() where T : Enum`
+  - Returns a random enum value.
+  - Asserts that the enum is not empty.
+
+## Strings
+
+- `char GetRandomChar(this string str)`
+  - Picks a random character from a non-empty string.
+
+- `string GetRandomSubstring(this string str)`
+  - Returns a substring of random length and position.
+
+- `string GetRandomSubstringOfLength(this string str, int length)`
+  - Returns a substring of specified length at random position.
+  - Validates length bounds.
+
+
 ## Transform
 
 ```csharp
@@ -417,6 +531,82 @@ void LogError(params object[] objs)
 ```
 
 Logs as an error multiple objects in the Console (leaving space between them)
+
+# Easing
+
+```cs
+public static class HexEasing
+```
+
+from [github](https://gist.github.com/ManeFunction/9f2d437fca6ccf31e4a48fec0584e21a) *Copyright (c)2001 Robert Penner*
+
+## Functions:
+- EaseInQuad,
+- EaseOutQuad,
+- EaseInOutQuad,
+- EaseInCubic,
+- EaseOutCubic,
+- EaseInOutCubic,
+- EaseInQuart,
+- EaseOutQuart,
+- EaseInOutQuart,
+- EaseInQuint,
+- EaseOutQuint,
+- EaseInOutQuint,
+- EaseInSine,
+- EaseOutSine,
+- EaseInOutSine,
+- EaseInExpo,
+- EaseOutExpo,
+- EaseInOutExpo,
+- EaseInCirc,
+- EaseOutCirc,
+- EaseInOutCirc,
+- Linear,
+- Spring,
+- EaseInBounce,
+- EaseOutBounce,
+- EaseInOutBounce,
+- EaseInBack,
+- EaseOutBack,
+- EaseInOutBack,
+- EaseInElastic,
+- EaseOutElastic,
+- EaseInOutElastic,
+
+# Strings
+
+```cs
+public static class HexString
+```
+
+Use these methods for fast variable substitution without format specifiers. All `{var}` placeholders are replaced with the corresponding string value.
+
+```csharp
+string template = "Hello, {name}!";
+string result = template.InplaceVariables("name", "Alice");
+// output: Hello, Alice!
+```
+
+```csharp
+string template = "Hello, {value:F2}!";
+string result = template.FormatVariables("value", 123.917f);
+// output: Hello, 123.92!
+```
+
+which is equivalent to:
+
+```csharp
+string template = "Hello, {value:F2}!";
+string result = template.FormatVariables
+(
+    new Dictionary<string, object>() 
+    {
+        { "value", 123.917f }
+    }
+);
+// output: Hello, 123.92!
+```
 
 # Tests
 

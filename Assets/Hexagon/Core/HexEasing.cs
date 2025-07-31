@@ -59,7 +59,7 @@
 using System;
 using UnityEngine;
 
-public static class EasingFunction
+public static class HexEasing
 {
     public enum Ease
     {
