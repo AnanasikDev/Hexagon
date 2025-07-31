@@ -19,8 +19,8 @@ public class Example : MonoBehaviour
             return result;
         },
         onGet: (GameObject item) => item.SetActive(true),
-        isActive: (GameObject item) => item.activeSelf,
-        onRelease: (GameObject item) => item.SetActive(false)
+        onRelease: (GameObject item) => item.SetActive(false),
+        isActive: (GameObject item) => item.activeSelf
     );
 
     private void Start()
@@ -38,18 +38,17 @@ public class Example : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            bool found = pool.ViewInactive(out GameObject go);
+            bool found = pool.ViewExistingActive(out GameObject go);
             if (found)
             {
                 pool.Get(go);
             }
-
             //pool.Get();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            bool found = pool.ViewActive(out GameObject go);
+            bool found = pool.ViewExistingActive(out GameObject go);
             if (found)
             {
                 pool.Release(go);

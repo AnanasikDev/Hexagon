@@ -313,106 +313,87 @@ Checks if two lists contain the same objects with the same number of occurrences
 
 ## Pool
 
-```csharp
-public class Pool<T>
+### Pool\<T> where T : class
+
+A generic, one-list object manager. This class maintains a single collection of objects and uses a delegate to determine whether each object is currently "active" or "inactive".
+
+It is designed for scenarios where objects have a distinct active/inactive state that **is managed externally**, and the primary goal is to reuse inactive objects rather than creating new ones.
+
+### Core Concepts
+
+The pool's behavior is defined by four primary delegates provided during construction:
+
+1. **factory**: Creates a new object instance when no inactive objects are available. It is also responsible for managing the initial state.
+
+2. **isActive**: Determines if the given object is active or inactive. This is the central mechanism for state tracking.
+
+3. **onGet**: Transitions the gotten object from inactive to active. Make sure that `isActive` will treat the newly gotten object as active.
+
+4. **onRelease**: Transitions the gotten object from active to inactive. Make sure that `isActive` will treat the released object as inactive.
+
+---
+
+Note: `isActive` **MUST** be synchronized with `onGet` and `onRelease`. The state is **NOT** tracked internally.
+
+### Initialization
+
+Create a pool instance using the static `Create` method, providing the necessary delegates.
+
+```cs
+public static Pool<T> Create(
+    Func<T> factory,
+    Action<T> onGet, 
+    Action<T> onRelease,
+    Func<T, bool> isActive,
+    int listCapacity = 20
+)
 ```
 
-**Pool of objects of the same type.**  
-Objects can be enabled and disabled dynamically without unnecessary instantiation and destruction, hence avoiding overhead and extra memory allocation. Requires `createFunc` and `isActiveFunc` to be assigned before usage. Supports any object types through generics and delegate-powered checks.
-
-When an object becomes inactive on the client (such as when an entity dies, is destroyed, goes off-screen, or is otherwise used), it should be disabled so the Pool can recognize it as inactive. Then, when needed, it can be retrieved, reinitialized, adapted to a new use case, and enabled. Disabling and enabling an entity is game-dependent and must be managed on the game side.
-
-<details>
-<summary>Fields and Properties</summary>
-
-```csharp
-bool isEmpty
+Example:
+```cs
+Pool<GameObject> pool = Pool<GameObject>.Create(
+    factory: () =>
+    {
+        GameObject result = new GameObject("My gameobject");
+        result.SetActive(false);
+        return result;
+    },
+    onGet:      (GameObject item) => item.SetActive(true),
+    onRelease:  (GameObject item) => item.SetActive(false),
+    isActive:   (GameObject item) => item.activeSelf
+);
 ```
 
-```csharp
-Func<T> createFunc
-```
-Function called upon instantiation of a new object. Only used in the `TakeInactiveOrCreate` method.
+### Recommended API
+The primary and recommended way to retrieve an object is with the `Get()` method.
 
-```csharp
-Func<T, bool> isActiveFunc
-```
-Function that defines whether an object is considered active.
+`Get()` Searches for the first available inactive object. If one is found, it is returned. If not, a new object is created using the `factory`, added to the pool, and then returned. `onGet` action is called automatically and the returned object is ready to use.
 
-</details>
+`Release(T item)` Releases the specified object and calls OnRelease action on it.
 
-<details>
-<summary>Methods</summary>
+`ReleaseAll()` Releases all inactive objects.
 
-```csharp
-pubc Pool(Func<T> createFunc, Func<T, bool> isActiveFunc)
-```
-Parameters:
-- `createFunc`: Function that instantiates a new object, used in `TakeInactiveOrCreate`.
-- `isActiveFunc`: Function that determines if an object is active.
+`Populate(int delta)` Creates `delta` **new** objects and adds them to the pool. Their state is set by `factory` delegate.
 
-```csharp
-T TakeInactive()
-```
-Returns the first inactive object in the pool, or null if there are no inactive objects or the pool is empty.
+### Extra API
 
-```csharp
-T TakeActive()
-```
-Returns the first active object in the pool, or null if there are no active objects or the pool is empty.
+Not recommended for general use. Must be used with caution.
 
-```csharp
-T TakeInactive(Func<T, bool> condition)
-```
-Returns the first inactive object that meets the specified condition, or null if no suitable objects are available or the pool is empty.  
-Parameters:
-- `condition`: An additional condition that determines whether an inactive object is suitable.
+`ViewExistingInactive(out T result)` Finds the first inactive object without changing its state. To finalize getting, `Get(item)` must be called. To discard getting no actions required.
 
-```csharp
-T TakeActive(Func<T, bool> condition)
-```
-Returns the first active object that meets the specified condition, or null if no suitable objects are available or the pool is empty.  
-Parameters:
-- `condition`: An additional condition that determines whether an active object is suitable.
+`ViewExistingActive(out T result)` Finds the first active object without changing its state. To finalize releasing, `Release(item)` must be called. To discard releasing no actions required.
 
-```csharp
-bool TryTakeInactive(out T obj, Func<T, bool> condition = null)
-```
-Assigns the first inactive object that meets the specified condition to `obj`, or null if no suitable object is available. Returns true if an object was assigned, otherwise false.  
-Parameters:
-- `condition`: An additional condition that determines whether an inactive object is suitable (optional).
+`Get(T item)` marks the specified object as gotten.
 
-```csharp
-bool TryTakeActive(out T obj, Func<T, bool> condition = null)
-```
-Assigns the first active object that meets the specified condition to `obj`, or null if no suitable object is available. Returns true if an object was assigned, otherwise false.  
-Parameters:
-- `condition`: An additional condition that determines whether an active object is suitable (optional).
+### Important Notes
 
-```csharp
-T TakeInactiveOrCreate()
-```
-Returns an inactive object from the pool or creates and records a new object using 'createFunc' if no inactive object is available.
+#### External State Management
 
-```csharp
-T TakeInactiveOrCreate(Func<T, bool> condition)
-```
-Returns an inactive object that meets the specified condition, or creates and records a new object using 'createFunc' if no suitable inactive object is available.  
-Parameters:
-- `condition`: An additional condition that determines whether an inactive object is suitable.
+This pool does not internally manage the state of objects. It relies entirely on the `isActive` delegate to report the state. The user is responsible for ensuring that the `onGet` and `onRelease` actions correctly modify the object's state so that `isActive` returns the expected value.
 
-```csharp
-T RecordNew(T newObj)
-```
-Records a new object to the pool without checking whether it is needed.  
-Returns the added object.
+#### Linear Search Performance
 
-```csharp
-bool Unrecord(T obj)
-```
-Removes the given object. Returns true if the given object was successfully removed.
-
-</details>
+All `Get` and `View` operations perform a linear search through the collection. Performance will degrade as the total number of objects in the pool increases. This implementation is best suited for small collections.
 
 ## Debug
 
