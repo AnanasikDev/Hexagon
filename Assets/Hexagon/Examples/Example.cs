@@ -11,11 +11,17 @@ public class Example : MonoBehaviour
     private Color outcolor;
     [Range(0, 2)][SerializeField] float brightness;
 
-    Pool<GameObject> pool = new Pool<GameObject>(
-        factoryFunc: () => new GameObject("Gameobject!!!"),
-        isAvailable: (GameObject item) => item.activeSelf,
-        onGet:       (GameObject item) => item.SetActive(true),
-        onRelease:   (GameObject item) => item.SetActive(false)
+    //ObjectPool<GameObject> pool = new ObjectPool<GameObject>(
+    //    createFunc: () => new GameObject("new GO!"),
+    //    actionOnGet: (GameObject go) => go.SetActive(true),
+    //    actionOnRelease: (GameObject go) => go.SetActive(false)
+    //); 
+
+    Pool<GameObject> pool = Pool<GameObject>.Create(
+        factory: () => new GameObject("Gameobject!!!"),
+        onGet: (GameObject item) => item.SetActive(true),
+        isActive: (GameObject item) => item.activeSelf,
+        onRelease: (GameObject item) => item.SetActive(false)
     );
 
     private void Start()
@@ -38,15 +44,28 @@ public class Example : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            pool.TakeInactiveOrCreate();
+            pool.Get();
+            //pool.TakeInactiveOrCreate();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            if (pool.TryPeekActive(out GameObject go))
+            using (var lease = pool.LeaseActive())
             {
-                pool.Release(go);
+                if (lease.HasValue && lease.GetReadOnlyItem().name != string.Empty)
+                {
+                    var obj = lease.ConfirmAndRelease();
+                }
             }
+            //if (pool.TryPeekActive(out GameObject go))
+            //{
+            //    pool.Release(go);
+            //}
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            pool.ReleaseAll();
         }
     }
 }
