@@ -10,6 +10,7 @@ Unity extensions library
     * [Time](#Time)
     * [Vector](#Vector)
     * [Random](#Random)
+    * [Color](#Color)
     * [Transform](#Transform)
     * [Collections](#Collections)
     * [Pool](#Pool)
@@ -19,9 +20,9 @@ Unity extensions library
 
 ## Notes
 
-```HexCoroutineRunner``` should be attached to **any** gameobject on each scene where its functionality is needed (used to use Unity built-in coroutines from non-MonoBehaviour classes). As it is using singleton there should be no more than one instance of it on a scene (there is no reason to have more anyway).
+`HexCoroutineRunner` should be attached to **any** gameobject on each scene where its functionality is needed (used to use Unity built-in coroutines from non-MonoBehaviour classes). As it is using singleton there should be no more than one instance of it on a scene (there is no reason to have more anyway).
 
-All other classes (except for ```Pool``` and ```HexCoroutineRunner```) and functions are ```static``` and are declared in the global namespace. 
+All other classes (except for `Pool` and `HexCoroutineRunner`) and functions are `static` and are declared in the global namespace. 
 
 ## Features
 
@@ -30,7 +31,7 @@ All other classes (except for ```Pool``` and ```HexCoroutineRunner```) and funct
 ```csharp 
 float SnapNumberToStep(float number, float step)
 ```
-Snaps the given number to the nearest float number within the given step. Rounding for float-point numbers with adjustable accuracy given as the ```step``` argument.
+Snaps the given number to the nearest float number within the given step. Rounding for float-point numbers with adjustable accuracy given as the `step` argument.
 
 ```csharp
 Vector2 GetCirclePointDegrees(float radius, float angle)
@@ -74,7 +75,7 @@ Returns value if it's less than max threshold, or max otherwise
 
 ### Time
 
-Note: All coroutine-related functions work using ```HexCoroutineRunner``` script that has to be attached to any gameobject on scene, unless non of these functions are called.
+Note: All coroutine-related functions work using `HexCoroutineRunner` script that has to be attached to any gameobject on scene, unless non of these functions are called.
 
 ```csharp
 void InvokeDelayed(float delaySeconds, System.Action action)
@@ -92,28 +93,24 @@ Invokes the input function once the condition() becomes true
 <summary>HexVectorOps</summary>
 
 ### Overview
+
 These functions perform element-wise arithmetic operations on vectors - multiplication, division, and taking absolute values. They work on `Vector3`, `Vector3Int`, `Vector2`, and `Vector2Int` types.
 
-### Multiply (Element-wise)
+### Scale (Element-wise)
+
 ```csharp
-Vector3 Multiply(this Vector3 a, Vector3 b)
-Vector3Int Multiply(this Vector3Int a, Vector3Int b)
-Vector2 Multiply(this Vector2 a, Vector2 b)
-Vector2Int Multiply(this Vector2Int a, Vector2Int b)
+Vector3 Scale(this Vector3 a, Vector3 b)
+Vector3Int Scale(this Vector3Int a, Vector3Int b)
+Vector2 Scale(this Vector2 a, Vector2 b)
+Vector2Int Scale(this Vector2Int a, Vector2Int b)
 ```
+
 Multiplies each component of the first vector by the corresponding component of the second vector, returning a new vector with the result.
 
-### Divide (Element-wise)
-```csharp
-Vector3 Divide(this Vector3 a, Vector3 b)
-Vector3Int Divide(this Vector3Int a, Vector3Int b)
-Vector2 Divide(this Vector2 a, Vector2 b)
-Vector2Int Divide(this Vector2Int a, Vector2Int b)
-```
-Divides each component of the first vector by the corresponding component of the second vector, returning a new vector with the result.  
 > **Remarks:** Not safe from division by zero
 
 ### Abs (Per component)
+
 ```csharp
 Vector3 Abs(this Vector3 vector)
 Vector3Int Abs(this Vector3Int vector)
@@ -122,15 +119,33 @@ Vector2Int Abs(this Vector2Int vector)
 ```
 Returns a new vector where each component is the absolute value of the corresponding component in the original vector.
 
+### Exponents
+
+```csharp
+Vector3 Pow(this Vector3 vector, float exponent)
+Vector2 Pow(this Vector2 vector, float exponent)
+Vector3 Sqrt(this Vector3 vector)
+Vector2 Sqrt(this Vector2 vector)
+```
+
+### Average
+
+```csharp
+Vector2 Average(this IEnumerable<Vector2> vectors)
+Vector3 Average(this IEnumerable<Vector3> vectors)
+```
+
 </details>
 
 <details>
 <summary>HexVectorAxisOps</summary>
 
 ### Overview
+
 These functions allow inline manipulation of individual components of vectors. They provide a way to set values for individual axes (X, Y, Z).
 
 ### Set Axis Value
+
 ```csharp
 void SetX(this ref Vector3 vector, float x)
 void SetY(this ref Vector3 vector, float y)
@@ -146,6 +161,7 @@ void SetY(this ref Vector2Int vector, int y)
 Directly modify a specific component (X, Y, or Z) of the given vector.
 
 ### With Axis Value
+
 ```csharp
 Vector3 WithX(this Vector3 vector, float x)
 Vector3 WithY(this Vector3 vector, float y)
@@ -161,6 +177,7 @@ Vector2Int WithY(this Vector2Int vector, int y)
 Create a new vector where the specified component is replaced with the given value, keeping the original vector object unchanged.
 
 ### Null Z
+
 ```csharp
 Vector3 NullZ(this Vector3 vector)
 ```
@@ -169,24 +186,11 @@ A shortcut for ```WithZ(0)```
 </details>
 
 <details>
-<summary>HexVectorRandomOps</summary>
-
-### Random Vectors
-```csharp
-Vector3 Random3D()
-Vector2 Random2D()
-```
-Generates a random vector where each component is a random float value between -1 and 1.
-
-</details>
-
-<details>
 <summary>HexVectorUtils</summary>
 
 ### Conversion
+
 ```csharp
-Color VectorToColor(this Vector3 vector, float a = 1.0f)
-Vector3 ColorToVector(this Color color)
 Vector2 ConvertTo2D(this Vector3 vector3)
 Vector2 ConvertTo2D(this Vector2Int vector2Int)
 Vector3 ConvertTo3D(this Vector2 vector2)
@@ -206,6 +210,7 @@ Vector3Int FloorToInt(this Vector3 vector3)
 Convert VectorN to VectorNInt
 
 ### Distance Calculation
+
 ```csharp
 float SqrDistance(this Vector2 a, Vector2 b)
 float SqrDistance(this Vector2Int a, Vector2Int b)
@@ -224,18 +229,33 @@ float DistanceXY(this Vector3 a, Vector3 b)
 ```
 Calculate the real distance between two vectors. `DistanceXY` calculates the real distance on XY plane.
 
-### Comparison
 ```csharp
 bool NearlyEquals(this Vector3 a, Vector3 b, double inaccuracy = 1.0E-7)
 bool NearlyEquals(this Vector2 a, Vector2 b, double inaccuracy = 1.0E-7)
 ```
 Checks if two vectors are nearly equal, allowing for a small tolerance (inaccuracy) to account for floating-point precision errors.
 
-### Rotation
+</details>
+
+<details>
+<summary>HexVectorGeom</summary>
+
 ```csharp
 Vector2 Rotate(this Vector2 vector, float degrees)
 ```
-Rotates the given ```Vector2``` by the given degree and returns the result without changing original vector.
+Rotates the given ```Vector2``` by the given degree and returns the result.
+
+```csharp
+Vector3 Rotate(this Vector3 vector, Vector3 planeNormal, float degrees)
+```
+
+```csharp
+Vector2 RotateAround2D(this Vector2 point, Vector2 pivotPoint, float degrees)
+```
+
+```csharp
+Vector3 RotateAround3D(this Vector3 point, Vector3 pivotPoint, Vector3 axis, float degrees)
+```
 
 </details>
 
@@ -251,6 +271,15 @@ Clamps the given ```Vector2``` to 0.0 - 1.0 range
 Vector3 Clamp01(this Vector3 vector)
 ```
 Clamps the given ```Vector3``` to 0.0 - 1.0 range
+
+```csharp
+float Sum(this Vector2 v)
+float Sum(this Vector3 v)
+float Sum(this Vector2Int v)
+float Sum(this Vector3Int v)
+float Sum(this Vector4 v)
+```
+Returns sum of all components of the vector
 
 </details>
 
@@ -366,6 +395,65 @@ Clamps the given ```Vector3``` to 0.0 - 1.0 range
   - Validates length bounds.
 
 
+## Color
+
+### Conversion
+
+- `Color VectorToColor(this Vector3 vector, float a = 1.0f)`
+  - Converts a `Vector3` to a `Color`, using the vector as RGB and the given alpha.
+
+- `Vector3 ColorToVector(this Color color)`
+  - Converts a `Color` to a `Vector3`, discarding the alpha channel.
+
+### Channel Modification
+
+- `Color WithRed(this Color color, float r)`
+- `Color WithGreen(this Color color, float g)`
+- `Color WithBlue(this Color color, float b)`
+- `Color WithAlpha(this Color color, float a)`
+  - Replace a single channel value while preserving others.
+
+### Brightness and Scaling
+
+- `Color WithBrightness(this Color color, float brightness)`
+  - Normalizes RGB and scales it to the desired brightness.
+
+- `float GetRGBMagnitude(this Color color)`
+  - Returns the Euclidean magnitude of RGB as if it were a vector.
+
+- `float GetRGBAMagnitude(this Color color)`
+  - Returns the Euclidean magnitude of the RGBA components.
+
+- `Color ScaleRGB(this Color color, float scalar)`
+  - Scales RGB components only.
+
+- `Color ScaleRGBA(this Color color, float scalar)`
+  - Scales all RGBA components.
+
+- `Color NormalizeRGB(this Color color)`
+  - Normalizes the RGB components to unit length, ignoring brightness.
+  - Alpha is unaffected.
+
+- `Color NormalizeRGBA(this Color color)`
+  - Normalizes the RGBA vector to unit length.
+  - Brightness is fixed, but saturation and alpha proportion may change.
+
+### HTML Color Tagging
+
+- `string WrapInHTMLTagRGB(this Color color, string str)`
+  - Wraps the string in a `<color=#RRGGBB>` Unity tag using RGB only.
+
+- `string WrapInHTMLTagRGBA(this Color color, string str)`
+  - Wraps the string in a `<color=#RRGGBBAA>` Unity tag including alpha.
+
+## Example Usage
+
+```csharp
+Color c = new Vector3(0.2f, 0.5f, 0.8f).VectorToColor();
+Color brighter = c.WithBrightness(1.5f);
+string html = brighter.WrapInHTMLTagRGB("Colored Text");
+```
+
 ## Transform
 
 ```csharp
@@ -377,6 +465,16 @@ Iterates over all transforms attached to this transform as direct children. For 
 List<Transform> GetChildrenRecursive(this Transform transform)
 ```
 Recursively iterates over all transforms nested to this transform
+
+```csharp
+void LookAtXY(this Transform transform, Vector3 position)
+```
+
+Looks at the `position` with `z` of `transform`.
+
+```csharp
+void Reset(this Transform transform)
+```
 
 ## Audio
 
