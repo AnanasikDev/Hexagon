@@ -28,7 +28,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './Docs/html' # This should match your Doxyfile's OUTPUT_DIRECTORY
+          path: '.' # This should match your Doxyfile's OUTPUT_DIRECTORY
 
       - name: Deploy to GitHub Pages
         id: deployment
