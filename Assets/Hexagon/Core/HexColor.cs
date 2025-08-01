@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Provides extension methods for Unity Color and Vector3 types to simplify common color transformations and formatting.
 /// </summary>
-public static class ModHexColor
+public static class HexColor
 {
     /// <summary>
     /// Converts a Vector3 to a Color, using optional alpha.

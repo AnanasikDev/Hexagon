@@ -48,7 +48,7 @@ public class VectorTests
     public void Vector_Rotate3D()
     {
         Vector3 v1 = new Vector3(0, 0, 1);
-        Assert.That(v1.Rotate(Vector3.up, 45).NearlyEquals(new Vector3(Hexath.sqrt2half, 0, Hexath.sqrt2half)));
+        Assert.That(v1.Rotate(Vector3.up, 45).NearlyEquals(new Vector3(Hexath.HALF_SQRT_2, 0, Hexath.HALF_SQRT_2)));
         Assert.That(v1.Rotate(Vector3.up, 90).NearlyEquals(new Vector3(1, 0, 0)));
         Assert.That(v1.Rotate(Vector3.up, 0).NearlyEquals(v1));
         Assert.That(v1.Rotate(Vector3.up, 360).NearlyEquals(v1));
