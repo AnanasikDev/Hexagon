@@ -1,6 +1,6 @@
-## Pool
+@page hexagon_pool_notes Pool notes
 
-@page hexagon_pool_notes Guide
+## Pool
 
 ### Pool\<T> where T : class
 
