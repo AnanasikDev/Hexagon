@@ -1,0 +1,35 @@
+name: Doxygen Documentation
+
+on:
+  push:
+    branches:
+      - main # Or whatever your main branch is called
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Doxygen documentation
+        uses: mattnotmitt/doxygen-action@v1.9.5 # Use a specific version for stability
+        with:
+          doxyfile-path: './Docs/Doxyfile' # Path to your Doxyfile
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './Docs/html' # This should match your Doxyfile's OUTPUT_DIRECTORY
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -122,6 +122,7 @@ public static class Hexath
     }
 
     /// <summary>
+    /// Deprecated. Use Mathf.Max instead.
     /// Returns a value in range of [min, +INF). If input value is smaller or equal to 'min' the output will be 'min', otherwise 'value'.
     /// </summary>
     [Obsolete("Use Mathf.Max instead")]
@@ -132,6 +133,7 @@ public static class Hexath
     }
 
     /// <summary>
+    /// Deprecated. Use Mathf.Max instead.
     /// Returns a value in range of [min, +INF). If input value is smaller or equal to 'min' the output will be 'min', otherwise 'value'.
     /// </summary>
     [Obsolete("Use Mathf.Max instead")]
@@ -142,6 +144,7 @@ public static class Hexath
     }
 
     /// <summary>
+    /// Deprecated. Use Mathf.Min instead.
     /// Returns a value in range of (-INF; max]. If input value is larger or equal to 'max' the output will be 'max', otherwise 'value'.
     /// </summary>
     [Obsolete("Use Mathf.Min instead")]
@@ -152,6 +155,7 @@ public static class Hexath
     }
 
     /// <summary>
+    /// Deprecated. Use Mathf.Min instead.
     /// Returns a value in range of (-INF; max]. If input value is larger or equal to 'max' the output will be 'max', otherwise 'value'.
     /// </summary>
     [Obsolete("Use Mathf.Min instead")]

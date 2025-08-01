@@ -28,6 +28,10 @@ All other classes (except for `Pool` and `HexCoroutineRunner`) and functions are
 
 ### Math
 
+```csharp
+public static class Hexath
+```
+
 ```csharp 
 float SnapNumberToStep(float number, float step)
 ```
@@ -43,15 +47,7 @@ Vector2 GetCirclePointRadians(float radius, float angle)
 ```
 Returns a point on the circumference with the given "radius" at the given "angle" in radians, starting at the point (radius, 0) as in math.
 
-```csharp
-Vector2 GetRandomRingPoint(float radius)
-```
-Returns random point on the circumference of the given "radius".
 
-```csharp
-Vector2 GetRandomCirclePoint(float radius)
-```
-Returns random point on or within the circumference of the given "radius".
 
 ```csharp
 int Ternarsign(float value)
