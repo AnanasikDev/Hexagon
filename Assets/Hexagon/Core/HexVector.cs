@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -148,7 +147,7 @@ public static class HexVectorOps
     /// <summary>
     /// Returns an average point of the given list of vectors.
     /// </summary>
-    public static Vector2 Average([DisallowNull] this IEnumerable<Vector2> vectors)
+    public static Vector2 Average(this IEnumerable<Vector2> vectors)
     {
         Assert.IsNotNull(vectors);
         Vector2 result = Vector2.zero;
@@ -165,7 +164,7 @@ public static class HexVectorOps
     /// <summary>
     /// Returns an average point of the given list of vectors.
     /// </summary>
-    public static Vector3 Average([DisallowNull] this IEnumerable<Vector3> vectors)
+    public static Vector3 Average(this IEnumerable<Vector3> vectors)
     {
         Assert.IsNotNull(vectors);
         Vector3 result = Vector3.zero;
@@ -193,87 +192,122 @@ public static class HexVectorAxisOps
     /// Returns a copy of the given Vector3 with the Z component set to 0.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 NullZ(this Vector3 vector) => new Vector3(vector.x, vector.y, 0);
+    public static Vector3 NullZ(this Vector3 vector) => 
+        new Vector3(vector.x, vector.y, 0);
 
     /// <summary>
     /// Creates a new Vector3 with the specified X component, retaining the original Y and Z components.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 WithX(this Vector3 vector, float x) => new Vector3(x, vector.y, vector.z);
+    public static Vector3 WithX(this Vector3 vector, float x) => 
+        new Vector3(x, vector.y, vector.z);
 
     /// <summary>
     /// Creates a new Vector3 with the specified Y component, retaining the original X and Z components.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 WithY(this Vector3 vector, float y) => new Vector3(vector.x, y, vector.z);
+    public static Vector3 WithY(this Vector3 vector, float y) => 
+        new Vector3(vector.x, y, vector.z);
 
     /// <summary>
     /// Creates a new Vector3 with the specified Z component, retaining the original X and Y components.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 WithZ(this Vector3 vector, float z) => new Vector3(vector.x, vector.y, z);
+    public static Vector3 WithZ(this Vector3 vector, float z) => 
+        new Vector3(vector.x, vector.y, z);
 
     /// <summary>
     /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
     /// </summary>
-    public static Vector3 With(this Vector3 vector, float? x = null, float? y = null, float? z = null) => new Vector3(x ?? vector.x, y ?? vector.y, z ?? vector.z);
+    public static Vector3 With(this Vector3 vector, float? x = null, float? y = null, float? z = null) => 
+        new Vector3(x ?? vector.x, y ?? vector.y, z ?? vector.z);
 
     /// <summary>
     /// Creates a new Vector3Int with the specified X component, retaining the original Y and Z components.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3Int WithX(this Vector3Int vector, int x) => new Vector3Int(x, vector.y, vector.z);
+    public static Vector3Int WithX(this Vector3Int vector, int x) => 
+        new Vector3Int(x, vector.y, vector.z);
 
     /// <summary>
     /// Creates a new Vector3Int with the specified Y component, retaining the original X and Z components.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3Int WithY(this Vector3Int vector, int y) => new Vector3Int(vector.x, y, vector.z);
+    public static Vector3Int WithY(this Vector3Int vector, int y) => 
+        new Vector3Int(vector.x, y, vector.z);
 
     /// <summary>
     /// Creates a new Vector3Int with the specified Z component, retaining the original X and Y components.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3Int WithZ(this Vector3Int vector, int z) => new Vector3Int(vector.x, vector.y, z);
+    public static Vector3Int WithZ(this Vector3Int vector, int z) => 
+        new Vector3Int(vector.x, vector.y, z);
 
     /// <summary>
     /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
     /// </summary>
-    public static Vector3Int With(this Vector3Int vector, int? x = null, int? y = null, int? z = null) => new Vector3Int(x ?? vector.x, y ?? vector.y, z ?? vector.z);
+    public static Vector3Int With(this Vector3Int vector, int? x = null, int? y = null, int? z = null) => 
+        new Vector3Int(x ?? vector.x, y ?? vector.y, z ?? vector.z);
 
     /// <summary>
     /// Creates a new Vector2 with the specified X component, retaining the original Y component.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 WithX(this Vector2 vector, float x) => new Vector2(x, vector.y);
+    public static Vector2 WithX(this Vector2 vector, float x) => 
+        new Vector2(x, vector.y);
 
     /// <summary>
     /// Creates a new Vector2 with the specified Y component, retaining the original X component.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 WithY(this Vector2 vector, float y) => new Vector2(vector.x, y);
+    public static Vector2 WithY(this Vector2 vector, float y) => 
+        new Vector2(vector.x, y);
+
+    /// <summary>
+    /// Creates a new Vector3 with the specified Z component, retaining the original X and Y components.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 WithZ3D(this Vector2 vector, float z) => 
+        new Vector3(vector.x, vector.y, z);
 
     /// <summary>
     /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
     /// </summary>
-    public static Vector2 With(this Vector2 vector, float? x = null, float? y = null) => new Vector2(x ?? vector.x, y ?? vector.y);
+    public static Vector2 With(this Vector2 vector, float? x = null, float? y = null) => 
+        new Vector2(x ?? vector.x, y ?? vector.y);
+
+    /// <summary>
+    /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
+    /// </summary>
+    public static Vector3 With3D(this Vector2 vector, float? x = null, float? y = null, float z = 0) => 
+        new Vector3(x ?? vector.x, y ?? vector.y, z);
 
     /// <summary>
     /// Creates a new Vector2Int with the specified X component, retaining the original Y component.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2Int WithX(this Vector2Int vector, int x) => new Vector2Int(x, vector.y);
+    public static Vector2Int WithX(this Vector2Int vector, int x) => 
+        new Vector2Int(x, vector.y);
 
     /// <summary>
     /// Creates a new Vector2Int with the specified Y component, retaining the original X component.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2Int WithY(this Vector2Int vector, int y) => new Vector2Int(vector.x, y);
+    public static Vector2Int WithY(this Vector2Int vector, int y) => 
+        new Vector2Int(vector.x, y);
+
+    /// <summary>
+    /// Creates a new Vector3Int with the specified Y component, retaining the original X component.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3Int WithZ3D(this Vector2Int vector, int z) => 
+        new Vector3Int(vector.x, vector.y, z);
 
     /// <summary>
     /// Creates a new Vector3 with the specified components, leaving the unspecified ones as they were.
     /// </summary>
-    public static Vector2Int With(this Vector2Int vector, int? x = null, int? y = null) => new Vector2Int(x ?? vector.x, y ?? vector.y);
+    public static Vector2Int With(this Vector2Int vector, int? x = null, int? y = null) => 
+        new Vector2Int(x ?? vector.x, y ?? vector.y);
 
     #endregion // with
 

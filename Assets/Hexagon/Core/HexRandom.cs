@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -13,7 +12,7 @@ public static class HexRandom
     /// Returns random element from the given collection with the scope of [first, last].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T RandomElement<T>([DisallowNull] this IList<T> collection)
+    public static T RandomElement<T>(this IList<T> collection)
     {
         Assert.IsNotNull(collection);
         Assert.AreNotEqual(0, collection.Count, "Cannot get random element from an empty collection");
@@ -23,7 +22,7 @@ public static class HexRandom
     /// <summary>
     /// Returns random element from the given collection with the scope of [first, last].
     /// </summary>
-    public static T RandomElementWithIndex<T>([DisallowNull] this IList<T> collection, out int index)
+    public static T RandomElementWithIndex<T>(this IList<T> collection, out int index)
     {
         Assert.IsNotNull(collection);
         Assert.AreNotEqual(0, collection.Count, "Cannot get random element from an empty collection");
@@ -55,7 +54,7 @@ public static class HexRandom
     /// <param name="num">The number of elements to take.</param>
     /// <param name="unique">If true, all returned elements will be unique. If false, elements can be chosen more than once.</param>
     /// <returns>An IEnumerable containing the chosen elements.</returns>
-    public static IEnumerable<T> GetRandomElements<T>([DisallowNull] this IList<T> collection, int num, bool unique = true)
+    public static IEnumerable<T> GetRandomElements<T>(this IList<T> collection, int num, bool unique = true)
     {
         Assert.IsNotNull(collection);
         Assert.IsTrue(num >= 0, "Number of elements to take cannot be negative.");
@@ -81,7 +80,7 @@ public static class HexRandom
     /// <summary>
     /// Shuffles the specified list in place using the Fisher-Yates algorithm.
     /// </summary>
-    public static void Shuffle<T>([DisallowNull] this IList<T> list)
+    public static void Shuffle<T>(this IList<T> list)
     {
         Assert.IsNotNull(list);
         int n = list.Count;
@@ -93,7 +92,7 @@ public static class HexRandom
         }
     }
 
-    public static List<T> GetShuffled<T>([DisallowNull] this IList<T> list)
+    public static List<T> GetShuffled<T>(this IList<T> list)
     {
         List<T> result = new List<T>(list);
         result.Shuffle();
@@ -287,7 +286,7 @@ public static class HexRandom
     /// Gets a random character from the given string.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static char GetRandomChar([DisallowNull] this string str)
+    public static char GetRandomChar(this string str)
     {
         Assert.IsFalse(string.IsNullOrEmpty(str));
         return str[Random.Range(0, str.Length)];
@@ -296,7 +295,7 @@ public static class HexRandom
     /// <summary>
     /// Gets a random substring of a random length from the given string.
     /// </summary>
-    public static string GetRandomSubstring([DisallowNull] this string str)
+    public static string GetRandomSubstring(this string str)
     {
         Assert.IsFalse(string.IsNullOrEmpty(str));
         int startIndex = Random.Range(0, str.Length);
@@ -307,7 +306,7 @@ public static class HexRandom
     /// <summary>
     /// Gets a random substring of a specified length from the given string.
     /// </summary>
-    public static string GetRandomSubstringOfLength([DisallowNull] this string str, int length)
+    public static string GetRandomSubstringOfLength(this string str, int length)
     {
         Assert.IsFalse(string.IsNullOrEmpty(str));
         Assert.IsTrue(length > 0 && length <= str.Length);

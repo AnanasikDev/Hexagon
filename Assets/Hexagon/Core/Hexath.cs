@@ -57,7 +57,7 @@ public static class Hexath
     /// <summary>
     /// Least common multiple of an array of numbers. An exception will be thrown if any of the input numbers are less or equal to zero. Input array may contain any number of elements but it cannot be null.
     /// </summary>
-    public static int LeastCommonMultiple( int[] values)
+    public static int LeastCommonMultiple(int[] values)
     {
         int len = values.Length;
         if (len == 0) return 0;

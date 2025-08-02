@@ -38,8 +38,13 @@ public static partial class HexTransform
         return children;
     }
 
-    public static void LookAtXY(this Transform transform, Vector3 position)
+    /// <summary>
+    /// Rotates the transform to face the given position on the XY plane (Z os the given position is ignored and replaced with <c>transform.position.z</c>.
+    /// </summary>
+    /// <param name="transform">Transform to rotate.</param>
+    /// <param name="position">Target position on the XY plane.</param>
+    public static void LookAtXY(this Transform transform, Vector2 position)
     {
-        transform.LookAt(new Vector3(position.x, position.y, transform.position.z));
+        transform.LookAt(position.WithZ3D(transform.position.z));
     }
 }
