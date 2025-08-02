@@ -731,4 +731,26 @@ public static class HexVectorMath
     public static int Sum(this Vector3Int v) => v.x + v.y + v.z;
 
     #endregion // sum
+
+    public static Vector2 SnapToStep(this in Vector2 vec, float step)
+    {
+        return new Vector2(Hexath.SnapNumberToStep(vec.x, step), Hexath.SnapNumberToStep(vec.y, step));
+    }
+
+    public static Vector3 SnapToStep(this in Vector3 vec, float step)
+    {
+        return new Vector3(Hexath.SnapNumberToStep(vec.x, step), Hexath.SnapNumberToStep(vec.y, step), Hexath.SnapNumberToStep(vec.z, step));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 Remainder(this in Vector2 vec, float value)
+    {
+        return new Vector2(vec.x % value, vec.y % value);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 Remainder(this in Vector3 vec, float value)
+    {
+        return new Vector3(vec.x % value, vec.y % value, vec.z % value);
+    }
 }

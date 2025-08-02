@@ -89,4 +89,25 @@ public class HexathTests
         Assert.AreEqual(-1, (-1f).ClampMin(-10.1f));
         Assert.AreEqual(-10.1f, (-20f).ClampMin(-10.1f));
     }
+
+    [Test]
+    public void SnapNumberToStep_Test()
+    {
+        Assert.AreEqual(50, Hexath.SnapNumberToStep(60, 25));
+        Assert.AreEqual(50, Hexath.SnapNumberToStep(50, 25));
+        Assert.AreEqual(50, Hexath.SnapNumberToStep(40, 25));
+        Assert.AreEqual(25, Hexath.SnapNumberToStep(30, 25));
+        Assert.AreEqual(0, Hexath.SnapNumberToStep(10, 25));
+        Assert.AreEqual(0.5f, Hexath.SnapNumberToStep(0.7f, 0.5f));
+        Assert.AreEqual(1.0f, Hexath.SnapNumberToStep(0.8f, 0.5f));
+        Assert.AreEqual(1.5f, Hexath.SnapNumberToStep(1.4f, 0.5f));
+        Assert.AreEqual(0f, Hexath.SnapNumberToStep(0.17f, 0.5f));
+        Assert.AreEqual(26f, Hexath.SnapNumberToStep(25, 2));
+        Assert.AreEqual(24f, Hexath.SnapNumberToStep(24.5f, 2));
+        Assert.AreEqual(-4, Hexath.SnapNumberToStep(-3, 2));
+        Assert.AreEqual(-2, Hexath.SnapNumberToStep(-2.99f, 2));
+        Assert.AreEqual(-4, Hexath.SnapNumberToStep(-4, 2));
+        Assert.AreEqual(-15, Hexath.SnapNumberToStep(-14, 5));
+        Assert.AreEqual(-15, Hexath.SnapNumberToStep(-16, 5));
+    }
 }
