@@ -1,4 +1,4 @@
-public abstract class State<TParent> where TParent : class
+public abstract class State
 {
     public StateMachine _machine;
 
@@ -6,7 +6,7 @@ public abstract class State<TParent> where TParent : class
     private float _startTime = 0;
     public float ActiveTime { get { return UnityEngine.Time.time - _startTime; } }
 
-    public virtual void Init(StateMachine<TParent> machine)
+    public virtual void Init(StateMachine machine)
     {
         _machine = machine;
     }
@@ -23,4 +23,15 @@ public abstract class State<TParent> where TParent : class
     public abstract bool IsPossibleChangeTo();
 
     public virtual void DrawGizmos() { }
+}
+
+public abstract class State<TParent> : State where TParent : class
+{
+    public TParent _parent;
+
+    public override void Init(StateMachine machine)
+    {
+        base.Init(machine);
+        _parent = (machine as StateMachine<TParent>).Parent;
+    }
 }

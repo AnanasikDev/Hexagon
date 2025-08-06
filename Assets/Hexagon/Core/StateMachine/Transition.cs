@@ -3,27 +3,27 @@ using System.Threading.Tasks;
 
 using StateID = System.Int32;
 
-public class Transition<TParent> where TParent : class
+public class Transition
 {
     public StateID from;
     public StateID to;
-    public Func<State<TParent>, bool> Condition;
+    public Func<State, bool> Condition;
     public float delay = 0;
     public bool finished = false;
 
     public event Action onFinishedEvent;
 
-    public static Transition<TParent> Create<TStateEnum>(TStateEnum from, TStateEnum to, Func<State<TParent>, bool> specificCondition = null, float delay = 0) where TStateEnum : Enum
+    public static Transition Create<TStateEnum>(TStateEnum from, TStateEnum to, Func<State, bool> specificCondition = null, float delay = 0) where TStateEnum : Enum
     {
-        return new Transition<TParent>(
-            from: StateMachine<TParent>.Get(from),
-            to: StateMachine<TParent>.Get(to),
+        return new Transition(
+            from: StateMachine.Get(from),
+            to: StateMachine.Get(to),
             specificCondition: specificCondition,
             delay: delay
         );
     }
 
-    public Transition(StateID from, StateID to, Func<State<TParent>, bool> specificCondition = null, float delay = 0)
+    public Transition(StateID from, StateID to, Func<State, bool> specificCondition = null, float delay = 0)
     {
         this.from = from;
         this.to = to;

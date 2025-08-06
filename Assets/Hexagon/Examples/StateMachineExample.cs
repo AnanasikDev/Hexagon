@@ -9,14 +9,14 @@ public class StateMachineExample : MonoBehaviour
         Running
     }
 
-    private StateMachine<StateMachineExample> stateMachine;
+    [SerializeField] private StateMachine<StateMachineExample> stateMachine;
 
     private void Start()
     {
         stateMachine = new StateMachine<StateMachineExample>(this);
         stateMachine.Init(
             enum2state:
-            new Dictionary<MyMachineState, State<StateMachineBehaviour>>()
+            new Dictionary<MyMachineState, State>()
             {
                 { MyMachineState.Idle, new IdleState() },
                 { MyMachineState.Running, new RunningState() }
@@ -27,14 +27,12 @@ public class StateMachineExample : MonoBehaviour
             {
                 StateNode.Create(MyMachineState.Idle, new List<Transition>()
                 {
-                    Transition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.activeTime > 3),
-                },
-                
-                () => this),
+                    Transition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.ActiveTime > 3),
+                }),
 
                 StateNode.Create(MyMachineState.Running, new List<Transition>()
                 {
-                    Transition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.activeTime > 2),
+                    Transition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.ActiveTime > 2),
                 })
             }
         );
@@ -45,7 +43,7 @@ public class StateMachineExample : MonoBehaviour
     }
 }
 
-class IdleState<StateMachineExample> : State<StateMachineBehaviour>
+class IdleState : State
 {
     public override void OnEnter()
     {
@@ -59,8 +57,25 @@ class IdleState<StateMachineExample> : State<StateMachineBehaviour>
     public override void OnUpdate()
     {
         // Idle logic here
-        _machine._parent.
-        myobject.Move(2);
+    }
+    public override bool IsPossibleChangeFrom() => true;
+    public override bool IsPossibleChangeTo() => true;
+}
+
+class RunningState : State
+{
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        Debug.Log("Entered Running State");
+    }
+    public override void OnExit()
+    {
+        Debug.Log("Exited Running State");
+    }
+    public override void OnUpdate()
+    {
+        (_machine as StateMachine<StateMachineExample>).Parent.transform.Translate(Vector3.right * Time.deltaTime);
     }
     public override bool IsPossibleChangeFrom() => true;
     public override bool IsPossibleChangeTo() => true;
