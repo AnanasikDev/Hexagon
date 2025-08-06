@@ -6,6 +6,11 @@ public abstract class State
     private float _startTime = 0;
     public float ActiveTime { get { return UnityEngine.Time.time - _startTime; } }
 
+    public StateMachine<TParent> GetMachine<TParent>() where TParent : class
+    {
+        return _machine as StateMachine<TParent>;
+    }
+
     public virtual void Init(StateMachine machine)
     {
         _machine = machine;

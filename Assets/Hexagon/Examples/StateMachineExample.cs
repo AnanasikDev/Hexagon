@@ -75,7 +75,7 @@ class RunningState : State
     }
     public override void OnUpdate()
     {
-        (_machine as StateMachine<StateMachineExample>).Parent.transform.Translate(Vector3.right * Time.deltaTime);
+        GetMachine<StateMachineExample>().Parent.transform.Translate(Vector3.forward * Time.deltaTime);
     }
     public override bool IsPossibleChangeFrom() => true;
     public override bool IsPossibleChangeTo() => true;
