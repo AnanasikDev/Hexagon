@@ -16,7 +16,7 @@ public class StateMachineExample : MonoBehaviour
         stateMachine = new StateMachine<StateMachineExample>(this);
         stateMachine.Init(
             enum2state:
-            new Dictionary<MyMachineState, State>()
+            new Dictionary<MyMachineState, State<StateMachineBehaviour>>()
             {
                 { MyMachineState.Idle, new IdleState() },
                 { MyMachineState.Running, new RunningState() }
@@ -45,7 +45,7 @@ public class StateMachineExample : MonoBehaviour
     }
 }
 
-class IdleState<StateMachineExample> : State
+class IdleState<StateMachineExample> : State<StateMachineBehaviour>
 {
     public override void OnEnter()
     {
@@ -59,6 +59,7 @@ class IdleState<StateMachineExample> : State
     public override void OnUpdate()
     {
         // Idle logic here
+        _machine._parent.
         myobject.Move(2);
     }
     public override bool IsPossibleChangeFrom() => true;

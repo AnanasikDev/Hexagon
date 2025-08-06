@@ -1,18 +1,19 @@
-public abstract class State
+public abstract class State<TParent> where TParent : class
 {
-    StateMachine<> machine;
+    public StateMachine _machine;
 
-    public int type;
-    private float startTime = 0;
-    public float activeTime { get { return UnityEngine.Time.time - startTime; } }
+    public int _type;
+    private float _startTime = 0;
+    public float ActiveTime { get { return UnityEngine.Time.time - _startTime; } }
 
-    public State()
+    public virtual void Init(StateMachine<TParent> machine)
     {
+        _machine = machine;
     }
 
     public virtual void OnEnter()
     {
-        startTime = UnityEngine.Time.time;
+        _startTime = UnityEngine.Time.time;
     }
     public abstract void OnExit();
     public abstract void OnUpdate();

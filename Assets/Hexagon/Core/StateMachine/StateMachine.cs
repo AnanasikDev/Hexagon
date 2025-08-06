@@ -5,24 +5,28 @@ using UnityEngine;
 
 using StateID = System.Int32;
 
-public class StateMachine<TParent> where TParent : class
+public class StateMachine
 {
-    public TParent parent { get; init; }
+    public TParent _parent { get; init; }
 
     public State _currentState = null;
-    public StateID currentStateID;
+    public StateID _currentStateID;
 
     public Dictionary<StateID, State> _enum2state = new();
-    public List<StateNode> nodes = new();
+    public List<StateNode> _nodes = new();
 
-    private Dictionary<StateID, List<Transition>> stateTree = new();
+    private Dictionary<StateID, List<Transition>> _stateTree = new();
 
     public bool _isTransitioning = false;
-    public bool isLocked = false;
+    public bool _isLocked = false;
 
-    public StateMachine(TParent parent)
+    public StateMachine()
     {
-        this.parent = parent;
+    }
+
+    public TParent GetParent<TParent>(IParentProvider<TParent> provider) where TParent : class
+    {
+        return provider.GetParent();
     }
 
     public static StateID Get<TEnumState>(TEnumState value) where TEnumState : Enum
@@ -30,12 +34,12 @@ public class StateMachine<TParent> where TParent : class
         return Convert.ToInt32(value);
     }
 
-    public void Init(Dictionary<StateID, State> enum2state, List<StateNode> nodes)
+    public void Init(Dictionary<StateID, State<>> enum2state, List<StateNode> nodes)
     {
         this._enum2state = enum2state;
-        this.nodes = nodes;
+        this._nodes = nodes;
 
-        stateTree = new();
+        _stateTree = new();
 
         foreach (StateNode node in nodes)
         {
@@ -74,7 +78,7 @@ public class StateMachine<TParent> where TParent : class
     {
         StateID result = _currentState.type;
 
-        if (isLocked || _isTransitioning) return result;
+        if (_isLocked || _isTransitioning) return result;
 
         Transition transition = GetTransitionFromCurrent(extraCondition);
         if (transition == null) return result;
@@ -123,7 +127,7 @@ public class StateMachine<TParent> where TParent : class
 
     protected virtual Transition GetTransitionFromCurrent(Func<Transition, bool> extraCondition = null)
     {
-        foreach (Transition transition in stateTree[_currentState.type])
+        foreach (Transition transition in _stateTree[_currentState.type])
         {
             if (transition.Condition(_currentState) &&
                 (extraCondition?.Invoke(transition) ?? true) &&
@@ -154,4 +158,9 @@ public class StateMachine<TParent> where TParent : class
     {
         _currentState.OnExit();
     }
+}
+
+public interface IParentProvider<TParent> where TParent : class
+{
+    TParent GetParent();
 }

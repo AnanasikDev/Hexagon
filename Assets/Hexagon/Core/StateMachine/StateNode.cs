@@ -3,19 +3,21 @@ using System.Collections.Generic;
 
 using StateID = System.Int32;
 
-public class StateNode
+public class StateNode<TParent> where TParent : class
 {
     public StateID _state;
     public List<Transition> _transitions;
+    public TParent _parent { get; init; }
 
-    public static StateNode Create<TStateEnum, TParent>(TStateEnum state, List<Transition> transitions, Func<TParent> getParent) where TStateEnum : System.Enum where TParent : class
+    public static StateNode<TParent> Create<TStateEnum>(TStateEnum state, List<Transition> transitions, TParent parent) where TStateEnum  : Enum
     {
-        return new StateNode(StateMachine<TParent>.Get(state), transitions);
+        return new StateNode<TParent>(StateMachine<TParent>.Get(state), transitions, parent);
     }
 
-    public StateNode(StateID state, List<Transition> transitions)
+    public StateNode(StateID state, List<Transition> transitions, TParent parent)
     {
         _state = state;
         _transitions = transitions;
+        _parent = parent;
     }
 }
