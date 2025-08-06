@@ -9,28 +9,32 @@ public class StateMachineExample : MonoBehaviour
         Running
     }
 
-    private StateMachine<MyMachineState> stateMachine;
+    private StateMachine<StateMachineExample> stateMachine;
+
     private void Start()
     {
-        stateMachine = new StateMachine<MyMachineState>();
+        stateMachine = new StateMachine<StateMachineExample>(this);
         stateMachine.Init(
             enum2state:
-            new Dictionary<MyMachineState, State<MyMachineState>>()
+            new Dictionary<MyMachineState, State>()
             {
                 { MyMachineState.Idle, new IdleState() },
                 { MyMachineState.Running, new RunningState() }
             },
 
             nodes:
-            new List<StateNode<MyMachineState>>()
+            new List<StateNode>()
             {
-                new StateNode<MyMachineState>(MyMachineState.Idle, new List<Transition<MyMachineState>>()
+                StateNode.Create(MyMachineState.Idle, new List<Transition>()
                 {
-                    new Transition<MyMachineState>(MyMachineState.Idle, MyMachineState.Running, state => true)
-                }),
-                new StateNode<MyMachineState>(MyMachineState.Running, new List<Transition<MyMachineState>>()
+                    Transition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.activeTime > 3),
+                },
+                
+                () => this),
+
+                StateNode.Create(MyMachineState.Running, new List<Transition>()
                 {
-                    new Transition<MyMachineState>(MyMachineState.Running, MyMachineState.Idle, state => true)
+                    Transition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.activeTime > 2),
                 })
             }
         );
@@ -39,4 +43,24 @@ public class StateMachineExample : MonoBehaviour
     {
         stateMachine.Update();
     }
+}
+
+class IdleState<StateMachineExample> : State
+{
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        Debug.Log("Entered Idle State");
+    }
+    public override void OnExit()
+    {
+        Debug.Log("Exited Idle State");
+    }
+    public override void OnUpdate()
+    {
+        // Idle logic here
+        myobject.Move(2);
+    }
+    public override bool IsPossibleChangeFrom() => true;
+    public override bool IsPossibleChangeTo() => true;
 }

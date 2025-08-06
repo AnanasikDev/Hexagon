@@ -1,6 +1,8 @@
-public abstract class State<TStateEnum> where TStateEnum : System.Enum
+public abstract class State
 {
-    public TStateEnum type;
+    StateMachine<> machine;
+
+    public int type;
     private float startTime = 0;
     public float activeTime { get { return UnityEngine.Time.time - startTime; } }
 

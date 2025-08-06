@@ -3,32 +3,46 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class StateMachine<TStateEnum> where TStateEnum : System.Enum
+using StateID = System.Int32;
+
+public class StateMachine<TParent> where TParent : class
 {
-    public State<TStateEnum> _currentState = null;
-    public TStateEnum currentStateEnum;
+    public TParent parent { get; init; }
 
-    public Dictionary<TStateEnum, State<TStateEnum>> _enum2state = new();
-    public List<StateNode<TStateEnum>> nodes = new();
+    public State _currentState = null;
+    public StateID currentStateID;
 
-    private Dictionary<TStateEnum, List<Transition<TStateEnum>>> stateTree = new();
+    public Dictionary<StateID, State> _enum2state = new();
+    public List<StateNode> nodes = new();
+
+    private Dictionary<StateID, List<Transition>> stateTree = new();
 
     public bool _isTransitioning = false;
     public bool isLocked = false;
 
-    public void Init(Dictionary<TStateEnum, State<TStateEnum>> enum2state, List<StateNode<TStateEnum>> nodes)
+    public StateMachine(TParent parent)
+    {
+        this.parent = parent;
+    }
+
+    public static StateID Get<TEnumState>(TEnumState value) where TEnumState : Enum
+    {
+        return Convert.ToInt32(value);
+    }
+
+    public void Init(Dictionary<StateID, State> enum2state, List<StateNode> nodes)
     {
         this._enum2state = enum2state;
         this.nodes = nodes;
 
         stateTree = new();
 
-        foreach (StateNode<TStateEnum> node in nodes)
+        foreach (StateNode node in nodes)
         {
 
         }
 
-        _currentState = enum2state[(TStateEnum)(object)0];
+        _currentState = enum2state[0];
         _currentState.OnEnter();
         OnStateChanged();
     }
@@ -37,7 +51,7 @@ public class StateMachine<TStateEnum> where TStateEnum : System.Enum
     {
         if (!_isTransitioning) return;
 
-        TStateEnum newState = await GetNextState();
+        StateID newState = await GetNextState();
 
         if (!Enum.Equals(newState, _currentState.type))
         {
@@ -56,13 +70,13 @@ public class StateMachine<TStateEnum> where TStateEnum : System.Enum
         _currentState.OnFixedUpdate();
     }
 
-    public async Task<TStateEnum> GetNextState(Func<Transition<TStateEnum>, bool> extraCondition = null)
+    public async Task<StateID> GetNextState(Func<Transition, bool> extraCondition = null)
     {
-        TStateEnum result = _currentState.type;
+        StateID result = _currentState.type;
 
         if (isLocked || _isTransitioning) return result;
 
-        Transition<TStateEnum> transition = GetTransitionFromCurrent(extraCondition);
+        Transition transition = GetTransitionFromCurrent(extraCondition);
         if (transition == null) return result;
 
         result = transition.to;
@@ -83,20 +97,19 @@ public class StateMachine<TStateEnum> where TStateEnum : System.Enum
     {
     }
 
-    public async Task<bool> SuggestTransitionTo(TStateEnum state)
+    public async Task<bool> SuggestTransitionTo(StateID targetState)
     {
         if (_isTransitioning) return false;
 
-        Transition<TStateEnum> transition = GetTransitionFromCurrent
+        Transition transition = GetTransitionFromCurrent
             (
-                transition => Enum.Equals(transition.to, state)
+                transition => Enum.Equals(transition.to, targetState)
             );
 
         if (transition == null) return false;
 
         if (transition.finished)
         {
-            state = transition.to;
             transition.finished = false;
             return true;
         }
@@ -108,9 +121,9 @@ public class StateMachine<TStateEnum> where TStateEnum : System.Enum
         return true;
     }
 
-    protected virtual Transition<TStateEnum> GetTransitionFromCurrent(Func<Transition<TStateEnum>, bool> extraCondition = null)
+    protected virtual Transition GetTransitionFromCurrent(Func<Transition, bool> extraCondition = null)
     {
-        foreach (Transition<TStateEnum> transition in stateTree[_currentState.type])
+        foreach (Transition transition in stateTree[_currentState.type])
         {
             if (transition.Condition(_currentState) &&
                 (extraCondition?.Invoke(transition) ?? true) &&
@@ -124,7 +137,11 @@ public class StateMachine<TStateEnum> where TStateEnum : System.Enum
         return null;
     }
 
-    public virtual State<TStateEnum> ForceNewState(TStateEnum newState)
+    public State ForceNewState<TStateEnum>(TStateEnum newState) where TStateEnum : Enum
+    {
+        return ForceNewState(Get(newState));
+    }
+    public virtual State ForceNewState(StateID newState)
     {
         _currentState.OnExit();
         _currentState = _enum2state[newState];
@@ -136,10 +153,5 @@ public class StateMachine<TStateEnum> where TStateEnum : System.Enum
     public virtual void Die()
     {
         _currentState.OnExit();
-    }
-
-    protected virtual TStateEnum GetDefaultStateEnum()
-    {
-        return (TStateEnum)(object)0;
     }
 }

@@ -1,23 +1,35 @@
 using System;
 using System.Threading.Tasks;
 
-public class Transition<TStateEnum> where TStateEnum : System.Enum
+using StateID = System.Int32;
+
+public class Transition
 {
-    public TStateEnum from;
-    public TStateEnum to;
-    public Func<State<TStateEnum>, bool> Condition;
+    public StateID from;
+    public StateID to;
+    public Func<State, bool> Condition;
     public float delay = 0;
     public bool finished = false;
 
     public event Action onFinishedEvent;
 
-    public Transition(TStateEnum from, TStateEnum to, Func<State<TStateEnum>, bool> specificCondition = null, float delay = 0)
+    public static Transition Create<TStateEnum>(TStateEnum from, TStateEnum to, Func<State, bool> specificCondition = null, float delay = 0) where TStateEnum : Enum
+    {
+        return new Transition(
+            from: StateMachine.Get(from),
+            to: StateMachine.Get(to),
+            specificCondition: specificCondition,
+            delay: delay
+        );
+    }
+
+    public Transition(StateID from, StateID to, Func<State, bool> specificCondition = null, float delay = 0)
     {
         this.from = from;
         this.to = to;
         if (specificCondition == null)
         {
-            specificCondition = (State<TStateEnum> state) => true;
+            specificCondition = (State state) => true;
         }
         Condition = specificCondition;
         this.delay = delay;
