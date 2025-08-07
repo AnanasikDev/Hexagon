@@ -5,11 +5,11 @@ using StateID = System.Int32;
 
 public class Transition
 {
-    public StateID from;
-    public StateID to;
-    public Func<State, bool> Condition;
-    public float delay = 0;
-    public bool finished = false;
+    public StateID _from;
+    public StateID _to;
+    public Func<State, bool> _condition;
+    public float _delay = 0;
+    public bool _finished = false;
 
     public event Action onFinishedEvent;
 
@@ -25,30 +25,43 @@ public class Transition
 
     public Transition(StateID from, StateID to, Func<State, bool> specificCondition = null, float delay = 0)
     {
-        this.from = from;
-        this.to = to;
+        this._from = from;
+        this._to = to;
         if (specificCondition == null)
         {
             specificCondition = state => true;
         }
-        Condition = specificCondition;
-        this.delay = delay;
+        _condition = specificCondition;
+        this._delay = delay;
     }
 
-    public async Task<bool> Start()
+    public virtual Task Progress()
     {
-        if (delay == 0)
+        return Task.Delay(TimeSpan.FromSeconds(_delay));
+    }
+
+    public virtual async Task Start()
+    {
+        if (_delay == 0)
         {
-            finished = true;
-            onFinishedEvent?.Invoke();
-            return true;
+            ForceFinish();
+            return;
         }
 
-        finished = false;
-        await Task.Delay(TimeSpan.FromSeconds(delay));
-        finished = true;
+        _finished = false;
+        await Progress();
 
+        ForceFinish();
+    }
+
+    public virtual void OnFinished()
+    {
+    }
+
+    public virtual void ForceFinish()
+    {
+        _finished = true;
+        OnFinished();
         onFinishedEvent?.Invoke();
-        return false;
     }
 }

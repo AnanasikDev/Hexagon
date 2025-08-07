@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using StateID = System.Int32;
@@ -82,10 +81,10 @@ public class StateMachine
         Transition? transition = GetTransitionFromCurrent(extraCondition);
         if (transition == null) return result;
 
-        result = transition.to;
-        if (transition.finished)
+        result = transition._to;
+        if (transition._finished)
         {
-            transition.finished = false;
+            transition._finished = false;
             return result;
         }
 
@@ -98,7 +97,7 @@ public class StateMachine
 
     public virtual async Task<bool> IsAvailableTo(StateID targetState)
     {
-        StateID result = await GetNextState(transition => transition.to == targetState);
+        StateID result = await GetNextState(transition => transition._to == targetState);
         return result != _currentState._type;
     }
 
@@ -114,10 +113,10 @@ public class StateMachine
     {
         foreach (Transition transition in _stateTree[_currentState._type])
         {
-            if (transition.Condition(_currentState) &&
+            if (transition._condition(_currentState) &&
                 (extraCondition?.Invoke(transition) ?? true) &&
-                _enum2state[transition.from].IsPossibleChangeFrom() &&
-                _enum2state[transition.to].IsPossibleChangeTo())
+                _enum2state[transition._from].IsPossibleChangeFrom() &&
+                _enum2state[transition._to].IsPossibleChangeTo())
             {
                 return transition;
             }
