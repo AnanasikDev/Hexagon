@@ -61,7 +61,7 @@ public class StateMachine
 
         if (newState != _currentState._type)
         {
-            ForceNewState(_currentState._type);
+            ForceNewState(newState);
         }
 
         _currentState.OnUpdate();
@@ -82,9 +82,8 @@ public class StateMachine
         if (transition == null) return result;
 
         result = transition._to;
-        if (transition._finished)
+        if (transition._delay == 0)
         {
-            transition._finished = false;
             return result;
         }
 
