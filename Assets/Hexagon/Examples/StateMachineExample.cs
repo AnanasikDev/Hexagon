@@ -13,7 +13,7 @@ public class StateMachineExample : MonoBehaviour
 
     private void Start()
     {
-        stateMachine = new StateMachine<StateMachineExample>(this);
+        stateMachine = new (this);
         stateMachine.Init(
             enum2state:
             new Dictionary<MyMachineState, State>()

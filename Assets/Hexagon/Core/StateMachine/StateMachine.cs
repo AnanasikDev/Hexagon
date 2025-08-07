@@ -1,93 +1,85 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using UnityEngine;
 
 using StateID = System.Int32;
 
 [Serializable]
-public abstract class StateMachine
+public class StateMachine
 {
-    public State _currentState = null;
-    public StateID _currentStateID;
+    public State _currentState { get; protected set; } = null!;
+    public State _previousState { get; protected set; } = null!;
+    public StateID _currentStateID { get; protected set; } = 0;
 
-    public Dictionary<StateID, State> _enum2state = new();
-    public List<StateNode> _nodes = new();
+    public readonly Dictionary<StateID, State> _enum2state = new();
+    public readonly List<StateNode> _nodes = new();
 
-    public Dictionary<StateID, List<Transition>> _stateTree = new();
+    public readonly Dictionary<StateID, List<Transition>> _stateTree = new();
 
-    public bool _isTransitioning = false;
-    public bool _isLocked = false;
+    public bool _isTransitioning { get; protected set; } = false;
+    public bool _isLocked { get; protected set; } = false;
 
-    public abstract void Init<TStateEnum>(Dictionary<TStateEnum, State> enum2state, List<StateNode> nodes) where TStateEnum : Enum;
-
-    public static StateID Get<TEnumState>(TEnumState value) where TEnumState : Enum
-    {
-        return Convert.ToInt32(value);
-    }
-}
-
-[Serializable]
-public class StateMachine<TParent> : StateMachine where TParent : class
-{
-    public TParent Parent { get; init; }
-
-    public StateMachine(TParent parent)
-    {
-        Parent = parent;
-    }
-
-    public override void Init<TStateEnum>(Dictionary<TStateEnum, State> enum2state, List<StateNode> nodes)
+    public virtual void Init<TStateEnum>(Dictionary<TStateEnum, State> enum2state, List<StateNode> nodes) where TStateEnum : Enum
     {
         foreach (var pair in enum2state)
         {
-            _enum2state.Add(Get(pair.Key), pair.Value);
-            pair.Value._type = Get(pair.Key);
+            _enum2state.Add(GetID(pair.Key), pair.Value);
+            pair.Value._type = GetID(pair.Key);
             pair.Value.Init(this);
+
+            if (pair.Value == null)
+            {
+                throw new InvalidOperationException($"State {pair.Key} cannot be null.");
+            }
         }
 
-        this._nodes = nodes;
+        _nodes.Clear();
+        _nodes.AddRange(nodes);
 
         foreach (StateNode node in nodes)
         {
             _stateTree[node._state] = node._transitions;
         }
 
+        if (_enum2state.Count == 0) 
+        {
+            throw new InvalidOperationException("StateMachine must have at least one state defined.");
+        }
+
         _currentState = _enum2state[0];
+        _previousState = _currentState;
         _currentState.OnEnter();
-        OnStateChanged();
     }
 
-    public async void Update()
+    public virtual async void Update()
     {
         if (_isTransitioning) return;
 
         StateID newState = await GetNextState();
 
-        if (!Enum.Equals(newState, _currentState._type))
+        if (newState != _currentState._type)
         {
-            _currentState.OnExit();
-            Debug.Log($"Transition from {_currentState._type} to {newState}");
-            _currentState = _enum2state[newState];
-            _currentState.OnEnter();
-            OnStateChanged();
+            ForceNewState(_currentState._type);
         }
 
         _currentState.OnUpdate();
     }
 
-    public void FixedUpdate()
+    public virtual void FixedUpdate()
     {
         _currentState.OnFixedUpdate();
     }
 
-    public async Task<StateID> GetNextState(Func<Transition, bool> extraCondition = null)
+    public virtual async Task<StateID> GetNextState(Func<Transition, bool>? extraCondition = null)
     {
         StateID result = _currentState._type;
 
         if (_isLocked || _isTransitioning) return result;
 
-        Transition transition = GetTransitionFromCurrent(extraCondition);
+        Transition? transition = GetTransitionFromCurrent(extraCondition);
         if (transition == null) return result;
 
         result = transition.to;
@@ -104,35 +96,21 @@ public class StateMachine<TParent> : StateMachine where TParent : class
         return result;
     }
 
-    protected virtual void OnStateChanged()
+    public virtual async Task<bool> IsAvailableTo(StateID targetState)
     {
+        StateID result = await GetNextState(transition => transition.to == targetState);
+        return result != _currentState._type;
     }
 
-    public async Task<bool> SuggestTransitionTo(StateID targetState)
+    public async Task<bool> TryMoveTo(StateID targetState)
     {
-        if (_isTransitioning) return false;
+        if (!await IsAvailableTo(targetState)) return false;
 
-        Transition transition = GetTransitionFromCurrent
-            (
-                transition => Enum.Equals(transition.to, targetState)
-            );
-
-        if (transition == null) return false;
-
-        if (transition.finished)
-        {
-            transition.finished = false;
-            return true;
-        }
-
-        _isTransitioning = true;
-        await transition.Start();
-        _isTransitioning = false;
-
+        ForceNewState(targetState);
         return true;
     }
 
-    protected virtual Transition GetTransitionFromCurrent(Func<Transition, bool> extraCondition = null)
+    protected virtual Transition? GetTransitionFromCurrent(Func<Transition, bool>? extraCondition = null)
     {
         foreach (Transition transition in _stateTree[_currentState._type])
         {
@@ -150,19 +128,43 @@ public class StateMachine<TParent> : StateMachine where TParent : class
 
     public State ForceNewState<TStateEnum>(TStateEnum newState) where TStateEnum : Enum
     {
-        return ForceNewState(Get(newState));
+        return ForceNewState(GetID(newState));
     }
+
     public virtual State ForceNewState(StateID newState)
     {
+        _previousState = _currentState;
         _currentState.OnExit();
         _currentState = _enum2state[newState];
         _currentState.OnEnter();
-        OnStateChanged();
+        OnStateChanged(_previousState, _currentState);
         return _currentState;
     }
 
     public virtual void Die()
     {
-        _currentState.OnExit();
+        _currentState?.OnExit();
+    }
+
+    protected virtual void OnStateChanged(State from, State to) { }
+
+    public static StateID GetID<TEnumState>(TEnumState value) where TEnumState : Enum
+    {
+        return Convert.ToInt32(value);
+    }
+}
+
+[Serializable]
+public class StateMachine<TParent> : StateMachine where TParent : class
+{
+    public TParent Parent { get; init; }
+
+    public StateMachine(TParent parent)
+    {
+        Parent = parent;
+        if (Parent == null)
+        {
+            throw new ArgumentNullException(nameof(parent), "Parent of a StateMachine<TParent> cannot be null.");
+        }
     }
 }

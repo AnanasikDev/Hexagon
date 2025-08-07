@@ -16,8 +16,8 @@ public class Transition
     public static Transition Create<TStateEnum>(TStateEnum from, TStateEnum to, Func<State, bool> specificCondition = null, float delay = 0) where TStateEnum : Enum
     {
         return new Transition(
-            from: StateMachine.Get(from),
-            to: StateMachine.Get(to),
+            from: StateMachine.GetID(from),
+            to: StateMachine.GetID(to),
             specificCondition: specificCondition,
             delay: delay
         );

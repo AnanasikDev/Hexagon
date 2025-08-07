@@ -10,7 +10,7 @@ public class StateNode
 
     public static StateNode Create<TStateEnum>(TStateEnum state, List<Transition> transitions) where TStateEnum  : Enum
     {
-        return new StateNode(StateMachine.Get(state), transitions);
+        return new StateNode(StateMachine.GetID(state), transitions);
     }
 
     public StateNode(StateID state, List<Transition> transitions)
