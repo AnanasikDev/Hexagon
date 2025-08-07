@@ -1,5 +1,3 @@
-using System;
-
 public abstract class State
 {
     public StateMachine _machine;
@@ -7,6 +5,7 @@ public abstract class State
     public int _type;
     private float _startTime = 0;
     public float ActiveTime { get { return UnityEngine.Time.time - _startTime; } }
+    public float Weight { get; set; }
 
     public virtual void Init(StateMachine machine)
     {
@@ -35,19 +34,9 @@ public abstract class State
     {
         return _machine as StateMachine<TParent>;
     }
-}
 
-public abstract class State<TParent> : State where TParent : class
-{
-    public TParent _parent;
-
-    public override void Init(StateMachine machine)
+    public TMachine GetGenericMachine<TMachine>() where TMachine : StateMachine
     {
-        base.Init(machine);
-        if (machine is not StateMachine<TParent>)
-        {
-            throw new InvalidOperationException($"StateMachine must be of type StateMachine<{typeof(TParent).Name}>");
-        }
-        _parent = GetMachine<TParent>().Parent;
+        return _machine as TMachine;
     }
 }

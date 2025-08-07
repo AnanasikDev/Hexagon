@@ -21,6 +21,7 @@ public class StateMachine
     public bool _isTransitioning { get; protected set; } = false;
     public bool _isLocked { get; protected set; } = false;
 
+
     public virtual void Init<TStateEnum>(Dictionary<TStateEnum, State> enum2state, List<StateNode> nodes) where TStateEnum : Enum
     {
         foreach (var pair in enum2state)
@@ -41,6 +42,10 @@ public class StateMachine
         foreach (StateNode node in nodes)
         {
             _stateTree[node._state] = node._transitions;
+            foreach (Transition transition in node._transitions)
+            {
+                transition.Init(this);
+            }
         }
 
         if (_enum2state.Count == 0) 
@@ -159,6 +164,28 @@ public class StateMachine<TParent> : StateMachine where TParent : class
     public TParent Parent { get; init; }
 
     public StateMachine(TParent parent)
+    {
+        Parent = parent;
+        if (Parent == null)
+        {
+            throw new ArgumentNullException(nameof(parent), "Parent of a StateMachine<TParent> cannot be null.");
+        }
+    }
+}
+
+public class BlendStateMachine : StateMachine
+{
+    public delegate float GetCurrentTimeDelegate();
+
+    public GetCurrentTimeDelegate GetCurrentTimeFunction = () => UnityEngine.Time.time;
+}
+
+[Serializable]
+public class BlendStateMachine<TParent> : StateMachine where TParent : class
+{
+    public TParent Parent { get; init; }
+
+    public BlendStateMachine(TParent parent)
     {
         Parent = parent;
         if (Parent == null)
