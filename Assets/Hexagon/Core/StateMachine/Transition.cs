@@ -11,9 +11,11 @@ public class Transition
     public StateID _to;
     public Func<State, bool> _condition;
     public float _delay = 0;
-    public bool _finished = false;
 
     public event Action onFinishedEvent;
+
+    public State _From { get { return _machine._enum2state[_from]; } }
+    public State _To { get { return _machine._enum2state[_to]; } }
 
     public static Transition Create<TStateEnum>(TStateEnum from, TStateEnum to, Func<State, bool> specificCondition = null, float delay = 0) where TStateEnum : Enum
     {
@@ -42,33 +44,24 @@ public class Transition
         this._delay = delay;
     }
 
-    public virtual async Task Progress()
+    public virtual async Task<bool> Progress()
     {
-        await Task.Delay(TimeSpan.FromSeconds(_delay));
-    }
-
-    public virtual async Task Start()
-    {
-        if (_delay == 0)
+        if (_delay <= 0)
         {
-            ForceFinish();
-            return;
+            return true;
         }
-
-        _finished = false;
-        await Progress();
-
-        ForceFinish();
+        await Task.Delay(TimeSpan.FromSeconds(_delay));
+        return true;
     }
 
-    public virtual void OnFinished()
+    public virtual void Begin()
     {
     }
 
-    public virtual void ForceFinish()
+    public virtual void Finish()
     {
-        _finished = true;
-        OnFinished();
+        _From.Weight = 0;
+        _To.Weight = 1;
         onFinishedEvent?.Invoke();
     }
 }
@@ -81,39 +74,43 @@ public class BlendTransition : Transition
 
     protected float _startTime = 0;
 
-    protected BlendStateMachine _blendMachine;
-
     public BlendTransition(int from, int to, Func<State, bool> specificCondition = null, float delay = 0) : base(from, to, specificCondition, delay)
     {
     }
 
-    public static BlendTransition From(Transition transition)
+    public static BlendTransition As(Transition transition)
     {
         return new BlendTransition(transition._from, transition._to, transition._condition, transition._delay);
     }
 
-    public override Task Start()
+    public override void Begin()
     {
-        _blendMachine = _machine as BlendStateMachine;
-        _startTime = _blendMachine.GetCurrentTimeFunction();
-        return base.Start();
+        _startTime = _machine.GetCurrentTimeFunction();
+        _From.Weight = 1;
+        _To.Weight = 0;
+        base.Begin();
     }
 
-    public override async Task Progress()
+    public override async Task<bool> Progress()
     {
         float progress = 0;
         if (_delay < 0.01f)
         {
-            throw new InvalidOperationException($"{nameof(_delay)} Delay has to be larger than 0.01");
+            return true;
         }
 
-        while (progress < 1)
+        progress = (_machine.GetCurrentTimeFunction() - _startTime) / _delay;
+        await Task.Yield();
+        _machine._enum2state[_to].Weight = progress;
+        _machine._enum2state[_from].Weight = 1.0f - progress;
+        _machine._currentState.OnUpdate();
+        _machine._targetState?.OnUpdate();
+
+        if (progress >= 1.0f)
         {
-            progress = (_blendMachine.GetCurrentTimeFunction() - _startTime) / _delay;
-            Debug.Log("Progress");
-            await Task.Yield();
-            _machine._enum2state[_to].Weight = progress;
-            _machine._enum2state[_from].Weight = 1.0f - progress;
+            return true;
         }
+
+        return false;
     }
 }

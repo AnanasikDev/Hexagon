@@ -9,7 +9,7 @@ public class StateMachineExample : MonoBehaviour
         Running
     }
 
-    [SerializeField] private BlendStateMachine<StateMachineExample> stateMachine;
+    [SerializeField] private StateMachine<StateMachineExample> stateMachine;
 
     private void Start()
     {
@@ -27,13 +27,13 @@ public class StateMachineExample : MonoBehaviour
             {
                 StateNode.Create(MyMachineState.Idle, new List<Transition>()
                 {
-                    BlendTransition.From(
+                    BlendTransition.As(
                         Transition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.ActiveTime > 3, 3)),
                 }),
 
                 StateNode.Create(MyMachineState.Running, new List<Transition>()
                 { 
-                    BlendTransition.From(
+                    BlendTransition.As(
                         Transition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.ActiveTime > 2, 3)),
                 })
             }
@@ -59,7 +59,7 @@ class IdleState : State
     public override void OnUpdate()
     {
         // Idle logic here
-        GetGenericMachine<BlendStateMachine<StateMachineExample>>().Parent.transform.Translate(Vector3.up * Time.deltaTime * Weight);
+        GetMachine<StateMachineExample>().Parent.transform.Translate(Vector3.up * Time.deltaTime * Weight);
     }
     public override bool IsPossibleChangeFrom() => true;
     public override bool IsPossibleChangeTo() => true;
@@ -78,7 +78,7 @@ class RunningState : State
     }
     public override void OnUpdate()
     {
-        GetGenericMachine<BlendStateMachine<StateMachineExample>>().Parent.transform.Translate(Vector3.forward * Time.deltaTime * Weight);
+        GetMachine<StateMachineExample>().Parent.transform.Translate(Vector3.forward * Time.deltaTime * Weight);
     }
     public override bool IsPossibleChangeFrom() => true;
     public override bool IsPossibleChangeTo() => true;

@@ -5,7 +5,7 @@ public abstract class State
     public int _type;
     private float _startTime = 0;
     public float ActiveTime { get { return UnityEngine.Time.time - _startTime; } }
-    public float Weight { get; set; }
+    public float Weight { get; set; } = 1.0f;
 
     public virtual void Init(StateMachine machine)
     {
@@ -33,10 +33,5 @@ public abstract class State
     public StateMachine<TParent> GetMachine<TParent>() where TParent : class
     {
         return _machine as StateMachine<TParent>;
-    }
-
-    public TMachine GetGenericMachine<TMachine>() where TMachine : StateMachine
-    {
-        return _machine as TMachine;
     }
 }

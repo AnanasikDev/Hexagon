@@ -13,6 +13,7 @@ public class StateMachine
     public State? _targetState { get; protected set; } = null;
     public State _previousState { get; protected set; } = null!;
     public StateID _currentStateID { get; protected set; } = 0;
+    protected Transition? _currentTransition = null;
 
     public readonly Dictionary<StateID, State> _enum2state = new();
     public readonly List<StateNode> _nodes = new();
@@ -22,6 +23,9 @@ public class StateMachine
     public bool _isTransitioning { get; protected set; } = false;
     public bool _isLocked { get; protected set; } = false;
 
+
+    public delegate float GetCurrentTimeDelegate();
+    public GetCurrentTimeDelegate GetCurrentTimeFunction = () => UnityEngine.Time.time;
 
     public virtual void Init<TStateEnum>(Dictionary<TStateEnum, State> enum2state, List<StateNode> nodes) where TStateEnum : Enum
     {
@@ -61,18 +65,23 @@ public class StateMachine
 
     public virtual async void Update()
     {
-        if (_isTransitioning)
+        if (_isTransitioning && _currentTransition != null)
         {
-            _currentState.OnUpdate();
-            _targetState?.OnUpdate();
+            bool finished = await _currentTransition.Progress();
+
+            if (!finished) return;
+
+            FinishTransition();
         }
 
-        StateID newState = await GetNextState();
+        (StateID state, Transition? transition) = GetNextState();
 
-        if (newState != _currentState._type)
+        if (transition != null)
         {
-            ForceNewState(newState);
+            BeginTransition(state, transition);
         }
+
+        _currentState.OnUpdate();
     }
 
     public virtual void FixedUpdate()
@@ -80,44 +89,17 @@ public class StateMachine
         _currentState.OnFixedUpdate();
     }
 
-    public virtual async Task<StateID> GetNextState(Func<Transition, bool>? extraCondition = null)
+    public virtual (StateID, Transition?) GetNextState(Func<Transition, bool>? extraCondition = null)
     {
         StateID result = _currentState._type;
 
-        if (_isLocked || _isTransitioning) return result;
+        if (_isLocked || _isTransitioning) return (result, null);
 
         Transition? transition = GetTransitionFromCurrent(extraCondition);
-        if (transition == null) return result;
+        if (transition == null) return (result, null);
 
         result = transition._to;
-        if (transition._delay == 0)
-        {
-            return result;
-        }
-
-        _targetState = _enum2state[transition._to];
-
-        _isTransitioning = true;
-        await transition.Start();
-        _isTransitioning = false;
-
-        _targetState = null;
-
-        return result;
-    }
-
-    public virtual async Task<bool> IsAvailableTo(StateID targetState)
-    {
-        StateID result = await GetNextState(transition => transition._to == targetState);
-        return result != _currentState._type;
-    }
-
-    public async Task<bool> TryMoveTo(StateID targetState)
-    {
-        if (!await IsAvailableTo(targetState)) return false;
-
-        ForceNewState(targetState);
-        return true;
+        return (result, transition);
     }
 
     protected virtual Transition? GetTransitionFromCurrent(Func<Transition, bool>? extraCondition = null)
@@ -136,17 +118,33 @@ public class StateMachine
         return null;
     }
 
-    public State ForceNewState<TStateEnum>(TStateEnum newState) where TStateEnum : Enum
+    protected virtual void BeginTransition(StateID newState, Transition transition)
     {
-        return ForceNewState(GetID(newState));
+        _isTransitioning = true;
+        _targetState = _enum2state[newState];
+        _currentState.OnExit();
+        _targetState.Weight = 0;
+        _currentState.Weight = 1;
+
+        _currentTransition = transition;
+        _currentTransition.Begin();
     }
 
-    public virtual State ForceNewState(StateID newState)
+    public virtual State FinishTransition()
     {
-        _previousState = _currentState;
-        _currentState.OnExit();
-        _currentState = _enum2state[newState];
         _currentState.OnEnter();
+        _targetState!.Weight = 1;
+        _currentState.Weight = 0;
+
+        _previousState = _currentState;
+        _currentState = _enum2state[_targetState!._type];
+
+        _currentTransition!.Finish();
+
+        _targetState = null;
+        _currentTransition = null;
+        _isTransitioning = false;
+
         OnStateChanged(_previousState, _currentState);
         return _currentState;
     }
@@ -170,28 +168,6 @@ public class StateMachine<TParent> : StateMachine where TParent : class
     public TParent Parent { get; init; }
 
     public StateMachine(TParent parent)
-    {
-        Parent = parent;
-        if (Parent == null)
-        {
-            throw new ArgumentNullException(nameof(parent), "Parent of a StateMachine<TParent> cannot be null.");
-        }
-    }
-}
-
-public class BlendStateMachine : StateMachine
-{
-    public delegate float GetCurrentTimeDelegate();
-
-    public GetCurrentTimeDelegate GetCurrentTimeFunction = () => UnityEngine.Time.time;
-}
-
-[Serializable]
-public class BlendStateMachine<TParent> : StateMachine where TParent : class
-{
-    public TParent Parent { get; init; }
-
-    public BlendStateMachine(TParent parent)
     {
         Parent = parent;
         if (Parent == null)
