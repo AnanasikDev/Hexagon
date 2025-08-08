@@ -27,12 +27,14 @@ public class StateMachineExample : MonoBehaviour
             {
                 StateNode.Create(MyMachineState.Idle, new List<Transition>()
                 {
-                    Transition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.ActiveTime > 3, 3),
+                    BlendTransition.From(
+                        Transition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.ActiveTime > 3, 3)),
                 }),
 
                 StateNode.Create(MyMachineState.Running, new List<Transition>()
-                {
-                    Transition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.ActiveTime > 2, 3),
+                { 
+                    BlendTransition.From(
+                        Transition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.ActiveTime > 2, 3)),
                 })
             }
         );

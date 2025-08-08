@@ -87,6 +87,11 @@ public class BlendTransition : Transition
     {
     }
 
+    public static BlendTransition From(Transition transition)
+    {
+        return new BlendTransition(transition._from, transition._to, transition._condition, transition._delay);
+    }
+
     public override Task Start()
     {
         _blendMachine = _machine as BlendStateMachine;

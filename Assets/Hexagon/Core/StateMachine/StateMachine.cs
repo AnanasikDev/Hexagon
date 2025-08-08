@@ -10,6 +10,7 @@ using StateID = System.Int32;
 public class StateMachine
 {
     public State _currentState { get; protected set; } = null!;
+    public State? _targetState { get; protected set; } = null;
     public State _previousState { get; protected set; } = null!;
     public StateID _currentStateID { get; protected set; } = 0;
 
@@ -60,16 +61,18 @@ public class StateMachine
 
     public virtual async void Update()
     {
-        if (_isTransitioning) return;
+        if (_isTransitioning)
+        {
+            _currentState.OnUpdate();
+            _targetState?.OnUpdate();
+        }
 
         StateID newState = await GetNextState();
 
         if (newState != _currentState._type)
         {
-            ForceNewState(_currentState._type);
+            ForceNewState(newState);
         }
-
-        _currentState.OnUpdate();
     }
 
     public virtual void FixedUpdate()
@@ -87,15 +90,18 @@ public class StateMachine
         if (transition == null) return result;
 
         result = transition._to;
-        if (transition._finished)
+        if (transition._delay == 0)
         {
-            transition._finished = false;
             return result;
         }
+
+        _targetState = _enum2state[transition._to];
 
         _isTransitioning = true;
         await transition.Start();
         _isTransitioning = false;
+
+        _targetState = null;
 
         return result;
     }
