@@ -12,7 +12,7 @@ public static class HexRandom
     /// Returns random element from the given collection with the scope of [first, last].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T RandomElement<T>(this IList<T> collection)
+    public static T GetElement<T>(this IList<T> collection)
     {
         Assert.IsNotNull(collection);
         Assert.AreNotEqual(0, collection.Count, "Cannot get random element from an empty collection");
@@ -22,7 +22,7 @@ public static class HexRandom
     /// <summary>
     /// Returns random element from the given collection with the scope of [first, last].
     /// </summary>
-    public static T RandomElementWithIndex<T>(this IList<T> collection, out int index)
+    public static T GetElementWithIndex<T>(this IList<T> collection, out int index)
     {
         Assert.IsNotNull(collection);
         Assert.AreNotEqual(0, collection.Count, "Cannot get random element from an empty collection");
@@ -44,7 +44,7 @@ public static class HexRandom
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T Select<T>(params T[] values)
     {
-        return RandomElement(values);
+        return GetElement(values);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public static class HexRandom
     /// <param name="num">The number of elements to take.</param>
     /// <param name="unique">If true, all returned elements will be unique. If false, elements can be chosen more than once.</param>
     /// <returns>An IEnumerable containing the chosen elements.</returns>
-    public static IEnumerable<T> GetRandomElements<T>(this IList<T> collection, int num, bool unique = true)
+    public static IEnumerable<T> GetElements<T>(this IList<T> collection, int num, bool unique = true)
     {
         Assert.IsNotNull(collection);
         Assert.IsTrue(num >= 0, "Number of elements to take cannot be negative.");
@@ -71,7 +71,7 @@ public static class HexRandom
             var results = new List<T>(num);
             for (int i = 0; i < num; i++)
             {
-                results.Add(collection.RandomElement());
+                results.Add(collection.GetElement());
             }
             return results;
         }
@@ -165,19 +165,134 @@ public static class HexRandom
     #endregion // sign
 
     #region Vectors
-    /// <summary>
-    /// Generates a random Vector3 with values between -1 and 1.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 Random3D()
-        => new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
 
     /// <summary>
     /// Generates a random Vector2 with values between -1 and 1.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2 Random2D()
-        => new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
+    public static Vector2 GetVector2D()
+        => new Vector2(
+            UnityEngine.Random.Range(-1f, 1f), 
+            UnityEngine.Random.Range(-1f, 1f));
+
+    /// <summary>
+    /// Generates a random Vector2 with values between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 GetVector2D(float min, float max)
+        => new Vector2(
+            UnityEngine.Random.Range(min, max), 
+            UnityEngine.Random.Range(min, max));
+
+    /// <summary>
+    /// Generates a random Vector2 with values between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 GetVector2D(Vector2 min, Vector2 max)
+        => new Vector2(
+            UnityEngine.Random.Range(min.x, max.x), 
+            UnityEngine.Random.Range(min.y, max.y));
+
+    /// <summary>
+    /// Generates a random Vector3 with values between -1 and 1.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 GetVector3D()
+        => new Vector3(
+            UnityEngine.Random.Range(-1f, 1f),
+            UnityEngine.Random.Range(-1f, 1f),
+            UnityEngine.Random.Range(-1f, 1f));
+
+    /// <summary>
+    /// Generates a random Vector3 with values between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 GetVector3D(float min, float max)
+        => new Vector3(
+            UnityEngine.Random.Range(min, max),
+            UnityEngine.Random.Range(min, max),
+            UnityEngine.Random.Range(min, max));
+
+    /// <summary>
+    /// Generates a random Vector3 with values between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 GetVector3D(Vector3 min, Vector3 max)
+        => new Vector3(
+            UnityEngine.Random.Range(min.x, max.x),
+            UnityEngine.Random.Range(min.y, max.y),
+            UnityEngine.Random.Range(min.z, max.z));
+
+    /// <summary>
+    /// Generates a random Vector4 with values between -1 and 1.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector4 GetVector4D()
+        => new Vector4(
+            UnityEngine.Random.Range(-1f, 1f),
+            UnityEngine.Random.Range(-1f, 1f),
+            UnityEngine.Random.Range(-1f, 1f),
+            UnityEngine.Random.Range(-1f, 1f));
+
+    /// <summary>
+    /// Generates a random Vector4 with values between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector4 GetVector4D(float min, float max)
+        => new Vector4(
+            UnityEngine.Random.Range(min, max),
+            UnityEngine.Random.Range(min, max),
+            UnityEngine.Random.Range(min, max),
+            UnityEngine.Random.Range(min, max));
+
+    /// <summary>
+    /// Generates a random Vector4 with values between min and max.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector4 GetVector4D(Vector4 min, Vector4 max)
+        => new Vector4(
+            UnityEngine.Random.Range(min.x, max.x),
+            UnityEngine.Random.Range(min.y, max.y),
+            UnityEngine.Random.Range(min.z, max.z),
+            UnityEngine.Random.Range(min.w, max.w));
+
+    /// <summary>
+    /// Generates a random Vector2Int with values between min (inclusive) and max (exclusive).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2Int GetVector2Int(int min, int max)
+        => new Vector2Int(
+            UnityEngine.Random.Range(min, max),
+            UnityEngine.Random.Range(min, max));
+
+    /// <summary>
+    /// Generates a random Vector2Int with values between min (inclusive) and max (exclusive).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2Int GetVector2Int(Vector2Int min, Vector2Int max)
+        => new Vector2Int(
+            UnityEngine.Random.Range(min.x, max.x),
+            UnityEngine.Random.Range(min.y, max.y));
+
+    /// <summary>
+    /// Generates a random Vector3Int with values between min (inclusive) and max (exclusive).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3Int GetVector3Int(int min, int max)
+        => new Vector3Int(
+            UnityEngine.Random.Range(min, max),
+            UnityEngine.Random.Range(min, max),
+            UnityEngine.Random.Range(min, max));
+
+    /// <summary>
+    /// Generates a random Vector3Int with values between min (inclusive) and max (exclusive).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3Int GetVector3Int(Vector3Int min, Vector3Int max)
+        => new Vector3Int(
+            UnityEngine.Random.Range(min.x, max.x),
+            UnityEngine.Random.Range(min.y, max.y),
+            UnityEngine.Random.Range(min.z, max.z));
 
     #endregion
 
@@ -224,54 +339,86 @@ public static class HexRandom
     #region Colors
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color RandomColorOpaque() => new Color(Random.value, Random.value, Random.value, 1f);
+    public static Color GetColorRGBOpaque() => new Color(Random.value, Random.value, Random.value, 1f);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color RandomColor(bool randomAlpha = false) => new Color(Random.value, Random.value, Random.value, randomAlpha ? Random.value : 1f);
+    public static Color GetColorRGB() => new Color(Random.value, Random.value, Random.value, Random.value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color RandomColor(float min = 0.5f, float max = 0.9f) => new Color(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max));
+    public static Color GetColorRGB(float min = 0.5f, float max = 0.9f) => new Color(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max));
+
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Color GetColorHSV()
+    {
+        return Random.ColorHSV();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Color GetColorHSV(float hueMin, float hueMax)
+    {
+        return Random.ColorHSV(hueMin, hueMax, 0f, 1f, 0f, 1f, 1f, 1f);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Color GetColorHSV(float hueMin, float hueMax, float saturationMin, float saturationMax)
+    {
+        return Random.ColorHSV(hueMin, hueMax, saturationMin, saturationMax, 0f, 1f, 1f, 1f);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Color GetColorHSV(float hueMin, float hueMax, float saturationMin, float saturationMax, float valueMin, float valueMax)
+    {
+        return Random.ColorHSV(hueMin, hueMax, saturationMin, saturationMax, valueMin, valueMax, 1f, 1f);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Color GetColorHSV(float hueMin, float hueMax, float saturationMin, float saturationMax, float valueMin, float valueMax, float alphaMin, float alphaMax)
+    {
+        return Random.ColorHSV(hueMin, hueMax, saturationMin, saturationMax, valueMin, valueMax, alphaMin, alphaMax);
+    }
 
     #endregion // Colors
 
     #region Random point
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 RandomPointOnSphere(float radius) => Random.onUnitSphere * radius;
+    public static Vector3 GetPointOnSphere(float radius) => Random.onUnitSphere * radius;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3 RandomPointInSphere(float radius) => Random.onUnitSphere * Random.Range(0, radius);
+    public static Vector3 GetPointInSphere(float radius) => Random.onUnitSphere * Random.Range(0, radius);
 
-    public static Vector2 RandomPointOnCircle(float radius, float maxAngle = 2 * Mathf.PI)
+    public static Vector2 GetPointOnCircle(float radius, float maxAngle = 2 * Mathf.PI)
     {
         float angle = Random.Range(0f, maxAngle);
         return new Vector2(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius);
     }
 
-    public static Vector2 RandomPointInCircle(float radius, float maxAngle = 2 * Mathf.PI)
+    public static Vector2 GetPointInCircle(float radius, float maxAngle = 2 * Mathf.PI)
     {
         float distance = Random.Range(0, radius);
         float angle = Random.Range(0f, maxAngle);
         return new Vector2(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance);
     }
 
-    public static Vector3 RandomPointInBounds(this Bounds bounds)
+    public static Vector3 GetPointInBounds(this Bounds bounds)
     {
         return new Vector3(Random.Range(bounds.min.x, bounds.max.x), Random.Range(bounds.min.y, bounds.max.y), Random.Range(bounds.min.z, bounds.max.z));
     }
 
-    public static Vector2 RandomPointInRect(this Rect rect)
+    public static Vector2 GetPointInRect(this Rect rect)
     {
         return new Vector2(Random.Range(rect.xMin, rect.xMax), Random.Range(rect.yMin, rect.yMax));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Quaternion RandomRotation2D() => Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+    public static Quaternion GetRotation2D() => Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+
     #endregion
 
     #region Enums
 
-    public static T RandomEnumValue<T>() where T : System.Enum
+    public static T GetEnumValue<T>() where T : System.Enum
     {
         var values = System.Enum.GetValues(typeof(T));
         Assert.AreNotEqual(values.Length, 0, "Enum must not be empty.");
@@ -286,7 +433,7 @@ public static class HexRandom
     /// Gets a random character from the given string.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static char GetRandomChar(this string str)
+    public static char GetChar(this string str)
     {
         Assert.IsFalse(string.IsNullOrEmpty(str));
         return str[Random.Range(0, str.Length)];
@@ -295,23 +442,29 @@ public static class HexRandom
     /// <summary>
     /// Gets a random substring of a random length from the given string.
     /// </summary>
-    public static string GetRandomSubstring(this string str)
+    public static string GetSubstring(this string str)
     {
-        Assert.IsFalse(string.IsNullOrEmpty(str));
-        int startIndex = Random.Range(0, str.Length);
-        int endIndex = Random.Range(startIndex, str.Length);
-        return str.Substring(startIndex, endIndex - startIndex);
+        return GetSubstringOfLength(str, Random.Range(1, str.Length + 1));
     }
 
     /// <summary>
     /// Gets a random substring of a specified length from the given string.
     /// </summary>
-    public static string GetRandomSubstringOfLength(this string str, int length)
+    public static string GetSubstringOfLength(this string str, int length)
     {
         Assert.IsFalse(string.IsNullOrEmpty(str));
         Assert.IsTrue(length > 0 && length <= str.Length);
         int startIndex = Random.Range(0, str.Length - length + 1);
         return str.Substring(startIndex, length);
+    }
+
+    /// <summary>
+    /// Gets a random substring of a specified length from the given string.
+    /// </summary>
+    public static string GetSubstringOfLength(this string str, int minLength, int maxLength)
+    {
+        int length = Random.Range(minLength, maxLength + 1);
+        return GetSubstringOfLength(str, length);
     }
 
     #endregion // strings
