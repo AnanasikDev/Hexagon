@@ -49,6 +49,14 @@ public class Example : MonoBehaviour
             }
         );
         Debug.Log(result);
+
+        float a = HexRandom.GetElement(new float[] { 1.2f, 3.4f, 5.6f });
+
+        var v = HexRandom.GetVector3D(0.2f, 0.4f);
+
+        Debug.Log($"substring: {HexRandom.GetSubstringOfLength("123456", 1, 3)}");
+
+        Debug.Log($"Min in enum {nameof(TestEnum)} is {HexEnum.Min<TestEnum>()}");
     }
 
     private void Update()
@@ -84,5 +92,13 @@ public class Example : MonoBehaviour
         {
             pool.ReleaseAll();
         }
+    }
+
+    enum TestEnum
+    {
+        First = 3,
+        Second = -2100,
+        Third = 100,
+        Fourth = 0
     }
 }
