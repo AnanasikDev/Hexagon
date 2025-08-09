@@ -30,14 +30,12 @@ public class StateMachineExample : MonoBehaviour
             {
                 StateNode.Create(MyMachineState.Idle, new List<Transition>()
                 {
-                    BlendTransition.As(
-                        Transition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.ActiveTime > 3, 3)),
+                    BlendTransition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.ActiveTime > 3, 1f, time => HexEasing.EaseOutSineD(0, 1, time)),
                 }),
 
                 StateNode.Create(MyMachineState.Running, new List<Transition>()
                 { 
-                    BlendTransition.As(
-                        Transition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.ActiveTime > 2, 3)),
+                    BlendTransition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.ActiveTime > 2, 1f, time => HexEasing.EaseInQuadD(0, 1, time))
                 })
             }
         );
