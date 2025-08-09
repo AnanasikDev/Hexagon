@@ -56,6 +56,8 @@ public class Transition
 
     public virtual void Begin()
     {
+        _From.Weight = 1;
+        _To.Weight = 0;
     }
 
     public virtual void Finish()

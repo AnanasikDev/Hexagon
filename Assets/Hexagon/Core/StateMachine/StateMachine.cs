@@ -60,7 +60,7 @@ public class StateMachine
 
         _currentState = _enum2state[0];
         _previousState = _currentState;
-        _currentState.OnEnter();
+        _currentState.OnTransitionToFinished();
     }
 
     public virtual async void Update()
@@ -122,9 +122,10 @@ public class StateMachine
     {
         _isTransitioning = true;
         _targetState = _enum2state[newState];
-        _currentState.OnExit();
-        _targetState.Weight = 0;
+        _currentState.OnTransitionFromStarted();
+        _targetState.OnTransitionToStarted();
         _currentState.Weight = 1;
+        _targetState.Weight = 0;
 
         _currentTransition = transition;
         _currentTransition.Begin();
@@ -132,14 +133,25 @@ public class StateMachine
 
     public virtual State FinishTransition()
     {
-        _currentState.OnEnter();
-        _targetState!.Weight = 1;
+        if (_targetState == null)
+        {
+            throw new InvalidOperationException($"{nameof(_targetState)} cannot be null on FinishTransition");
+        }
+
+        if (_currentTransition == null)
+        {
+            throw new InvalidOperationException($"{nameof(_currentTransition)} cannot be null on FinishTransition");
+        }
+
+        _currentState.OnTransitionFromFinished();
+        _targetState.OnTransitionToFinished();
         _currentState.Weight = 0;
+        _targetState.Weight = 1;
 
         _previousState = _currentState;
-        _currentState = _enum2state[_targetState!._type];
+        _currentState = _enum2state[_targetState._type];
 
-        _currentTransition!.Finish();
+        _currentTransition.Finish();
 
         _targetState = null;
         _currentTransition = null;
@@ -151,7 +163,7 @@ public class StateMachine
 
     public virtual void Die()
     {
-        _currentState?.OnExit();
+        _currentState?.OnTransitionFromStarted();
     }
 
     protected virtual void OnStateChanged(State from, State to) { }

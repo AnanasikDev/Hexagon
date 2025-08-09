@@ -10,13 +10,35 @@ public abstract class State
     public virtual void Init(StateMachine machine)
     {
         _machine = machine;
+        Init();
     }
 
-    public virtual void OnEnter()
+    public abstract void Init();
+
+    /// <summary>
+    /// Called when state becomes the target state of the State Machine. Weight becomes 0. Transition has started.
+    /// </summary>
+    public virtual void OnTransitionToStarted() { }
+
+    /// <summary>
+    /// Called when state becomes the current state of the State Machine. Weight becomes 1. Transition has ended.
+    /// </summary>
+    public virtual void OnTransitionToFinished()
     {
         _startTime = UnityEngine.Time.time;
     }
-    public abstract void OnExit();
+
+    /// <summary>
+    /// Called when state starts to lose weight to the target state of the State Machine. Weight becomes 1. Transition has started.
+    /// </summary>
+    public abstract void OnTransitionFromStarted();
+
+    /// <summary>
+    /// Called when state becomes the previous state of the State Machine. Weight becomes 0. Transition has ended.
+    /// </summary>
+    public virtual void OnTransitionFromFinished() { }
+    
+
     public abstract void OnUpdate();
     public virtual void OnFixedUpdate() { }
 

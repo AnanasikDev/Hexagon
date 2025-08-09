@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class StateMachineExample : MonoBehaviour
 {
+    public MeshRenderer meshRenderer;
+
     enum MyMachineState
     {
         Idle,
@@ -47,19 +50,35 @@ public class StateMachineExample : MonoBehaviour
 
 class IdleState : State
 {
-    public override void OnEnter()
+    private StateMachine<StateMachineExample> machine;
+
+    public override void Init()
     {
-        base.OnEnter();
+        machine = GetMachine<StateMachineExample>();
+        Assert.IsNotNull(machine);
+    }
+
+    public override void OnTransitionToStarted()
+    {
+        
+    }
+
+    public override void OnTransitionToFinished()
+    {
+        base.OnTransitionToFinished();
         Debug.Log("Entered Idle State");
     }
-    public override void OnExit()
+
+    public override void OnTransitionFromStarted()
     {
         Debug.Log("Exited Idle State");
     }
+
     public override void OnUpdate()
     {
         // Idle logic here
-        GetMachine<StateMachineExample>().Parent.transform.Translate(Vector3.up * Time.deltaTime * Weight);
+        machine.Parent.transform.Translate(Vector3.up * Time.deltaTime * Weight);
+        machine.Parent.meshRenderer.material.color = Color.Lerp(machine.Parent.meshRenderer.material.color, Color.red, Weight);
     }
     public override bool IsPossibleChangeFrom() => true;
     public override bool IsPossibleChangeTo() => true;
@@ -67,18 +86,32 @@ class IdleState : State
 
 class RunningState : State
 {
-    public override void OnEnter()
+    private StateMachine<StateMachineExample> machine;
+
+    public override void Init()
     {
-        base.OnEnter();
+        machine = GetMachine<StateMachineExample>();
+        Assert.IsNotNull(machine);
+    }
+
+    public override void OnTransitionToStarted()
+    {
+    }
+
+    public override void OnTransitionToFinished()
+    {
+        base.OnTransitionToFinished();
         Debug.Log("Entered Running State");
     }
-    public override void OnExit()
+    public override void OnTransitionFromStarted()
     {
         Debug.Log("Exited Running State");
     }
+
     public override void OnUpdate()
     {
-        GetMachine<StateMachineExample>().Parent.transform.Translate(Vector3.forward * Time.deltaTime * Weight);
+        machine.Parent.transform.Translate(Vector3.forward * Time.deltaTime * Weight);
+        machine.Parent.meshRenderer.material.color = Color.Lerp(machine.Parent.meshRenderer.material.color, Color.green, Weight);
     }
     public override bool IsPossibleChangeFrom() => true;
     public override bool IsPossibleChangeTo() => true;
