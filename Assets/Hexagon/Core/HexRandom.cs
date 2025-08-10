@@ -54,7 +54,7 @@ public static class HexRandom
     /// <param name="num">The number of elements to take.</param>
     /// <param name="unique">If true, all returned elements will be unique. If false, elements can be chosen more than once.</param>
     /// <returns>An IEnumerable containing the chosen elements.</returns>
-    public static IEnumerable<T> GetRandomElements<T>(this IList<T> collection, int num, bool unique = true)
+    public static IEnumerable<T> GetElements<T>(this IList<T> collection, int num, bool unique = true)
     {
         Assert.IsNotNull(collection);
         Assert.IsTrue(num >= 0, "Number of elements to take cannot be negative.");
@@ -362,42 +362,6 @@ public static class HexRandom
 
     #endregion
 
-    /// <summary>
-    /// Returns a random value between min and max, but if max is less than min, it will overflow the value into the range [rangeMin - rangeMax].
-    /// </summary>
-    /// <param name="rangeMin">Min allowed value</param>
-    /// <param name="rangeMax">Max allowed value</param>
-    /// <param name="start">Random range start</param>
-    /// <param name="end">Random range end</param>
-    /// <returns>Value either in range [start - end] if end is equal to or larger than start, or in range [start - rangeMax] U [rangeMin - end] otherwise.</returns>
-    public static float GetOverflownValue(float rangeMin, float rangeMax, float start, float end)
-    {
-        Assert.IsTrue(start >= rangeMin, $"Min value {start} must not be less than rangeMin {rangeMin}");
-        Assert.IsTrue(end <= rangeMax, $"Max value {end} must not be larger than rangeMax {rangeMax}");
-
-        if (end >= start)
-        {
-            // [0 ........ min ======== max ........ 1]
-            return Random.Range(start, end);
-        }
-
-        // If max < min, we split the range into two sections to overflow the value.
-        // [0 ======== max ........ min ======== 1]
-
-        float min1 = start;
-        float max1 = rangeMax;
-        float min2 = rangeMin;
-        float max2 = end;
-
-        // If first section is chosen, get random value from it
-        if (GetBool(max1 - min1, max2 - min2))
-        {
-            return Random.Range(min1, max1);
-        }
-        // Otherwise, get random value from the second section
-        return Random.Range(min2, max2);
-    }
-
     #region Colors
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -552,4 +516,44 @@ public static class HexRandom
     }
 
     #endregion // strings
+
+    #region Math
+
+    /// <summary>
+    /// Returns a random value between min and max, but if max is less than min, it will overflow the value into the range [rangeMin - rangeMax].
+    /// </summary>
+    /// <param name="rangeMin">Min allowed value</param>
+    /// <param name="rangeMax">Max allowed value</param>
+    /// <param name="start">Random range start</param>
+    /// <param name="end">Random range end</param>
+    /// <returns>Value either in range [start - end] if end is equal to or larger than start, or in range [start - rangeMax] U [rangeMin - end] otherwise.</returns>
+    public static float GetOverflownValue(float rangeMin, float rangeMax, float start, float end)
+    {
+        Assert.IsTrue(start >= rangeMin, $"Min value {start} must not be less than rangeMin {rangeMin}");
+        Assert.IsTrue(end <= rangeMax, $"Max value {end} must not be larger than rangeMax {rangeMax}");
+
+        if (end >= start)
+        {
+            // [0 ........ min ======== max ........ 1]
+            return Random.Range(start, end);
+        }
+
+        // If max < min, we split the range into two sections to overflow the value.
+        // [0 ======== max ........ min ======== 1]
+
+        float min1 = start;
+        float max1 = rangeMax;
+        float min2 = rangeMin;
+        float max2 = end;
+
+        // If first section is chosen, get random value from it
+        if (GetBool(max1 - min1, max2 - min2))
+        {
+            return Random.Range(min1, max1);
+        }
+        // Otherwise, get random value from the second section
+        return Random.Range(min2, max2);
+    }
+
+    #endregion
 }
