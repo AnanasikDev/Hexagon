@@ -362,18 +362,32 @@ public static class HexRandom
 
     #endregion
 
-    public static float GetOverflownValue(float rangeMin, float rangeMax, float min, float max)
+    /// <summary>
+    /// Returns a random value between min and max, but if max is less than min, it will overflow the value into the range [rangeMin - rangeMax].
+    /// </summary>
+    /// <param name="rangeMin">Min allowed value</param>
+    /// <param name="rangeMax">Max allowed value</param>
+    /// <param name="start">Random range start</param>
+    /// <param name="end">Random range end</param>
+    /// <returns>Value either in range [start - end] if end is equal to or larger than start, or in range [start - rangeMax] U [rangeMin - end] otherwise.</returns>
+    public static float GetOverflownValue(float rangeMin, float rangeMax, float start, float end)
     {
-        if (max >= min)
+        Assert.IsTrue(start >= rangeMin, $"Min value {start} must not be less than rangeMin {rangeMin}");
+        Assert.IsTrue(end <= rangeMax, $"Max value {end} must not be larger than rangeMax {rangeMax}");
+
+        if (end >= start)
         {
-            return Random.Range(min, max);
+            // [0 ........ min ======== max ........ 1]
+            return Random.Range(start, end);
         }
 
         // If max < min, we split the range into two sections to overflow the value.
-        float min1 = min; // min > max
+        // [0 ======== max ........ min ======== 1]
+
+        float min1 = start;
         float max1 = rangeMax;
-        float min2 = rangeMin; // start of range
-        float max2 = max;
+        float min2 = rangeMin;
+        float max2 = end;
 
         // If first section is chosen, get random value from it
         if (GetBool(max1 - min1, max2 - min2))
@@ -429,44 +443,23 @@ public static class HexRandom
     /// <summary>
     /// Returns a random color between two colors in HSV space. Hue is overflown if hueMax overflows over the end of [0 - 1] range (is less than hueMin).
     /// </summary>
-    /// <param name="c1">Min color</param>
-    /// <param name="c2">Max color</param>
+    /// <param name="minColor">Min color</param>
+    /// <param name="maxColor">Max color</param>
     /// <param name="invertHueRange">If set to true, hue range (min and max) will be inverted.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color GetColorHSV(Color c1, Color c2, bool invertHueRange = false)
+    public static Color GetColorHSV(Color minColor, Color maxColor, bool invertHueRange = false)
     {
-        Color.RGBToHSV(c1, out float hueMin, out float satMin, out float valueMin);
-        Color.RGBToHSV(c2, out float hueMax, out float satMax, out float valueMax);
+        Color.RGBToHSV(minColor, out float hueMin, out float satMin, out float valueMin);
+        Color.RGBToHSV(maxColor, out float hueMax, out float satMax, out float valueMax);
 
         if (invertHueRange)
         {
             (hueMin, hueMax) = (hueMax, hueMin);
         }
 
-
-        if (hueMin <= hueMax)
-        {
-            // [0 -------- hueMin ======== hueMax -------- 1]
-            return Random.ColorHSV(hueMin, hueMax, satMin, satMax, valueMin, valueMax, c1.a, c2.a);
-        }
-
-        // If hueMin > hueMax, we split the hue range into two sections to overflow the hue value.
-        // [0 ======== hueMax -------- hueMin ======== 1]
-
-        float hueMin1 = hueMin; // hueMin > hueMax
-        float hueMax1 = 1f;     // end of range
-        float hueMin2 = 0f;     // start of range
-        float hueMax2 = hueMax; // hueMax < hueMin
-
-        // If first section is chosen, get random color from it
-        if (GetBool(hueMax1 - hueMin1, hueMax2 - hueMin2))
-        {
-            return Random.ColorHSV(hueMin1, hueMax1, satMin, satMax, valueMin, valueMax, c1.a, c2.a);
-        }
-
-        // Otherwise, get random color from the second section
-        return Random.ColorHSV(hueMin2, hueMax2, satMin, satMax, valueMin, valueMax, c1.a, c2.a);
+        float newHue = GetOverflownValue(0, 1, hueMax, hueMin);
+        return Random.ColorHSV(newHue, newHue, satMin, satMax, valueMin, valueMax, minColor.a, maxColor.a);
     }
 
     #endregion // Colors
