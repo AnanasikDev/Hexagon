@@ -43,20 +43,55 @@ public class Example : MonoBehaviour
         string template = "Hello, {value:F2}!";
         string result = template.FormatVariables
         (
-            new Dictionary<string, object>() 
+            new Dictionary<string, object>()
             {
                 { "value", 123.917f }
             }
         );
         Debug.Log(result);
 
-        float a = HexRandom.GetElement(new float[] { 1.2f, 3.4f, 5.6f });
+        float a = HexRandom.GetRandomElement(new float[] { 1.2f, 3.4f, 5.6f });
 
         var v = HexRandom.GetVector3D(0.2f, 0.4f);
 
-        Debug.Log($"substring: {HexRandom.GetSubstringOfLength("123456", 1, 3)}");
+        Debug.Log($"substring: {HexRandom.GetRandomSubstringOfLength("123456", 1, 3)}");
 
         Debug.Log($"Min in enum {nameof(TestEnum)} is {HexEnum.Min<TestEnum>()}");
+
+        var c = new float[] { 1.2f, 3.4f, 5.6f, 8.4f, 10.3f };
+        for (int i = 0; i < 5; i++)
+        {
+            List<float> r = c.GetRandomSubcollection(1, 3);
+            Debug.Log($"Random subcollection {i}: {string.Join(", ", r)}");
+        }
+
+        for (int i = 0; i < 100; i++)
+        {
+            float v1 = HexRandom.GetOverflownValue(0, 1, 0.97f, 0.4f);
+            Debug.Log($"Overflown = {v1}");
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                Color color = HexRandom.GetColorHSV(Color.yellow, Color.blue);
+                GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                g.transform.position = new Vector3(i, 3, j) * 1.2f;
+                g.GetComponent<MeshRenderer>().material.color = color;
+            }
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                Color color = HexRandom.GetColorHSV(Color.blue, Color.yellow);
+                GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                g.transform.position = new Vector3(i, 3, j) * 1.2f + Vector3.right * 30;
+                g.GetComponent<MeshRenderer>().material.color = color;
+            }
+        }
     }
 
     private void Update()

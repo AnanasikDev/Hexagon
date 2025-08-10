@@ -12,7 +12,7 @@ public static class HexRandom
     /// Returns random element from the given collection with the scope of [first, last].
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T GetElement<T>(this IList<T> collection)
+    public static T GetRandomElement<T>(this IList<T> collection)
     {
         Assert.IsNotNull(collection);
         Assert.AreNotEqual(0, collection.Count, "Cannot get random element from an empty collection");
@@ -22,7 +22,7 @@ public static class HexRandom
     /// <summary>
     /// Returns random element from the given collection with the scope of [first, last].
     /// </summary>
-    public static T GetElementWithIndex<T>(this IList<T> collection, out int index)
+    public static T GetRandomElementWithIndex<T>(this IList<T> collection, out int index)
     {
         Assert.IsNotNull(collection);
         Assert.AreNotEqual(0, collection.Count, "Cannot get random element from an empty collection");
@@ -44,7 +44,7 @@ public static class HexRandom
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T Select<T>(params T[] values)
     {
-        return GetElement(values);
+        return GetRandomElement(values);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public static class HexRandom
     /// <param name="num">The number of elements to take.</param>
     /// <param name="unique">If true, all returned elements will be unique. If false, elements can be chosen more than once.</param>
     /// <returns>An IEnumerable containing the chosen elements.</returns>
-    public static IEnumerable<T> GetElements<T>(this IList<T> collection, int num, bool unique = true)
+    public static IEnumerable<T> GetRandomElements<T>(this IList<T> collection, int num, bool unique = true)
     {
         Assert.IsNotNull(collection);
         Assert.IsTrue(num >= 0, "Number of elements to take cannot be negative.");
@@ -71,7 +71,7 @@ public static class HexRandom
             var results = new List<T>(num);
             for (int i = 0; i < num; i++)
             {
-                results.Add(collection.GetElement());
+                results.Add(collection.GetRandomElement());
             }
             return results;
         }
@@ -92,11 +92,37 @@ public static class HexRandom
         }
     }
 
+    /// <summary>
+    /// Returns a new list with the elements of the original list shuffled. The original list remains unchanged.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
     public static List<T> GetShuffled<T>(this IList<T> list)
     {
         List<T> result = new List<T>(list);
         result.Shuffle();
         return result;
+    }
+
+    /// <summary>
+    /// Returns a random subcollection of a random length [min, max) from the given collection.
+    /// </summary>
+    /// <typeparam name="T">Item type</typeparam>
+    /// <param name="collection">Input collection</param>
+    /// <param name="minLength">Min length (inclusive)</param>
+    /// <param name="maxLength">Max length (exclusive)</param>
+    /// <returns></returns>
+    public static List<T> GetRandomSubcollection<T>(this IList<T> collection, int minLength, int maxLength)
+    {
+        Assert.IsTrue(maxLength >= minLength);
+        Assert.IsTrue(maxLength <= collection.Count);
+        Assert.IsTrue(minLength > 0);
+
+        int length = Random.Range(minLength, maxLength);
+        int start = Random.Range(0, collection.Count - length + 1);
+
+        return collection.ToList().GetRange(start, length);
     }
 
     #endregion
@@ -336,6 +362,28 @@ public static class HexRandom
 
     #endregion
 
+    public static float GetOverflownValue(float rangeMin, float rangeMax, float min, float max)
+    {
+        if (max >= min)
+        {
+            return Random.Range(min, max);
+        }
+
+        // If max < min, we split the range into two sections to overflow the value.
+        float min1 = min; // min > max
+        float max1 = rangeMax;
+        float min2 = rangeMin; // start of range
+        float max2 = max;
+
+        // If first section is chosen, get random value from it
+        if (GetBool(max1 - min1, max2 - min2))
+        {
+            return Random.Range(min1, max1);
+        }
+        // Otherwise, get random value from the second section
+        return Random.Range(min2, max2);
+    }
+
     #region Colors
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -376,6 +424,49 @@ public static class HexRandom
     public static Color GetColorHSV(float hueMin, float hueMax, float saturationMin, float saturationMax, float valueMin, float valueMax, float alphaMin, float alphaMax)
     {
         return Random.ColorHSV(hueMin, hueMax, saturationMin, saturationMax, valueMin, valueMax, alphaMin, alphaMax);
+    }
+
+    /// <summary>
+    /// Returns a random color between two colors in HSV space. Hue is overflown if hueMax overflows over the end of [0 - 1] range (is less than hueMin).
+    /// </summary>
+    /// <param name="c1">Min color</param>
+    /// <param name="c2">Max color</param>
+    /// <param name="invertHueRange">If set to true, hue range (min and max) will be inverted.</param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Color GetColorHSV(Color c1, Color c2, bool invertHueRange = false)
+    {
+        Color.RGBToHSV(c1, out float hueMin, out float satMin, out float valueMin);
+        Color.RGBToHSV(c2, out float hueMax, out float satMax, out float valueMax);
+
+        if (invertHueRange)
+        {
+            (hueMin, hueMax) = (hueMax, hueMin);
+        }
+
+
+        if (hueMin <= hueMax)
+        {
+            // [0 -------- hueMin ======== hueMax -------- 1]
+            return Random.ColorHSV(hueMin, hueMax, satMin, satMax, valueMin, valueMax, c1.a, c2.a);
+        }
+
+        // If hueMin > hueMax, we split the hue range into two sections to overflow the hue value.
+        // [0 ======== hueMax -------- hueMin ======== 1]
+
+        float hueMin1 = hueMin; // hueMin > hueMax
+        float hueMax1 = 1f;     // end of range
+        float hueMin2 = 0f;     // start of range
+        float hueMax2 = hueMax; // hueMax < hueMin
+
+        // If first section is chosen, get random color from it
+        if (GetBool(hueMax1 - hueMin1, hueMax2 - hueMin2))
+        {
+            return Random.ColorHSV(hueMin1, hueMax1, satMin, satMax, valueMin, valueMax, c1.a, c2.a);
+        }
+
+        // Otherwise, get random color from the second section
+        return Random.ColorHSV(hueMin2, hueMax2, satMin, satMax, valueMin, valueMax, c1.a, c2.a);
     }
 
     #endregion // Colors
@@ -433,7 +524,7 @@ public static class HexRandom
     /// Gets a random character from the given string.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static char GetChar(this string str)
+    public static char GetRandomChar(this string str)
     {
         Assert.IsFalse(string.IsNullOrEmpty(str));
         return str[Random.Range(0, str.Length)];
@@ -442,15 +533,15 @@ public static class HexRandom
     /// <summary>
     /// Gets a random substring of a random length from the given string.
     /// </summary>
-    public static string GetSubstring(this string str)
+    public static string GetRandomSubstring(this string str)
     {
-        return GetSubstringOfLength(str, Random.Range(1, str.Length + 1));
+        return GetRandomSubstringOfLength(str, Random.Range(1, str.Length + 1));
     }
 
     /// <summary>
     /// Gets a random substring of a specified length from the given string.
     /// </summary>
-    public static string GetSubstringOfLength(this string str, int length)
+    public static string GetRandomSubstringOfLength(this string str, int length)
     {
         Assert.IsFalse(string.IsNullOrEmpty(str));
         Assert.IsTrue(length > 0 && length <= str.Length);
@@ -461,10 +552,10 @@ public static class HexRandom
     /// <summary>
     /// Gets a random substring of a specified length from the given string.
     /// </summary>
-    public static string GetSubstringOfLength(this string str, int minLength, int maxLength)
+    public static string GetRandomSubstringOfLength(this string str, int minLength, int maxLength)
     {
         int length = Random.Range(minLength, maxLength + 1);
-        return GetSubstringOfLength(str, length);
+        return GetRandomSubstringOfLength(str, length);
     }
 
     #endregion // strings
