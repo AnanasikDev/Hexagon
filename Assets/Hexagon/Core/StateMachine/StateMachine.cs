@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
+
 using StateID = System.Int32;
 
 namespace Hexagon.StateMachine
@@ -86,9 +87,9 @@ namespace Hexagon.StateMachine
             }
         }
 
-        public void AddTransitions(params TransitionInput[] inputs)
+        public void AddTransitions(params TransitionGroup[] inputs)
         {
-            foreach (TransitionInput input in inputs)
+            foreach (TransitionGroup input in inputs)
             {
                 AddTransitions(input._transitions);
             }
@@ -184,8 +185,6 @@ namespace Hexagon.StateMachine
             _targetState = _enum2state[newState];
             _currentState.OnTransitionFromStarted();
             _targetState.OnTransitionToStarted();
-            _currentState.Weight = 1;
-            _targetState.Weight = 0;
 
             _currentTransition = transition;
             _currentTransition.Begin();
@@ -207,8 +206,6 @@ namespace Hexagon.StateMachine
 
             _currentState.OnTransitionFromFinished();
             _targetState.OnTransitionToFinished();
-            _currentState.Weight = 0;
-            _targetState.Weight = 1;
 
             _previousState = _currentState;
             _currentState = _enum2state[_targetState._type];

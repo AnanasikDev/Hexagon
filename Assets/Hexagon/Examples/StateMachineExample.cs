@@ -27,19 +27,25 @@ public class StateMachineExample : MonoBehaviour
             }
         );
         stateMachine.AddTransitions(
-            BlendTransition.CreateOne(
-                from: MyMachineState.Idle,
-                to: MyMachineState.Running,
-                specificCondition: (state, @event) => state.ActiveTime > 2
-            ),
+            Transition<MyMachineState>
+                .From(MyMachineState.Idle)
+                .To(MyMachineState.Running)
+                .If((state, @event) =>
+                {
+                    if (state.ActiveTime > 2) return true;
+                    return false;
+                }),
 
-            BlendTransition.CreateOne(
-                from: MyMachineState.Running,
-                to: MyMachineState.Idle,
-                specificCondition: (state, @event) => @event is FSM_Stop || state.ActiveTime > 5,
-                duration: 0.8f,
-                blendingFunction: time => HexEasing.EaseInOutQuad(0, 1, time)
-            )
+            BlendTransition<MyMachineState>
+                .From(MyMachineState.Running)
+                .To(MyMachineState.Idle)
+                .Durate(0.3f)
+                .Blend(time => HexEasing.EaseInBack(0, 1, time))
+                .If((state, @event) =>
+                {
+                    if (@event is FSM_Stop || state.ActiveTime > 6) return true;
+                    return false;
+                })
         );
     }
     private void Update()
