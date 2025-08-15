@@ -1,3 +1,4 @@
+using Hexagon.StateMachine;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -23,25 +24,31 @@ public class StateMachineExample : MonoBehaviour
             {
                 { MyMachineState.Idle, new IdleState() },
                 { MyMachineState.Running, new RunningState() }
-            },
-
-            nodes:
-            new List<StateNode>()
-            {
-                StateNode.Create(MyMachineState.Idle, new List<Transition>()
-                {
-                    BlendTransition.Create(MyMachineState.Idle, MyMachineState.Running, state => state.ActiveTime > 3, 1f, time => HexEasing.EaseOutSineD(0, 1, time)),
-                }),
-
-                StateNode.Create(MyMachineState.Running, new List<Transition>()
-                { 
-                    BlendTransition.Create(MyMachineState.Running, MyMachineState.Idle, state => state.ActiveTime > 2, 1f, time => HexEasing.EaseInQuadD(0, 1, time))
-                })
             }
+        );
+        stateMachine.AddTransitions(
+            BlendTransition.CreateOne(
+                from: MyMachineState.Idle,
+                to: MyMachineState.Running,
+                specificCondition: (state, @event) => state.ActiveTime > 2
+            ),
+
+            BlendTransition.CreateOne(
+                from: MyMachineState.Running,
+                to: MyMachineState.Idle,
+                specificCondition: (state, @event) => @event is FSM_Stop || state.ActiveTime > 5,
+                duration: 0.8f,
+                blendingFunction: time => HexEasing.EaseInOutQuad(0, 1, time)
+            )
         );
     }
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            stateMachine.PushEvent(new FSM_Stop());
+        }
+
         stateMachine.Update();
     }
 }
@@ -113,4 +120,8 @@ class RunningState : State
     }
     public override bool IsPossibleChangeFrom() => true;
     public override bool IsPossibleChangeTo() => true;
+}
+
+class FSM_Stop : FSM_Event
+{
 }
