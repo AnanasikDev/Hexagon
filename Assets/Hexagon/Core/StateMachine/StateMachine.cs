@@ -8,6 +8,10 @@ using StateID = System.Int32;
 
 namespace Hexagon.StateMachine
 {
+    /// <summary>
+    /// Universal state machine implementaion.
+    /// see @ref hexagon_state_machine for more information.
+    /// </summary>
     [Serializable]
     public class StateMachine
     {
@@ -38,7 +42,7 @@ namespace Hexagon.StateMachine
         public event Action<State, State>? OnTransitionStartedEvent;
         public event Action<State, State>? OnTransitionEndedEvent;
 
-        public virtual void Init<TStateEnum>(Dictionary<TStateEnum, State> enum2state, List<Transition>? transitions = null) where TStateEnum : Enum
+        public virtual void Init<TStateEnum>(Dictionary<TStateEnum, State> enum2state) where TStateEnum : Enum
         {
             foreach (var pair in enum2state)
             {

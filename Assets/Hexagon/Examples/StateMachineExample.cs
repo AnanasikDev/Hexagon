@@ -28,6 +28,13 @@ public class StateMachineExample : MonoBehaviour
             }
         );
         stateMachine.AddTransitions(
+            new List<Transition>() 
+            { 
+                new Transition<MyMachineState>(MyMachineState.Running, MyMachineState.Idle, null, 1) 
+            }
+        );
+
+        stateMachine.AddTransitions(
             Transition<MyMachineState>
                 .From(MyMachineState.Idle)
                 .To(MyMachineState.Running)
@@ -88,7 +95,6 @@ class IdleState : State
 
     public override void OnUpdate()
     {
-        // Idle logic here
         machine.Parent.transform.Translate(Vector3.up * Time.deltaTime * Weight);
         machine.Parent.meshRenderer.material.color = Color.Lerp(machine.Parent.meshRenderer.material.color, Color.red, Weight);
     }

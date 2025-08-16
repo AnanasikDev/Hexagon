@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Hexagon;
 using UnityEngine.Assertions;
 using UnityEngine.Pool;
 

@@ -1,3 +1,4 @@
+using Hexagon;
 using NUnit.Framework;
 
 [TestFixture]

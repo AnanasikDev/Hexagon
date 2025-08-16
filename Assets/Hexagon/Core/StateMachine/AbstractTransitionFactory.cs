@@ -15,12 +15,6 @@ namespace Hexagon.StateMachine
         internal List<TStateEnum> froms = null!;
         internal List<TStateEnum> tos = null!;
 
-        public virtual TFactory From(params TStateEnum[] fromStates)
-        {
-            this.froms = new List<TStateEnum>(fromStates);
-            return (TFactory)this;
-        }
-
         public virtual TFactory To(params TStateEnum[] toStates)
         {
             this.tos = new List<TStateEnum>(toStates);

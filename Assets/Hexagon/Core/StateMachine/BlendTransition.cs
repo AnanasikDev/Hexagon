@@ -18,53 +18,7 @@ namespace Hexagon.StateMachine
 
         protected float _startTime = 0;
 
-        public static TransitionGroup CreateOne<TStateEnum>(TStateEnum from, TStateEnum to, ConditionDelegate? specificCondition = null, float duration = 0, BlendingDelegate? blendingFunction = null) where TStateEnum : Enum
-        {
-            return CreateOne(StateMachine.EnumToID(from), StateMachine.EnumToID(to), specificCondition, duration, blendingFunction);
-        }
-
-        internal static TransitionGroup CreateOne(StateID from, StateID to, ConditionDelegate? specificCondition = null, float duration = 0, BlendingDelegate? blendingFunction = null)
-        {
-            BlendTransition transition = new BlendTransition(
-                from: from,
-                to: to,
-                specificCondition: specificCondition,
-                duration: duration,
-                blendingFunction: blendingFunction
-            );
-            TransitionGroup result = new TransitionGroup(one: transition);
-            return result;
-        }
-
-        public static TransitionGroup CreateMany<TStateEnum>(IEnumerable<TStateEnum> froms, IEnumerable<TStateEnum> tos, ConditionDelegate? specificCondition = null, float duration = 0, BlendingDelegate? blendingFunction = null) where TStateEnum : Enum
-        {
-            List<Transition> transitions = new List<Transition>();
-            foreach (TStateEnum from in froms)
-            {
-                foreach (TStateEnum to in tos)
-                {
-                    transitions.AddRange(CreateOne(from, to, specificCondition, duration, blendingFunction)._transitions);
-                }
-            }
-            TransitionGroup result = new TransitionGroup(many: transitions);
-            return result;
-        }
-
-        public static TransitionGroup CreateMany(IEnumerable<StateID> froms, IEnumerable<StateID> tos, ConditionDelegate? specificCondition = null, float duration = 0, BlendingDelegate? blendingFunction = null)
-        {
-            List<Transition> transitions = new List<Transition>();
-            foreach (StateID from in froms)
-            {
-                foreach (StateID to in tos)
-                {
-                    transitions.AddRange(CreateOne(from, to, specificCondition, duration, blendingFunction)._transitions);
-                }
-            }
-            TransitionGroup result = new TransitionGroup(many: transitions);
-            return result;
-        }
-
-        public BlendTransition(int from, int to, ConditionDelegate? specificCondition = null, float duration = 0, BlendingDelegate? blendingFunction = null) : base(from, to, specificCondition, duration)
+        public BlendTransition(StateID from, StateID to, ConditionDelegate? specificCondition = null, float duration = 0, BlendingDelegate? blendingFunction = null) : base(from, to, specificCondition, duration)
         {
             _linearProgressFunction = time => (time - _startTime) / _duration;
             if (blendingFunction == null)
@@ -109,7 +63,7 @@ namespace Hexagon.StateMachine
 
     public class BlendTransition<TStateEnum> : BlendTransition where TStateEnum : Enum
     {
-        public BlendTransition(int from, int to, ConditionDelegate? specificCondition = null, float duration = 0, BlendingDelegate? blendingFunction = null) : base(from, to, specificCondition, duration, blendingFunction)
+        public BlendTransition(TStateEnum from, TStateEnum to, ConditionDelegate? specificCondition = null, float duration = 0, BlendingDelegate? blendingFunction = null) : base(StateMachine.EnumToID(from), StateMachine.EnumToID(to), specificCondition, duration, blendingFunction)
         {
         }
 
@@ -144,13 +98,22 @@ namespace Hexagon.StateMachine
 
         public override TransitionGroup If(Transition.ConditionDelegate? condition = null)
         {
-            return BlendTransition.CreateMany(
-                froms: this.froms,
-                tos: this.tos,
-                specificCondition: condition,
-                duration: duration,
-                blendingFunction: this.function
-            );
+            List<Transition> transitions = new List<Transition>();
+            foreach (TStateEnum from in this.froms)
+            {
+                foreach (TStateEnum to in this.tos)
+                {
+                    transitions.Add(new BlendTransition(
+                        from: StateMachine.EnumToID(from),
+                        to: StateMachine.EnumToID(to),
+                        specificCondition: condition,
+                        duration: duration,
+                        blendingFunction: this.function
+                    ));
+                }
+            }
+            TransitionGroup result = new TransitionGroup(many: transitions);
+            return result;
         }
     }
 }

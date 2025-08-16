@@ -24,51 +24,6 @@ namespace Hexagon.StateMachine
 
         public delegate bool ConditionDelegate(State state, ExternalMachineEvent @event);
 
-        public static TransitionGroup CreateOne<TStateEnum>(TStateEnum from, TStateEnum to, ConditionDelegate? specificCondition = null, float duration = 0) where TStateEnum : Enum
-        {
-            return CreateOne(StateMachine.EnumToID(from), StateMachine.EnumToID(to), specificCondition, duration);
-        }
-
-        internal static TransitionGroup CreateOne(StateID from, StateID to, ConditionDelegate? specificCondition = null, float duration = 0)
-        {
-            Transition transition = new Transition(
-                from: from,
-                to: to,
-                specificCondition: specificCondition,
-                duration: duration
-            );
-            TransitionGroup result = new TransitionGroup(one: transition);
-            return result;
-        }
-
-        public static TransitionGroup CreateMany<TStateEnum>(IEnumerable<TStateEnum> froms, IEnumerable<TStateEnum> tos, ConditionDelegate? specificCondition = null, float duration = 0) where TStateEnum : Enum
-        {
-            List<Transition> transitions = new List<Transition>();
-            foreach (TStateEnum from in froms)
-            {
-                foreach (TStateEnum to in tos)
-                {
-                    transitions.AddRange(CreateOne(from, to, specificCondition, duration)._transitions);
-                }
-            }
-            TransitionGroup result = new TransitionGroup(many: transitions);
-            return result;
-        }
-
-        public static TransitionGroup CreateMany(IEnumerable<StateID> froms, IEnumerable<StateID> tos, ConditionDelegate? specificCondition = null, float duration = 0)
-        {
-            List<Transition> transitions = new List<Transition>();
-            foreach (StateID from in froms)
-            {
-                foreach (StateID to in tos)
-                {
-                    transitions.AddRange(CreateOne(from, to, specificCondition, duration)._transitions);
-                }
-            }
-            TransitionGroup result = new TransitionGroup(many: transitions);
-            return result;
-        }
-
         public void Init(StateMachine machine)
         {
             _machine = machine;
@@ -112,7 +67,7 @@ namespace Hexagon.StateMachine
 
     public class Transition<TStateEnum> : Transition where TStateEnum : Enum
     {
-        public Transition(int from, int to, ConditionDelegate? specificCondition = null, float delay = 0) : base(from, to, specificCondition, delay)
+        public Transition(TStateEnum from, TStateEnum to, ConditionDelegate? specificCondition = null, float delay = 0) : base(StateMachine.EnumToID(from), StateMachine.EnumToID(to), specificCondition, delay)
         {
         }
 
@@ -140,12 +95,21 @@ namespace Hexagon.StateMachine
 
         public override TransitionGroup If(Transition.ConditionDelegate? condition = null)
         {
-            return Transition.CreateMany(
-                froms: this.froms,
-                tos: this.tos,
-                specificCondition: condition,
-                duration: this.duration
-            );
+            List<Transition> transitions = new List<Transition>();
+            foreach (TStateEnum from in this.froms)
+            {
+                foreach (TStateEnum to in this.tos)
+                {
+                    transitions.Add(new Transition(
+                        from: StateMachine.EnumToID(from),
+                        to: StateMachine.EnumToID(to),
+                        specificCondition: condition,
+                        duration: this.duration
+                    ));
+                }
+            }
+            TransitionGroup result = new TransitionGroup(many: transitions);
+            return result;
         }
     }
 }
