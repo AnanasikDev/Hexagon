@@ -1,3 +1,4 @@
+using Hexagon;
 using Hexagon.StateMachine;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,7 +44,7 @@ public class StateMachineExample : MonoBehaviour
                 .Blend(time => HexEasing.EaseInBack(0, 1, time))
                 .If((state, @event) =>
                 {
-                    if (@event is FSM_Stop || state.ActiveTime > 6) return true;
+                    if (@event is Event_Stop || state.ActiveTime > 6) return true;
                     return false;
                 })
         );
@@ -52,7 +53,7 @@ public class StateMachineExample : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            stateMachine.PushEvent(new FSM_Stop());
+            stateMachine.PushEvent(new Event_Stop());
         }
 
         stateMachine.Update();
@@ -128,6 +129,6 @@ class RunningState : State
     public override bool IsPossibleChangeTo() => true;
 }
 
-class FSM_Stop : FSM_Event
+class Event_Stop : ExternalMachineEvent
 {
 }

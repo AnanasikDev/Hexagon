@@ -24,6 +24,7 @@ namespace Hexagon.StateMachine
 
         public bool _isTransitioning { get; protected set; } = false;
         public bool _isLocked { get; protected set; } = false;
+
         /// <summary>
         /// Whether the transition was started in the last call of Update (in the last frame).
         /// </summary>
@@ -32,7 +33,7 @@ namespace Hexagon.StateMachine
         public delegate float GetCurrentTimeDelegate();
         public GetCurrentTimeDelegate GetCurrentTimeFunction = () => UnityEngine.Time.time;
 
-        protected Queue<FSM_Event> _eventQueue = new();
+        protected Queue<ExternalMachineEvent> _eventQueue = new();
 
         public event Action<State, State>? OnTransitionStartedEvent;
         public event Action<State, State>? OnTransitionEndedEvent;
@@ -143,7 +144,7 @@ namespace Hexagon.StateMachine
         {
             foreach (Transition transition in _stateTree[_currentState._type])
             {
-                bool eventExists = _eventQueue.TryPeek(out FSM_Event? currentEvent);
+                bool eventExists = _eventQueue.TryPeek(out ExternalMachineEvent? currentEvent);
                 if (transition._condition(_currentState, currentEvent) &&
                     (extraCondition?.Invoke(transition) ?? true) &&
                     _enum2state[transition._from].IsPossibleChangeFrom() &&
@@ -242,7 +243,7 @@ namespace Hexagon.StateMachine
             return (TEnumState)Enum.ToObject(typeof(TEnumState), id);
         }
 
-        public void PushEvent(FSM_Event @event)
+        public void PushEvent(ExternalMachineEvent @event)
         {
             Assert.IsNotNull(@event, "Event cannot be null.");
             _eventQueue.Enqueue(@event);

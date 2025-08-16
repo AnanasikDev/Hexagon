@@ -1,44 +1,47 @@
 using System;
 using UnityEngine.Assertions;
 
-public static class HexEnum
+namespace Hexagon
 {
-    public static TEnum DefaultValue<TEnum>()
+    public static class HexEnum
     {
-        return Enum.IsDefined(typeof(TEnum), 0) ? (TEnum)(object)0 : default(TEnum);
-    }
-
-    public static TEnum Min<TEnum>() where TEnum : Enum
-    {
-        int i = 0;
-        int min = int.MaxValue;
-        foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
+        public static TEnum DefaultValue<TEnum>()
         {
-            int v = Convert.ToInt32(value);
-            if (v < min)
-            {
-                min = v;
-            }
-            i++;
+            return Enum.IsDefined(typeof(TEnum), 0) ? (TEnum)(object)0 : default(TEnum);
         }
-        Assert.IsTrue(i > 0, $"Enum {typeof(TEnum).Name} must have at least one value defined.");
-        return (TEnum)(object)min;
-    }
 
-    public static TEnum Max<TEnum>() where TEnum : Enum
-    {
-        int i = 0;
-        int max = int.MinValue;
-        foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
+        public static TEnum Min<TEnum>() where TEnum : Enum
         {
-            int v = Convert.ToInt32(value);
-            if (v > max)
+            int i = 0;
+            int min = int.MaxValue;
+            foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
             {
-                max = v;
+                int v = Convert.ToInt32(value);
+                if (v < min)
+                {
+                    min = v;
+                }
+                i++;
             }
-            i++;
+            Assert.IsTrue(i > 0, $"Enum {typeof(TEnum).Name} must have at least one value defined.");
+            return (TEnum)(object)min;
         }
-        Assert.IsTrue(i > 0, $"Enum {typeof(TEnum).Name} must have at least one value defined.");
-        return (TEnum)(object)max;
+
+        public static TEnum Max<TEnum>() where TEnum : Enum
+        {
+            int i = 0;
+            int max = int.MinValue;
+            foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
+            {
+                int v = Convert.ToInt32(value);
+                if (v > max)
+                {
+                    max = v;
+                }
+                i++;
+            }
+            Assert.IsTrue(i > 0, $"Enum {typeof(TEnum).Name} must have at least one value defined.");
+            return (TEnum)(object)max;
+        }
     }
 }

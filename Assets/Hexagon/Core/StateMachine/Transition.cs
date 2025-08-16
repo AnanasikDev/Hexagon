@@ -22,7 +22,7 @@ namespace Hexagon.StateMachine
         public State _From { get { return _machine._enum2state[_from]; } }
         public State _To { get { return _machine._enum2state[_to]; } }
 
-        public delegate bool ConditionDelegate(State state, FSM_Event @event);
+        public delegate bool ConditionDelegate(State state, ExternalMachineEvent @event);
 
         public static TransitionGroup CreateOne<TStateEnum>(TStateEnum from, TStateEnum to, ConditionDelegate? specificCondition = null, float duration = 0) where TStateEnum : Enum
         {
@@ -80,7 +80,7 @@ namespace Hexagon.StateMachine
             this._to = to;
             if (specificCondition == null)
             {
-                specificCondition = (State state, FSM_Event @event) => true;
+                specificCondition = (State state, ExternalMachineEvent @event) => true;
             }
             _condition = specificCondition;
             this._duration = duration;

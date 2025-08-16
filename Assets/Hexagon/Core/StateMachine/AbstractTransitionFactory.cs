@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Hexagon.StateMachine
 {
+    /// <summary>
+    /// Serves as a base class for creating transition factories that generate transitions between states in a state machine with specified parameters. Helps providing a fluent pipeline interface for defining transitions.
+    /// </summary>
     public abstract class AbstractTransitionFactory<TFactory, TStateEnum> 
         where TFactory : AbstractTransitionFactory<TFactory, TStateEnum>
         where TStateEnum : Enum
