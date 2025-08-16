@@ -9,13 +9,11 @@ namespace Hexagon
 {
     /// <summary>
     /// Manages a collection of objects that can be reused, tracking their state via a delegate.
-    /// </summary>
-    /// <remarks>
     /// This implementation relies on an external function to determine if an object is active or inactive.
     /// Operations that search for objects, such as <see cref="Get()"/> or <see cref="ViewExistingInactive(out T?)"/>, have a performance cost that scales linearly with the total number of items.
     /// <br/>
     /// See @ref hexagon_pool_notes Hexagon Pool Notes
-    /// </remarks>
+    /// </summary>
     /// <typeparam name="T">The type of object to be managed. Must be a class.</typeparam>
     public sealed class Pool<T> where T : class
     {
