@@ -27,12 +27,6 @@ public class StateMachineExample : MonoBehaviour
                 { MyMachineState.Running, new RunningState() }
             }
         );
-        stateMachine.AddTransitions(
-            new List<Transition>() 
-            { 
-                new Transition<MyMachineState>(MyMachineState.Running, MyMachineState.Idle, null, 1) 
-            }
-        );
 
         stateMachine.AddTransitions(
             Transition<MyMachineState>

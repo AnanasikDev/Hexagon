@@ -16,14 +16,22 @@ namespace Hexagon.StateMachine
     public class StateMachine
     {
         public State _currentState { get; protected set; } = null!;
+        /// <summary>
+        /// Target state of the ongoing transition if it exists, null otherwise.
+        /// </summary>
         public State? _targetState { get; protected set; } = null;
+        /// <summary>
+        /// Previous state of the last transition, it is NOT nullified after exiting transition.
+        /// </summary>
         public State _previousState { get; protected set; } = null!;
         public StateID _currentStateID { get; protected set; } = 0;
         protected Transition? _currentTransition = null;
 
         public readonly Dictionary<StateID, State> _enum2state = new();
         public readonly List<Transition> _transitions = new();
-
+        /// <summary>
+        /// Mapping of states to all their outgoing transitions.
+        /// </summary>
         public readonly Dictionary<StateID, List<Transition>> _stateTree = new();
 
         public bool _isTransitioning { get; protected set; } = false;
@@ -148,8 +156,7 @@ namespace Hexagon.StateMachine
         {
             foreach (Transition transition in _stateTree[_currentState._type])
             {
-                bool eventExists = _eventQueue.TryPeek(out ExternalMachineEvent? currentEvent);
-                if (transition._condition(_currentState, currentEvent) &&
+                if (transition._condition(_currentState, PeekEvent()) &&
                     (extraCondition?.Invoke(transition) ?? true) &&
                     _enum2state[transition._from].IsPossibleChangeFrom() &&
                     _enum2state[transition._to].IsPossibleChangeTo())
@@ -159,28 +166,6 @@ namespace Hexagon.StateMachine
             }
 
             return null;
-        }
-
-        public virtual bool RequestState(StateID newState)
-        {
-            if (_isLocked || _isTransitioning)
-            {
-                return false;
-            }
-            if (!_enum2state.ContainsKey(newState))
-            {
-                throw new ArgumentException($"State {newState} does not exist in the StateMachine.");
-            }
-
-            Transition? transition = GetTransitionFromCurrent(t => t._to == newState);
-
-            if (transition == null)
-            {
-                return false;
-            }
-
-            BeginTransition(newState, transition);
-            return false;
         }
 
         protected virtual void BeginTransition(StateID newState, Transition transition)
@@ -194,6 +179,7 @@ namespace Hexagon.StateMachine
             _currentTransition = transition;
             _currentTransition.Begin();
 
+            OnTransitionStarted(_currentState, _targetState);
             OnTransitionStartedEvent?.Invoke(_currentState, _targetState);
         }
 
@@ -221,7 +207,7 @@ namespace Hexagon.StateMachine
             _currentTransition = null;
             _isTransitioning = false;
 
-            OnStateChanged(_previousState, _currentState);
+            OnTransitionEnded(_previousState, _currentState);
             OnTransitionEndedEvent?.Invoke(_previousState, _currentState);
             return _currentState;
         }
@@ -229,9 +215,11 @@ namespace Hexagon.StateMachine
         public virtual void Die()
         {
             _currentState?.OnTransitionFromStarted();
+            _isLocked = true;
         }
 
-        protected virtual void OnStateChanged(State from, State to) { }
+        protected virtual void OnTransitionEnded(State from, State to) { }
+        protected virtual void OnTransitionStarted(State from, State to) { }
 
         public static StateID EnumToID<TEnumState>(TEnumState value) where TEnumState : Enum
         {
@@ -251,6 +239,12 @@ namespace Hexagon.StateMachine
         {
             Assert.IsNotNull(@event, "Event cannot be null.");
             _eventQueue.Enqueue(@event);
+        }
+
+        public ExternalMachineEvent? PeekEvent()
+        {
+            if (_eventQueue.Count == 0) return null;
+            return _eventQueue.Peek();
         }
     }
 
